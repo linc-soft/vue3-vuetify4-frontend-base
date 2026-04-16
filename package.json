@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "mcp": "ruler apply",
-    "mcp:revert": "ruler revert"
+    "mcp:revert": "ruler revert",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
@@ -36,6 +37,8 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-vuetify": "^4.5.0",
     "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.8.3",
     "sass-embedded": "^1.99.0",
@@ -44,5 +47,13 @@
     "vite": "^8.0.8",
     "vite-plugin-vuetify": "^2.1.3",
     "vue-tsc": "^3.2.6"
+  },
+  "lint-staged": {
+    "*.{ts,vue,js,mts}": [
+      "eslint --fix"
+    ],
+    "*.{ts,vue,js,mts,json,scss,css,md,html}": [
+      "prettier --write"
+    ]
   }
 }
