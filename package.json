@@ -25,7 +25,8 @@
     "vue": "^3.5.32",
     "vue-i18n": "^11.3.2",
     "vue-router": "^5.0.4",
-    "vuetify": "^4.0.5"
+    "vuetify": "^4.0.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@intellectronica/ruler": "^0.3.38",
