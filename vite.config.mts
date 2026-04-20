@@ -42,6 +42,12 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+        configure: proxy => {
+          proxy.on('proxyReq', proxyReq => {
+            // 将 Origin 重写为后端地址，避免 CORS 403
+            proxyReq.setHeader('Origin', 'http://localhost:8080')
+          })
+        },
       },
     },
   },
