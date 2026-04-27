@@ -20,7 +20,7 @@
               <template #subtitle>{{ user.username }}</template>
             </v-list-item>
             <v-list-item :title="t('user.table.status')">
-              <template #subtitle>{{ user.status }}</template>
+              <template #subtitle>{{ statusLabelOf(user.status) }}</template>
             </v-list-item>
           </v-list>
         </template>
@@ -106,6 +106,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteUser, getUser } from '@/api/modules/user'
+import { useEnums } from '@/composables/useEnums'
 
 const props = defineProps<{
   modelValue: boolean
@@ -119,6 +120,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { smAndDown } = useDisplay()
+const { labelOf: statusLabelOf } = useEnums('user-status')
 
 const user = ref<UserInfoResponse | null>(null)
 const loading = ref(false)

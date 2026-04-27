@@ -10,3 +10,12 @@ export const EnumItemSchema = z.object({
 export type EnumItem = z.infer<typeof EnumItemSchema>
 
 export const EnumListSchema = z.array(EnumItemSchema)
+
+export const SelectOptionSchema = z.object({
+  value: z.union([z.string(), z.number()]),
+  label: z.string(),
+})
+
+export type SelectOption = z.infer<typeof SelectOptionSchema>
+
+export const SelectOptionListSchema = z.array(SelectOptionSchema)

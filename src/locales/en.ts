@@ -26,6 +26,7 @@ export default {
       username: 'Username',
       password: 'Password',
       status: 'Status',
+      roles: 'Roles',
       cancel: 'Cancel',
       submit: 'Submit',
       passwordHint: 'Leave blank to keep current password',

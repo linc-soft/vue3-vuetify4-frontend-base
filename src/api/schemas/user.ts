@@ -22,6 +22,7 @@ export const UserCreateRequestSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
   status: z.string().min(1),
+  roleIds: z.array(z.number()).optional(),
 })
 
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>
@@ -31,6 +32,7 @@ export const UserUpdateRequestSchema = z.object({
   username: z.string().min(1),
   password: z.string().optional(),
   status: z.string().min(1),
+  roleIds: z.array(z.number()).optional(),
   version: z.number(),
 })
 
@@ -49,6 +51,7 @@ export const UserInfoResponseSchema = z.object({
   id: z.number(),
   username: z.string(),
   status: z.string(),
+  roleIds: z.array(z.number()).optional(),
   version: z.number(),
 })
 

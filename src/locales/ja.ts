@@ -26,6 +26,7 @@ export default {
       username: 'ユーザー名',
       password: 'パスワード',
       status: 'ステータス',
+      roles: 'ロール',
       cancel: 'キャンセル',
       submit: '送信',
       passwordHint: '空欄の場合、パスワードは変更されません',

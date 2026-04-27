@@ -26,6 +26,7 @@ export default {
       username: '用户名',
       password: '密码',
       status: '状态',
+      roles: '角色',
       cancel: '取消',
       submit: '提交',
       passwordHint: '留空则不修改密码',

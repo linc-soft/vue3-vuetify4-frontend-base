@@ -92,11 +92,12 @@
 import type { VForm } from 'vuetify/components'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -124,7 +125,8 @@ async function handleLogin() {
 
   try {
     await authStore.login({ username: form.username, password: form.password })
-    router.push('/')
+    const redirect = (route.query.redirect as string) || '/'
+    router.push(redirect)
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('login.failed')
   } finally {

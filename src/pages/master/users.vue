@@ -73,6 +73,9 @@
       :page="page"
       @update:options="onOptionsUpdate"
     >
+      <template #item.status="{ value }">
+        {{ statusLabelOf(value) }}
+      </template>
       <template #item.actions="{ item }">
         <v-btn
           density="compact"
@@ -168,8 +171,9 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteUser, getUser, getUserPage } from '@/api/modules/user'
-import UserDetailDialog from '@/components/UserDetailDialog.vue'
-import UserFormDialog from '@/components/UserFormDialog.vue'
+import { useEnums } from '@/composables/useEnums'
+import UserDetailDialog from './components/UserDetailDialog.vue'
+import UserFormDialog from './components/UserFormDialog.vue'
 
 const { t } = useI18n()
 const { smAndDown } = useDisplay()
@@ -198,11 +202,8 @@ const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
-// Status options
-const statusOptions = computed(() => [
-  { title: t('user.status.enabled'), value: 'ENABLED' },
-  { title: t('user.status.disabled'), value: 'DISABLED' },
-])
+// Status options (from backend enums)
+const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
 
 // Table column definitions
 const allHeaders = computed(() => [

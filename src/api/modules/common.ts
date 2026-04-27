@@ -1,7 +1,7 @@
-import type { EnumItem } from '@/api/schemas/common'
+import type { EnumItem, SelectOption } from '@/api/schemas/common'
 import type { Result } from '@/api/types'
 import http from '@/api/client'
-import { EnumListSchema } from '@/api/schemas/common'
+import { EnumListSchema, SelectOptionListSchema } from '@/api/schemas/common'
 
 /** GET /api/common/enums?type={type} */
 export async function getEnums(type: string): Promise<EnumItem[]> {
@@ -9,4 +9,12 @@ export async function getEnums(type: string): Promise<EnumItem[]> {
     params: { type },
   })
   return EnumListSchema.parse(data.data)
+}
+
+/** GET /api/common/select-options?type={type} */
+export async function getSelectOptions(type: string): Promise<SelectOption[]> {
+  const { data } = await http.get<Result<SelectOption[]>>('/api/common/select-options', {
+    params: { type },
+  })
+  return SelectOptionListSchema.parse(data.data)
 }
