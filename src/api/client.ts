@@ -98,12 +98,22 @@ async function tryRefreshToken(): Promise<boolean> {
 
   refreshPromise = (async () => {
     try {
+      // Read CSRF token from cookie (backend requires X-CSRF-Token header for refresh endpoint)
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(c => c.startsWith('csrfToken='))
+        ?.split('=')[1]
+
       const { data } = await axios.post<Result<{ accessToken: string }>>(
-        `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/auth/refresh`,
+        '/api/auth/refresh',
         null,
-        { withCredentials: true },
+        {
+          baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
+          withCredentials: true,
+          headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : {},
+        },
       )
-      if (data.code === 0 && data.data?.accessToken) {
+      if (data.code === 200 && data.data?.accessToken) {
         setAccessToken(data.data.accessToken)
         return true
       }
@@ -120,8 +130,12 @@ async function tryRefreshToken(): Promise<boolean> {
 
 function handleUnauthorized() {
   setAccessToken(null)
-  // Redirect to the login page (use window.location to avoid circular import of router)
-  window.location.href = '/login'
+  // Clear persisted auth store so the router guard sees isAuthenticated = false after reload
+  localStorage.removeItem('auth')
+  // Redirect to the login page, preserving the current path for post-login redirect
+  const currentPath = window.location.pathname + window.location.search
+  const redirect = currentPath && currentPath !== '/' && currentPath !== '/login' ? currentPath : ''
+  window.location.href = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'
 }
 
 export default http
