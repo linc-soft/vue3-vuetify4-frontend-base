@@ -16,9 +16,3 @@ export const LoginResponseSchema = z.object({
 })
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>
-
-export const RefreshResponseSchema = z.object({
-  accessToken: z.string(),
-})
-
-export type RefreshResponse = z.infer<typeof RefreshResponseSchema>

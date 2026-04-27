@@ -17,20 +17,6 @@ export async function login(params: LoginRequest): Promise<LoginResponse> {
 }
 
 /**
- * Refresh Token
- *
- * POST /api/auth/refresh
- * - Refresh token is read from HttpOnly Cookie (automatically sent by the browser)
- * - Token Rotation: invalidate the old refresh token, issue a new refresh token via Set-Cookie
- */
-export async function refresh(): Promise<string> {
-  const { data } = await http.post<Result<{ accessToken: string }>>('/api/auth/refresh')
-  const token = data.data.accessToken
-  setAccessToken(token)
-  return token
-}
-
-/**
  * User Logout
  *
  * POST /api/auth/logout
