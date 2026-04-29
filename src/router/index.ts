@@ -5,6 +5,7 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router'
+import { resolveLayout } from '@/layouts/resolveLayout'
 import Index from '@/pages/index.vue'
 import Login from '@/pages/login.vue'
 
@@ -19,13 +20,11 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
-      component: Index,
-    },
-    {
-      path: '/users',
-      name: 'users',
-      component: () => import('@/pages/master/users.vue'),
+      component: resolveLayout(),
+      children: [
+        { path: '', name: 'home', component: Index },
+        { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
+      ],
     },
   ],
 })
