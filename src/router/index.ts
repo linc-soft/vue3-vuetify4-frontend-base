@@ -24,6 +24,7 @@ const router = createRouter({
       children: [
         { path: '', name: 'home', component: Index },
         { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
+        { path: 'roles', name: 'roles', component: () => import('@/pages/master/roles.vue') },
       ],
     },
   ],

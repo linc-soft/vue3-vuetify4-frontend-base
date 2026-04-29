@@ -6,6 +6,7 @@ import {
   type RoleDeleteRequest,
   type RoleInfoResponse,
   RoleInfoResponseSchema,
+  type RoleInheritanceRequest,
   type RoleListRequest,
   type RoleListResponseItem,
   RoleListResponseItemSchema,
@@ -38,4 +39,28 @@ export async function updateRole(params: RoleUpdateRequest): Promise<void> {
 /** DELETE /api/roles */
 export async function deleteRole(params: RoleDeleteRequest): Promise<void> {
   await http.delete('/api/roles', { data: params })
+}
+
+// ========== Role Inheritance API ==========
+
+/** POST /api/roles/inheritance — Add Role Inheritance Relationship */
+export async function addRoleInheritance(params: RoleInheritanceRequest): Promise<void> {
+  await http.post('/api/roles/inheritance', params)
+}
+
+/** DELETE /api/roles/inheritance — Delete Role Inheritance Relationship */
+export async function removeRoleInheritance(params: RoleInheritanceRequest): Promise<void> {
+  await http.delete('/api/roles/inheritance', { data: params })
+}
+
+/** GET /api/roles/{id}/parents — Get parent role list */
+export async function getParentRoles(id: number): Promise<RoleListResponseItem[]> {
+  const { data } = await http.get<Result<RoleListResponseItem[]>>(`/api/roles/${id}/parents`)
+  return z.array(RoleListResponseItemSchema).parse(data.data)
+}
+
+/** GET /api/roles/{id}/children — Get child role list */
+export async function getChildRoles(id: number): Promise<RoleListResponseItem[]> {
+  const { data } = await http.get<Result<RoleListResponseItem[]>>(`/api/roles/${id}/children`)
+  return z.array(RoleListResponseItemSchema).parse(data.data)
 }
