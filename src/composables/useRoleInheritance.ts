@@ -66,7 +66,6 @@ export function wouldCreateCycle(
 /**
  * Calculate the role IDs to be disabled in the left list.
  * - Myself (the role being edited)
- * - Own Ancestors (Cycle Prevention)
  * - Own descendants (reverse cycle prevention)
  * @param currentRoleId Editing Role ID (null when creating new)
  * @param allRoles All Role List
@@ -82,12 +81,6 @@ export function getDisabledRoleIds(
 
   // Disable itself
   disabled.add(currentRoleId)
-
-  // Disable own ancestors (cycle prevention)
-  const ancestors = getAncestorIds(currentRoleId, allRoles)
-  for (const id of ancestors) {
-    disabled.add(id)
-  }
 
   // Disable own descendants (prevent reverse circular dependency)
   const descendants = getDescendantIds(currentRoleId, allRoles)
