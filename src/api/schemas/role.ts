@@ -5,7 +5,6 @@ import { z } from 'zod/v4'
 export const RoleListRequestSchema = z.object({
   roleName: z.string().optional(),
   roleCode: z.string().optional(),
-  description: z.string().optional(),
 })
 
 export type RoleListRequest = z.infer<typeof RoleListRequestSchema>
@@ -13,6 +12,7 @@ export type RoleListRequest = z.infer<typeof RoleListRequestSchema>
 export const RoleCreateRequestSchema = z.object({
   roleName: z.string().min(1),
   description: z.string().optional(),
+  parentRoleIds: z.array(z.number()).default([]),
 })
 
 export type RoleCreateRequest = z.infer<typeof RoleCreateRequestSchema>
@@ -22,6 +22,7 @@ export const RoleUpdateRequestSchema = z.object({
   roleName: z.string().min(1),
   description: z.string().optional(),
   version: z.number(),
+  parentRoleIds: z.array(z.number()).default([]),
 })
 
 export type RoleUpdateRequest = z.infer<typeof RoleUpdateRequestSchema>
@@ -33,13 +34,6 @@ export const RoleDeleteRequestSchema = z.object({
 
 export type RoleDeleteRequest = z.infer<typeof RoleDeleteRequestSchema>
 
-export const RoleInheritanceRequestSchema = z.object({
-  childRoleId: z.number(),
-  parentRoleId: z.number(),
-})
-
-export type RoleInheritanceRequest = z.infer<typeof RoleInheritanceRequestSchema>
-
 // ─── Response ───
 
 export const RoleInfoResponseSchema = z.object({
@@ -48,6 +42,7 @@ export const RoleInfoResponseSchema = z.object({
   roleCode: z.string().nullable(),
   description: z.string().nullable(),
   version: z.number(),
+  parentRoleIds: z.array(z.number()).default([]),
 })
 
 export type RoleInfoResponse = z.infer<typeof RoleInfoResponseSchema>
@@ -57,9 +52,9 @@ export const RoleListResponseItemSchema = z.object({
   roleName: z.string(),
   roleCode: z.string().nullable(),
   description: z.string().nullable(),
-  parentRoleIds: z.array(z.number()).nullable(),
   updateBy: z.string().nullable(),
   updateAt: z.string().nullable(),
+  parentRoleIds: z.array(z.number()).default([]),
 })
 
 export type RoleListResponseItem = z.infer<typeof RoleListResponseItemSchema>

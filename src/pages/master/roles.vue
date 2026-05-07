@@ -224,7 +224,6 @@ async function fetchRoles() {
       roleName: filters.roleName || undefined,
       roleCode: filters.roleCode || undefined,
     })
-    console.log(items.value)
   } catch (error: unknown) {
     console.error('Failed to fetch roles:', error)
   } finally {

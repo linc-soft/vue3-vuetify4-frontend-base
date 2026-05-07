@@ -1,8 +1,9 @@
 <template>
   <v-dialog
     :fullscreen="smAndDown"
-    :max-width="smAndDown ? undefined : 900"
+    :max-width="smAndDown ? undefined : 640"
     :model-value="modelValue"
+    scrollable
     @update:model-value="emit('update:modelValue', $event)"
   >
     <v-card>
@@ -16,134 +17,154 @@
         >
           <v-progress-circular indeterminate />
         </div>
-        <v-form
-          v-else
-          ref="formRef"
-          @submit.prevent="handleSubmit"
-        >
-          <!-- 基本情報 -->
-          <v-text-field
-            v-model="form.roleName"
-            :label="t('role.form.roleName')"
-            :rules="[rules.roleNameRequired]"
-          />
-          <v-text-field
-            v-model="form.description"
-            :label="t('role.form.description')"
-          />
-
-          <!-- Inheritance Section -->
-          <v-divider class="my-4" />
-          <div class="text-subtitle-1 mb-2">
-            <v-icon
-              class="mr-1"
-              icon="mdi-sitemap-outline"
+        <template v-else>
+          <v-form
+            ref="formRef"
+            @submit.prevent="handleSubmit"
+          >
+            <v-text-field
+              v-model="form.roleName"
+              :label="t('role.form.roleName')"
+              :rules="[rules.roleNameRequired]"
             />
-            {{ t('role.form.inheritance') }}
-          </div>
-          <p class="text-body-2 text-medium-emphasis mb-4">
-            {{ t('role.form.inheritanceHint') }}
-          </p>
-
-          <v-row>
-            <!-- Left Side: Role Selection List -->
-            <v-col
-              cols="12"
-              md="6"
+            <v-text-field
+              v-model="form.description"
+              :label="t('role.form.description')"
+            />
+            <v-autocomplete
+              v-model="form.parentRoleIds"
+              chips
+              clearable
+              closable-chips
+              :hint="t('role.form.parentRolesHint')"
+              item-title="roleName"
+              item-value="id"
+              :items="parentCandidates"
+              :label="t('role.form.parentRoles')"
+              multiple
+              persistent-hint
+              variant="outlined"
             >
-              <v-text-field
-                v-model="searchKeyword"
-                class="mb-2"
-                clearable
-                density="compact"
-                hide-details
-                :placeholder="t('role.form.searchPlaceholder')"
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-              />
-              <v-card
-                border
-                class="overflow-y-auto"
-                max-height="360"
-                variant="outlined"
-              >
-                <v-list
-                  density="compact"
-                  select-strategy="leaf"
+              <template #chip="{ props: chipProps, item }">
+                <v-chip
+                  v-bind="chipProps"
+                  :color="item.roleCode ? 'success' : 'info'"
+                  size="small"
+                  variant="tonal"
                 >
-                  <v-list-item
-                    v-for="role in filteredRoles"
-                    :key="role.id"
-                    :disabled="disabledIds.has(role.id)"
-                  >
-                    <template #prepend>
-                      <v-checkbox-btn
-                        :disabled="disabledIds.has(role.id)"
-                        :model-value="selectedParentIds.includes(role.id)"
-                        @update:model-value="toggleParent(role.id, $event)"
-                      />
-                    </template>
-                    <v-list-item-title>{{ role.roleName }}</v-list-item-title>
-                    <v-list-item-subtitle class="text-caption">
-                      {{ role.roleCode }}
-                    </v-list-item-subtitle>
-                    <template #append>
-                      <v-icon
-                        v-if="redundantIds.has(role.id)"
-                        color="warning"
-                        icon="mdi-alert-circle-outline"
-                        size="x-small"
-                      />
-                    </template>
-                  </v-list-item>
-                  <v-list-item v-if="filteredRoles.length === 0">
-                    <v-list-item-title class="text-medium-emphasis">
-                      No roles found
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-col>
+                  {{ item.roleName }}
+                </v-chip>
+              </template>
+              <template #item="{ props: itemProps, item }">
+                <v-list-item
+                  v-bind="itemProps"
+                  :subtitle="describeRole(item)"
+                >
+                  <template #prepend>
+                    <v-chip
+                      class="mr-2"
+                      :color="item.roleCode ? 'success' : 'info'"
+                      size="x-small"
+                      variant="tonal"
+                    >
+                      {{ badgeLabel(item.id) }}
+                    </v-chip>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-autocomplete>
+          </v-form>
 
-            <!-- Right Side: Inheritance Tree Preview -->
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <div class="text-body-2 font-weight-medium mb-2">
-                <v-icon
-                  class="mr-1"
-                  icon="mdi-file-tree-outline"
-                  size="18"
-                />
-                {{ t('role.form.treeTitle') }}
+          <!-- Inheritance preview (responsive, no hover dependency) -->
+          <v-card
+            v-if="form.parentRoleIds.length > 0"
+            class="mt-4"
+            variant="tonal"
+          >
+            <v-card-title class="text-subtitle-2">
+              {{ t('role.form.previewTitle') }}
+            </v-card-title>
+            <v-card-text>
+              <!-- Effective base roles -->
+              <div class="text-caption text-medium-emphasis mb-1">
+                {{ t('role.form.effectiveBaseRoles') }}
               </div>
-              <v-card
-                border
-                class="overflow-y-auto pa-2"
-                max-height="390"
-                min-height="300"
-                variant="outlined"
+              <div
+                v-if="effectiveBaseRoles.length === 0"
+                class="text-body-2 text-medium-emphasis mb-2"
               >
-                <template v-if="inheritanceTree.length > 0">
-                  <RoleTreeNodeItem
-                    v-for="node in inheritanceTree"
-                    :key="node.id"
-                    :node="node"
-                    @remove="removeParent"
-                  />
-                </template>
-                <div
-                  v-else
-                  class="d-flex align-center justify-center text-medium-emphasis text-body-2"
-                  style="min-height: 280px"
+                {{ t('role.form.noBaseRoles') }}
+              </div>
+              <v-chip-group
+                v-else
+                class="mb-2"
+                column
+              >
+                <v-chip
+                  v-for="r in effectiveBaseRoles"
+                  :key="r.id"
+                  color="primary"
+                  size="small"
+                  variant="tonal"
                 >
-                  {{ t('role.form.treeEmpty') }}
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-form>
+                  {{ r.roleName }}
+                  <span class="text-disabled ml-1">· {{ r.roleCode }}</span>
+                </v-chip>
+              </v-chip-group>
+
+              <!-- Inheritance chain details (click to expand, mobile-friendly) -->
+              <v-expansion-panels
+                class="mt-2"
+                variant="accordion"
+              >
+                <v-expansion-panel
+                  v-for="id in form.parentRoleIds"
+                  :key="id"
+                >
+                  <v-expansion-panel-title>
+                    <span class="text-body-2">
+                      {{ roleMap.get(id)?.roleName ?? `#${id}` }}
+                    </span>
+                    <template #actions>
+                      <v-icon>mdi-chevron-down</v-icon>
+                    </template>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <div
+                      v-for="(node, idx) in flattenedTree(id)"
+                      :key="`${id}-${idx}-${node.role.id}`"
+                      class="d-flex align-center py-1"
+                      :style="{ paddingLeft: `${node.depth * 16}px` }"
+                    >
+                      <v-icon
+                        v-if="node.depth > 0"
+                        class="mr-1"
+                        size="x-small"
+                      >
+                        mdi-subdirectory-arrow-right
+                      </v-icon>
+                      <v-chip
+                        class="mr-2"
+                        :color="node.role.roleCode ? 'success' : 'info'"
+                        size="x-small"
+                        variant="tonal"
+                      >
+                        {{ badgeLabel(node.role.id) }}
+                      </v-chip>
+                      <span class="text-body-2">{{ node.role.roleName }}</span>
+                      <span
+                        v-if="node.role.roleCode"
+                        class="text-caption text-medium-emphasis ml-2"
+                      >
+                        · {{ node.role.roleCode }}
+                      </span>
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-card-text>
+          </v-card>
+        </template>
 
         <v-alert
           v-if="errorMessage"
@@ -187,16 +208,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import {
-  addRoleInheritance,
-  createRole,
-  getParentRoles,
-  getRoleList,
-  removeRoleInheritance,
-  updateRole,
-} from '@/api/modules/role'
-import { useRoleInheritance } from '@/composables/useRoleInheritance'
-import RoleTreeNodeItem from './RoleTreeNodeItem.vue'
+import { createRole, getRole, getRoleList, updateRole } from '@/api/modules/role'
 
 const props = defineProps<{
   modelValue: boolean
@@ -212,9 +224,14 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { smAndDown } = useDisplay()
 
-const form = reactive({
+const form = reactive<{
+  roleName: string
+  description: string
+  parentRoleIds: number[]
+}>({
   roleName: '',
   description: '',
+  parentRoleIds: [],
 })
 const version = ref(0)
 const formRef = ref<VForm>()
@@ -222,31 +239,76 @@ const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
 
-// Inheritance-related status
+// All roles (used to build the inheritance graph)
 const allRoles = ref<RoleListResponseItem[]>([])
-const selectedParentIds = ref<number[]>([])
-const searchKeyword = ref('')
-
-// composable
-const currentRoleId = computed(() => props.roleId)
-const { disabledIds, inheritanceTree, redundantIds } = useRoleInheritance(
-  allRoles,
-  currentRoleId,
-  selectedParentIds,
+const roleMap = computed(
+  () => new Map<number, RoleListResponseItem>(allRoles.value.map(r => [r.id, r])),
 )
 
-// Search Filters
-const filteredRoles = computed(() => {
-  const keyword = searchKeyword.value?.toLowerCase() ?? ''
-  return allRoles.value.filter(r => {
-    if (r.id === props.roleId) return false
-    if (!keyword) return true
-    return r.roleName.toLowerCase().includes(keyword) || r.roleCode?.toLowerCase().includes(keyword)
-  })
-})
+// Parent role candidates: exclude self in edit mode to prevent direct self-inheritance (cycles are finally validated by the backend)
+const parentCandidates = computed(() => allRoles.value.filter(r => r.id !== props.roleId))
 
 const rules = {
   roleNameRequired: (v: string) => !!v || t('role.validation.roleNameRequired'),
+}
+
+// Subtitle description for candidate items
+function describeRole(r: RoleListResponseItem): string {
+  if (r.roleCode) {
+    return `${t('role.form.roleCode')}: ${r.roleCode}`
+  }
+  if (r.parentRoleIds.length === 0) {
+    return t('role.form.noParents')
+  }
+  const names = r.parentRoleIds.map(pid => roleMap.value.get(pid)?.roleName ?? `#${pid}`).join(', ')
+  return `${t('role.form.inheritsFrom')}: ${names}`
+}
+
+function isBaseRoleId(id: number): boolean {
+  return !!roleMap.value.get(id)?.roleCode
+}
+
+function badgeLabel(id: number): string {
+  return isBaseRoleId(id) ? t('role.form.badgeBase') : t('role.form.badgeComposite')
+}
+// Transitive closure BFS: returns all ancestors (including self) recursively expanded from the selected parent roles; visited prevents cycles
+function resolveAncestors(rootIds: number[]): RoleListResponseItem[] {
+  const visited = new Set<number>()
+  const queue: number[] = [...rootIds]
+  const result: RoleListResponseItem[] = []
+  while (queue.length > 0) {
+    const id = queue.shift()!
+    if (visited.has(id)) continue
+    visited.add(id)
+    const r = roleMap.value.get(id)
+    if (!r) continue
+    result.push(r)
+    for (const pid of r.parentRoleIds) {
+      if (!visited.has(pid)) queue.push(pid)
+    }
+  }
+  return result
+}
+
+// Effective base roles = nodes in the transitive closure that have a roleCode
+const effectiveBaseRoles = computed(() =>
+  resolveAncestors(form.parentRoleIds).filter(r => r.roleCode),
+)
+
+// Flatten a single-root inheritance chain with depth for indented rendering (duplicates allowed in DAG scenarios)
+function flattenedTree(rootId: number): { role: RoleListResponseItem; depth: number }[] {
+  const out: { role: RoleListResponseItem; depth: number }[] = []
+  const walk = (id: number, depth: number, visited: Set<number>) => {
+    if (visited.has(id)) return
+    const role = roleMap.value.get(id)
+    if (!role) return
+    out.push({ role, depth })
+    const next = new Set(visited)
+    next.add(id)
+    for (const pid of role.parentRoleIds) walk(pid, depth + 1, next)
+  }
+  walk(rootId, 0, new Set())
+  return out
 }
 
 watch(
@@ -254,57 +316,34 @@ watch(
   async open => {
     if (!open) return
     errorMessage.value = ''
-    searchKeyword.value = ''
-
-    // Get all role list
     loading.value = true
     try {
-      allRoles.value = await getRoleList()
+      // Concurrent fetch: all roles + (in edit mode) current role detail
+      const [list, detail] = await Promise.all([
+        getRoleList(),
+        props.mode === 'edit' && props.roleId != null ? getRole(props.roleId) : null,
+      ])
+      allRoles.value = list
+
+      if (props.mode === 'create') {
+        form.roleName = ''
+        form.description = ''
+        form.parentRoleIds = []
+        version.value = 0
+        formRef.value?.resetValidation()
+      } else if (detail) {
+        form.roleName = detail.roleName
+        form.description = detail.description ?? ''
+        form.parentRoleIds = [...detail.parentRoleIds]
+        version.value = detail.version
+      }
     } catch (error: unknown) {
       errorMessage.value = error instanceof Error ? error.message : t('role.error.loadFailed')
     } finally {
       loading.value = false
     }
-
-    if (props.mode === 'create') {
-      form.roleName = ''
-      form.description = ''
-      selectedParentIds.value = []
-      version.value = 0
-      formRef.value?.resetValidation()
-    } else if (props.roleId != null) {
-      loading.value = true
-      try {
-        const [role, parents] = await Promise.all([
-          (await import('@/api/modules/role')).getRole(props.roleId),
-          getParentRoles(props.roleId),
-        ])
-        form.roleName = role.roleName
-        form.description = role.description ?? ''
-        version.value = role.version
-        selectedParentIds.value = parents.map(p => p.id)
-      } catch (error: unknown) {
-        errorMessage.value = error instanceof Error ? error.message : t('role.error.loadFailed')
-      } finally {
-        loading.value = false
-      }
-    }
   },
 )
-
-function toggleParent(roleId: number, checked: boolean) {
-  if (checked) {
-    if (!selectedParentIds.value.includes(roleId)) {
-      selectedParentIds.value = [...selectedParentIds.value, roleId]
-    }
-  } else {
-    selectedParentIds.value = selectedParentIds.value.filter(id => id !== roleId)
-  }
-}
-
-function removeParent(roleId: number) {
-  selectedParentIds.value = selectedParentIds.value.filter(id => id !== roleId)
-}
 
 async function handleSubmit() {
   if (!formRef.value) return
@@ -314,35 +353,19 @@ async function handleSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
-    if (props.mode === 'create') {
-      const createdId = await createRole({
-        roleName: form.roleName,
-        description: form.description || undefined,
-      })
-      // Add inheritance relationship
-      for (const parentId of selectedParentIds.value) {
-        await addRoleInheritance({ childRoleId: createdId, parentRoleId: parentId })
-      }
-    } else {
-      await updateRole({
-        id: props.roleId!,
-        roleName: form.roleName,
-        description: form.description || undefined,
-        version: version.value,
-      })
-
-      // Differential update of inheritance relationship
-      const originalParentIds = allRoles.value.find(r => r.id === props.roleId)?.parentRoleIds ?? []
-      const toAdd = selectedParentIds.value.filter(id => !originalParentIds.includes(id))
-      const toRemove = originalParentIds.filter(id => !selectedParentIds.value.includes(id))
-
-      for (const parentId of toAdd) {
-        await addRoleInheritance({ childRoleId: props.roleId!, parentRoleId: parentId })
-      }
-      for (const parentId of toRemove) {
-        await removeRoleInheritance({ childRoleId: props.roleId!, parentRoleId: parentId })
-      }
-    }
+    await (props.mode === 'create'
+      ? createRole({
+          roleName: form.roleName,
+          description: form.description || undefined,
+          parentRoleIds: form.parentRoleIds,
+        })
+      : updateRole({
+          id: props.roleId!,
+          roleName: form.roleName,
+          description: form.description || undefined,
+          version: version.value,
+          parentRoleIds: form.parentRoleIds,
+        }))
 
     emit('saved')
     emit('update:modelValue', false)

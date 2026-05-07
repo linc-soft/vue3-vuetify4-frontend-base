@@ -40,14 +40,6 @@
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
           />
-          <v-autocomplete
-            v-model="form.roleIds"
-            chips
-            closable-chips
-            :items="roleOptions"
-            :label="t('user.form.roles')"
-            multiple
-          />
         </v-form>
         <v-alert
           v-if="errorMessage"
@@ -92,7 +84,6 @@ import { useDisplay } from 'vuetify'
 
 import { createUser, getUser, updateUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
   modelValue: boolean
@@ -112,7 +103,6 @@ const form = reactive({
   username: '',
   password: '',
   status: 'ENABLED',
-  roleIds: [] as number[],
 })
 const version = ref(0)
 const formRef = ref<VForm>()
@@ -121,7 +111,6 @@ const submitting = ref(false)
 const errorMessage = ref('')
 
 const { options: statusOptions } = useEnums('user-status')
-const { options: roleOptions } = useSelectOptions('role')
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
@@ -138,7 +127,6 @@ watch(
       form.username = ''
       form.password = ''
       form.status = ''
-      form.roleIds = []
       version.value = 0
       formRef.value?.resetValidation()
     } else if (props.userId != null) {
@@ -148,7 +136,6 @@ watch(
         form.username = user.username
         form.password = ''
         form.status = user.status
-        form.roleIds = user.roleIds ?? []
         version.value = user.version
       } catch (error: unknown) {
         errorMessage.value = error instanceof Error ? error.message : t('user.error.loadFailed')
@@ -172,14 +159,12 @@ async function handleSubmit() {
           username: form.username,
           password: form.password,
           status: form.status,
-          roleIds: form.roleIds.length > 0 ? form.roleIds : undefined,
         })
       : updateUser({
           id: props.userId!,
           username: form.username,
           password: form.password || undefined,
           status: form.status,
-          roleIds: form.roleIds.length > 0 ? form.roleIds : undefined,
           version: version.value,
         }))
     emit('saved')
