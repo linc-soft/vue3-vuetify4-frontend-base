@@ -71,7 +71,7 @@ export default {
     },
     actions: { detail: '详情', edit: '编辑', delete: '删除', create: '新建用户' },
     status: { enabled: '启用', disabled: '禁用' },
-    detail: { title: '用户详情', close: '关闭' },
+    detail: { title: '用户详情', close: '关闭', roles: '角色', noRoles: '未分配角色' },
     form: {
       createTitle: '新建用户',
       editTitle: '编辑用户',
@@ -79,6 +79,8 @@ export default {
       password: '密码',
       status: '状态',
       roles: '角色',
+      rolesHint: '可多选；所选角色的权限将授予该用户',
+      compositeRole: '聚合角色',
       cancel: '取消',
       submit: '提交',
       passwordHint: '留空则不修改密码',

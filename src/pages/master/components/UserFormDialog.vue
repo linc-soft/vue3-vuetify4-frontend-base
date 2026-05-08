@@ -3,6 +3,7 @@
     :fullscreen="smAndDown"
     :max-width="smAndDown ? undefined : 600"
     :model-value="modelValue"
+    scrollable
     @update:model-value="emit('update:modelValue', $event)"
   >
     <v-card>
@@ -40,6 +41,37 @@
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
           />
+          <v-autocomplete
+            v-model="form.roleIds"
+            chips
+            clearable
+            closable-chips
+            :hint="t('user.form.rolesHint')"
+            item-title="roleName"
+            item-value="id"
+            :items="allRoles"
+            :label="t('user.form.roles')"
+            multiple
+            persistent-hint
+            variant="outlined"
+          >
+            <template #chip="{ props: chipProps, item }">
+              <v-chip
+                v-bind="chipProps"
+                :color="item.roleCode ? 'success' : 'info'"
+                size="small"
+                variant="tonal"
+              >
+                {{ item.roleName }}
+              </v-chip>
+            </template>
+            <template #item="{ props: itemProps, item }">
+              <v-list-item
+                v-bind="itemProps"
+                :subtitle="item.roleCode ?? t('user.form.compositeRole')"
+              />
+            </template>
+          </v-autocomplete>
         </v-form>
         <v-alert
           v-if="errorMessage"
@@ -77,11 +109,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { RoleListResponseItem } from '@/api/schemas/role'
 import type { VForm } from 'vuetify/components'
 import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
+import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 
@@ -99,16 +133,23 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { smAndDown } = useDisplay()
 
-const form = reactive({
+const form = reactive<{
+  username: string
+  password: string
+  status: string
+  roleIds: number[]
+}>({
   username: '',
   password: '',
   status: 'ENABLED',
+  roleIds: [],
 })
 const version = ref(0)
 const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const allRoles = ref<RoleListResponseItem[]>([])
 
 const { options: statusOptions } = useEnums('user-status')
 
@@ -123,25 +164,33 @@ watch(
   async open => {
     if (!open) return
     errorMessage.value = ''
-    if (props.mode === 'create') {
-      form.username = ''
-      form.password = ''
-      form.status = ''
-      version.value = 0
-      formRef.value?.resetValidation()
-    } else if (props.userId != null) {
-      loading.value = true
-      try {
-        const user = await getUser(props.userId)
+    loading.value = true
+    try {
+      // Concurrent fetch: all roles + (in edit mode) current user detail
+      const [roles, user] = await Promise.all([
+        getRoleList(),
+        props.mode === 'edit' && props.userId != null ? getUser(props.userId) : null,
+      ])
+      allRoles.value = roles
+
+      if (props.mode === 'create') {
+        form.username = ''
+        form.password = ''
+        form.status = ''
+        form.roleIds = []
+        version.value = 0
+        formRef.value?.resetValidation()
+      } else if (user) {
         form.username = user.username
         form.password = ''
         form.status = user.status
+        form.roleIds = [...(user.roleIds ?? [])]
         version.value = user.version
-      } catch (error: unknown) {
-        errorMessage.value = error instanceof Error ? error.message : t('user.error.loadFailed')
-      } finally {
-        loading.value = false
       }
+    } catch (error: unknown) {
+      errorMessage.value = error instanceof Error ? error.message : t('user.error.loadFailed')
+    } finally {
+      loading.value = false
     }
   },
 )
@@ -159,12 +208,14 @@ async function handleSubmit() {
           username: form.username,
           password: form.password,
           status: form.status,
+          roleIds: form.roleIds,
         })
       : updateUser({
           id: props.userId!,
           username: form.username,
           password: form.password || undefined,
           status: form.status,
+          roleIds: form.roleIds,
           version: version.value,
         }))
     emit('saved')

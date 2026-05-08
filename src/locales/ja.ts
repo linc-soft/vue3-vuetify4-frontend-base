@@ -71,7 +71,7 @@ export default {
     },
     actions: { detail: '詳細', edit: '編集', delete: '削除', create: 'ユーザー作成' },
     status: { enabled: '有効', disabled: '無効' },
-    detail: { title: 'ユーザー詳細', close: '閉じる' },
+    detail: { title: 'ユーザー詳細', close: '閉じる', roles: 'ロール', noRoles: '未割り当て' },
     form: {
       createTitle: 'ユーザー作成',
       editTitle: 'ユーザー編集',
@@ -79,6 +79,8 @@ export default {
       password: 'パスワード',
       status: 'ステータス',
       roles: 'ロール',
+      rolesHint: '複数選択可。選択したロールの権限がこのユーザーに付与されます',
+      compositeRole: '集約ロール',
       cancel: 'キャンセル',
       submit: '送信',
       passwordHint: '空欄の場合、パスワードは変更されません',

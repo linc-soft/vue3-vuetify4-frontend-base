@@ -71,7 +71,7 @@ export default {
     },
     actions: { detail: 'Detail', edit: 'Edit', delete: 'Delete', create: 'Create User' },
     status: { enabled: 'Enabled', disabled: 'Disabled' },
-    detail: { title: 'User Detail', close: 'Close' },
+    detail: { title: 'User Detail', close: 'Close', roles: 'Roles', noRoles: 'No roles assigned' },
     form: {
       createTitle: 'Create User',
       editTitle: 'Edit User',
@@ -79,6 +79,8 @@ export default {
       password: 'Password',
       status: 'Status',
       roles: 'Roles',
+      rolesHint: 'Multi-select; permissions of selected roles will be granted to this user',
+      compositeRole: 'Composite role',
       cancel: 'Cancel',
       submit: 'Submit',
       passwordHint: 'Leave blank to keep current password',
