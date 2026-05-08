@@ -1,8 +1,36 @@
 <template>
   <v-container
-    class="fill-height"
+    class="fill-height position-relative"
     fluid
   >
+    <div class="login-locale-switcher">
+      <v-menu offset="8">
+        <template #activator="{ props }">
+          <v-btn
+            :aria-label="t('app.language')"
+            icon="mdi-translate"
+            variant="text"
+            v-bind="props"
+          />
+        </template>
+
+        <v-list
+          density="compact"
+          min-width="160"
+          :selected="[currentLocale]"
+        >
+          <v-list-item
+            v-for="code in supportedLocales"
+            :key="code"
+            :active="currentLocale === code"
+            :title="localeLabels[code]"
+            :value="code"
+            @click="setLocale(code)"
+          />
+        </v-list>
+      </v-menu>
+    </div>
+
     <v-row
       align="center"
       justify="center"
@@ -94,9 +122,16 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
+import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
+const {
+  current: currentLocale,
+  supported: supportedLocales,
+  labels: localeLabels,
+  setLocale,
+} = useLocale()
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -134,3 +169,12 @@ async function handleLogin() {
   }
 }
 </script>
+
+<style scoped>
+.login-locale-switcher {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 1;
+}
+</style>

@@ -1,6 +1,7 @@
 export default {
   app: {
     logout: 'Sign Out',
+    language: 'Language',
   },
   login: {
     title: 'Sign In',

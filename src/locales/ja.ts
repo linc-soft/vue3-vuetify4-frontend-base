@@ -1,6 +1,7 @@
 export default {
   app: {
     logout: 'ログアウト',
+    language: '言語',
   },
   login: {
     title: 'ログイン',

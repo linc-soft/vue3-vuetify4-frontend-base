@@ -1,6 +1,7 @@
 export default {
   app: {
     logout: '退出登录',
+    language: '语言',
   },
   login: {
     title: '用户登录',
