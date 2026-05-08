@@ -13,7 +13,7 @@ import axios from 'axios'
  */
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '',
-  timeout: 1500,
+  timeout: 10_000,
   withCredentials: true,
   xsrfCookieName: 'csrfToken',
   xsrfHeaderName: 'X-CSRF-Token',
@@ -72,6 +72,13 @@ http.interceptors.response.use(
       throw Promise.reject(new ApiError(result.code, result.message ?? 'Request failed'))
     }
 
+    // Handle network errors
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      throw new ApiError(-1, 'Request timeout, please try again')
+    }
+    if (!error.response) {
+      throw new ApiError(-1, 'Network error, please check your connection')
+    }
     throw Promise.reject(error)
   },
 )
