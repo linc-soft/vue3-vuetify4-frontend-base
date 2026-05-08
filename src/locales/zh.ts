@@ -1,4 +1,7 @@
 export default {
+  app: {
+    logout: '退出登录',
+  },
   login: {
     title: '用户登录',
     username: '用户名',

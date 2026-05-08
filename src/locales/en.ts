@@ -1,4 +1,7 @@
 export default {
+  app: {
+    logout: 'Sign Out',
+  },
   login: {
     title: 'Sign In',
     username: 'Username',
