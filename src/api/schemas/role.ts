@@ -55,6 +55,7 @@ export const RoleListResponseItemSchema = z.object({
   updateBy: z.string().nullable(),
   updateAt: z.string().nullable(),
   parentRoleIds: z.array(z.number()).default([]),
+  version: z.number(),
 })
 
 export type RoleListResponseItem = z.infer<typeof RoleListResponseItemSchema>

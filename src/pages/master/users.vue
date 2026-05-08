@@ -170,7 +170,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { deleteUser, getUser, getUserPage } from '@/api/modules/user'
+import { deleteUser, getUserPage } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
@@ -276,16 +276,8 @@ function openForm(mode: 'create' | 'edit', id?: number) {
 // Open the delete confirmation box
 async function openDeleteConfirm(item: UserPageResponseItem) {
   errorMessage.value = ''
-  deleteLoading.value = true
+  deleteTarget.value = { id: item.id, version: item.version }
   deleteDialog.value = true
-  try {
-    const userInfo = await getUser(item.id)
-    deleteTarget.value = { id: userInfo.id, version: userInfo.version }
-  } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : t('user.error.loadFailed')
-  } finally {
-    deleteLoading.value = false
-  }
 }
 
 // Execute deletion

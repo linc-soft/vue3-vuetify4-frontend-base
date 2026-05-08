@@ -170,7 +170,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { deleteRole, getRole, getRoleList } from '@/api/modules/role'
+import { deleteRole, getRoleList } from '@/api/modules/role'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
@@ -259,16 +259,8 @@ function openForm(mode: 'create' | 'edit', id?: number) {
 // Open the deletion confirmation dialog.
 async function openDeleteConfirm(item: RoleListResponseItem) {
   errorMessage.value = ''
-  deleteLoading.value = true
+  deleteTarget.value = { id: item.id, version: item.version }
   deleteDialog.value = true
-  try {
-    const roleInfo = await getRole(item.id)
-    deleteTarget.value = { id: roleInfo.id, version: roleInfo.version }
-  } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : t('role.error.loadFailed')
-  } finally {
-    deleteLoading.value = false
-  }
 }
 
 // Execute deletion

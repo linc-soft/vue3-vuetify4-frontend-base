@@ -63,6 +63,7 @@ export const UserListResponseItemSchema = z.object({
   status: z.string(),
   updateBy: z.string().nullable(),
   updateAt: z.string().nullable(),
+  version: z.number(),
 })
 
 export type UserListResponseItem = z.infer<typeof UserListResponseItemSchema>
@@ -73,6 +74,7 @@ export const UserPageResponseItemSchema = z.object({
   status: z.string(),
   updateBy: z.string().nullable(),
   updateAt: z.string().nullable(),
+  version: z.number(),
 })
 
 export type UserPageResponseItem = z.infer<typeof UserPageResponseItemSchema>
