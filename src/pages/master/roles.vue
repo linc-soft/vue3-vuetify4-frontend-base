@@ -22,14 +22,24 @@
         cols="12"
         md="3"
       >
-        <v-text-field
+        <v-autocomplete
           v-model="filters.roleCode"
           clearable
           density="compact"
           hide-details
+          item-title="roleCode"
+          item-value="roleCode"
+          :items="baseRoleOptions"
           :label="t('role.search.roleCode')"
           variant="outlined"
-        />
+        >
+          <template #item="{ props: itemProps, item }">
+            <v-list-item
+              v-bind="itemProps"
+              :subtitle="item.roleName"
+            />
+          </template>
+        </v-autocomplete>
       </v-col>
       <v-col
         cols="12"
@@ -178,12 +188,15 @@ const { t } = useI18n()
 const { smAndDown } = useDisplay()
 
 // Filter Conditions
-const filters = reactive({ roleName: '', roleCode: '' })
+const filters = reactive({ roleName: '', roleCode: undefined })
 
 // Table data and loading state
 const items = ref<RoleListResponseItem[]>([])
 const loading = ref(false)
 const itemsPerPage = ref(10)
+
+// Base role options for the roleCode dropdown (roles with a non-null roleCode)
+const baseRoleOptions = ref<RoleListResponseItem[]>([])
 
 // Dialog Control
 const detailDialog = ref(false)
@@ -231,6 +244,16 @@ async function fetchRoles() {
   }
 }
 
+// Load base role options (independent of search filters)
+async function fetchBaseRoleOptions() {
+  try {
+    const roles = await getRoleList()
+    baseRoleOptions.value = roles.filter(r => !!r.roleCode)
+  } catch (error: unknown) {
+    console.error('Failed to fetch base role options:', error)
+  }
+}
+
 // Search
 function handleSearch() {
   fetchRoles()
@@ -239,7 +262,7 @@ function handleSearch() {
 // Reset
 function handleReset() {
   filters.roleName = ''
-  filters.roleCode = ''
+  filters.roleCode = undefined
   handleSearch()
 }
 
@@ -282,4 +305,5 @@ async function handleDelete() {
 
 // Initial Load
 fetchRoles()
+fetchBaseRoleOptions()
 </script>
