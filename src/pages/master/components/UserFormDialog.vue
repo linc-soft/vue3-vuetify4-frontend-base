@@ -141,7 +141,7 @@ const form = reactive<{
 }>({
   username: '',
   password: '',
-  status: 'ENABLED',
+  status: '',
   roleIds: [],
 })
 const version = ref(0)
@@ -176,7 +176,7 @@ watch(
       if (props.mode === 'create') {
         form.username = ''
         form.password = ''
-        form.status = ''
+        form.status = '1'
         form.roleIds = []
         version.value = 0
         formRef.value?.resetValidation()
