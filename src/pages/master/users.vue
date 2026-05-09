@@ -179,7 +179,7 @@ const { t } = useI18n()
 const { smAndDown } = useDisplay()
 
 // Filter Conditions
-const filters = reactive({ username: '', status: '' as string | undefined })
+const filters = reactive({ username: '', status: '1' })
 
 // Pagination parameters
 const page = ref(1)
@@ -256,7 +256,7 @@ function handleSearch() {
 // Reset
 function handleReset() {
   filters.username = ''
-  filters.status = undefined
+  filters.status = '1'
   handleSearch()
 }
 
