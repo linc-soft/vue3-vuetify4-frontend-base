@@ -3,7 +3,7 @@
     <!-- Search and Filter Section -->
     <v-row
       align="center"
-      dense
+      density="compact"
     >
       <v-col
         cols="12"

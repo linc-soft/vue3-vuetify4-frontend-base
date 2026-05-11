@@ -24,13 +24,40 @@ defineEmits<{
       density="compact"
       nav
     >
-      <v-list-item
+      <template
         v-for="item in items"
-        :key="item.to"
-        :prepend-icon="item.icon"
-        :title="item.title"
-        :to="item.to"
-      />
+        :key="item.to || item.title"
+      >
+        <!-- Item without children -->
+        <v-list-item
+          v-if="!item.children"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :to="item.to"
+        />
+
+        <!-- Item with children (expandable) -->
+        <v-list-group
+          v-else
+          :value="item.title"
+        >
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              :prepend-icon="item.icon"
+              :title="item.title"
+            />
+          </template>
+
+          <v-list-item
+            v-for="child in item.children"
+            :key="child.to"
+            :prepend-icon="child.icon"
+            :title="child.title"
+            :to="child.to"
+          />
+        </v-list-group>
+      </template>
     </v-list>
   </v-navigation-drawer>
 </template>

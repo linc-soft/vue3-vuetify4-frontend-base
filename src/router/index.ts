@@ -25,6 +25,23 @@ const router = createRouter({
         { path: '', name: 'home', component: Index },
         { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
         { path: 'roles', name: 'roles', component: () => import('@/pages/master/roles.vue') },
+        // Logs
+        { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
+        {
+          path: 'logs/error',
+          name: 'logs-error',
+          component: () => import('@/pages/logs/error.vue'),
+        },
+        {
+          path: 'logs/operation',
+          name: 'logs-operation',
+          component: () => import('@/pages/logs/operation.vue'),
+        },
+        {
+          path: 'logs/trace/:traceId',
+          name: 'logs-trace',
+          component: () => import('@/pages/logs/trace.vue'),
+        },
       ],
     },
   ],
