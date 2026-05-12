@@ -14,6 +14,7 @@ export const EnumListSchema = z.array(EnumItemSchema)
 export const SelectOptionSchema = z.object({
   value: z.union([z.string(), z.number()]),
   label: z.string(),
+  description: z.string().nullable().optional(),
 })
 
 export type SelectOption = z.infer<typeof SelectOptionSchema>

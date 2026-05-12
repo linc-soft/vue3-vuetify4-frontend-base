@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getAccessToken } from '@/api/client'
 import { login as apiLogin, logout as apiLogout } from '@/api/modules/auth'
+import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore(
       await apiLogout()
       username.value = null
       isAuthenticated.value = false
+      clearSelectOptionsCache()
     }
 
     function checkAuth() {

@@ -47,9 +47,7 @@
             clearable
             closable-chips
             :hint="t('user.form.rolesHint')"
-            item-title="roleName"
-            item-value="id"
-            :items="allRoles"
+            :items="roleOptions"
             :label="t('user.form.roles')"
             multiple
             persistent-hint
@@ -58,17 +56,9 @@
             <template #chip="{ props: chipProps, item }">
               <v-chip
                 v-bind="chipProps"
-                :color="item.roleCode ? 'success' : 'info'"
+                :color="roleDescriptionOf(item.value) ? 'success' : 'info'"
                 size="small"
                 variant="tonal"
-              >
-                {{ item.roleName }}
-              </v-chip>
-            </template>
-            <template #item="{ props: itemProps, item }">
-              <v-list-item
-                v-bind="itemProps"
-                :subtitle="item.roleCode ?? t('user.form.compositeRole')"
               />
             </template>
           </v-autocomplete>
@@ -109,15 +99,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { RoleListResponseItem } from '@/api/schemas/role'
 import type { VForm } from 'vuetify/components'
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
+import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
   modelValue: boolean
@@ -149,9 +138,18 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
-const allRoles = ref<RoleListResponseItem[]>([])
 
 const { options: statusOptions } = useEnums('user-status')
+const { items: roleItems, descriptionOf: roleDescriptionOf } = useSelectOptions('role')
+
+// Map role items to options with composite role label for empty description
+const roleOptions = computed(() =>
+  roleItems.value.map(item => ({
+    title: item.label,
+    value: item.value,
+    props: { subtitle: item.description || t('user.form.compositeRole') },
+  })),
+)
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
@@ -166,12 +164,9 @@ watch(
     errorMessage.value = ''
     loading.value = true
     try {
-      // Concurrent fetch: all roles + (in edit mode) current user detail
-      const [roles, user] = await Promise.all([
-        getRoleList(),
-        props.mode === 'edit' && props.userId != null ? getUser(props.userId) : null,
-      ])
-      allRoles.value = roles
+      // In edit mode, fetch current user detail
+      const user =
+        props.mode === 'edit' && props.userId != null ? await getUser(props.userId) : null
 
       if (props.mode === 'create') {
         form.username = ''
