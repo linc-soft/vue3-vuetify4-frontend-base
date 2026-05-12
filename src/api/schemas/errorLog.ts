@@ -6,7 +6,7 @@ export const ErrorLogPageRequestSchema = z.object({
   page: z.number().int().min(1),
   size: z.number().int().min(1).max(100),
   traceId: z.string().optional(),
-  errorType: z.string().optional(),
+  keyword: z.string().optional(),
   username: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),

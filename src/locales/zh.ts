@@ -146,6 +146,7 @@ export default {
       title: '错误日志',
       traceId: 'Trace ID',
       errorType: '错误类型',
+      keyword: '关键字',
       message: '错误消息',
       stackTrace: '堆栈信息',
       username: '用户名',

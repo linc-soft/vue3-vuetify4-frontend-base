@@ -150,6 +150,7 @@ export default {
       title: 'エラーログ',
       traceId: 'トレース ID',
       errorType: 'エラータイプ',
+      keyword: 'キーワード',
       message: 'メッセージ',
       stackTrace: 'スタックトレース',
       username: 'ユーザー名',

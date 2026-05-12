@@ -51,7 +51,7 @@
         />
       </v-col>
     </v-row>
-    <!-- Row 2: Trace ID + Error Type + Action Buttons -->
+    <!-- Row 2: Trace ID + Keyword + Action Buttons -->
     <v-row
       align="center"
       density="compact"
@@ -76,11 +76,11 @@
         sm="4"
       >
         <v-text-field
-          v-model="filters.errorType"
+          v-model="filters.keyword"
           clearable
           density="compact"
           hide-details
-          :label="t('log.error.errorType')"
+          :label="t('log.error.keyword')"
           variant="outlined"
         />
       </v-col>
@@ -151,7 +151,7 @@ const { options: userOptions } = useSelectOptions('user')
 // Filter Conditions
 const filters = reactive({
   traceId: '',
-  errorType: '',
+  keyword: '',
   username: null,
   startTime: '',
   endTime: '',
@@ -183,7 +183,7 @@ async function fetchLogs() {
       page: page.value,
       size: itemsPerPage.value,
       traceId: filters.traceId || undefined,
-      errorType: filters.errorType || undefined,
+      keyword: filters.keyword || undefined,
       username: filters.username || undefined,
       startTime: filters.startTime || undefined,
       endTime: filters.endTime || undefined,
@@ -213,7 +213,7 @@ function handleSearch() {
 // Reset
 function handleReset() {
   filters.traceId = ''
-  filters.errorType = ''
+  filters.keyword = ''
   filters.username = null
   filters.startTime = ''
   filters.endTime = ''

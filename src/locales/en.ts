@@ -150,6 +150,7 @@ export default {
       title: 'Error Logs',
       traceId: 'Trace ID',
       errorType: 'Error Type',
+      keyword: 'Keyword',
       message: 'Message',
       stackTrace: 'Stack Trace',
       username: 'Username',
