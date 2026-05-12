@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <!-- Search and filter area -->
+    <!-- Row 1: Request Method + API Path + Status Code -->
     <v-row
       align="center"
       density="compact"
@@ -8,19 +9,57 @@
       <v-col
         cols="12"
         md="2"
+        sm="4"
       >
-        <v-text-field
-          v-model="filters.traceId"
+        <v-select
+          v-model="filters.method"
           clearable
           density="compact"
           hide-details
-          :label="t('log.access.traceId')"
+          :items="methodOptions"
+          :label="t('log.access.method')"
+          variant="outlined"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+        sm="8"
+      >
+        <v-text-field
+          v-model="filters.path"
+          clearable
+          density="compact"
+          hide-details
+          :label="t('log.access.path')"
           variant="outlined"
         />
       </v-col>
       <v-col
         cols="12"
         md="2"
+        sm="4"
+      >
+        <v-select
+          v-model="filters.statusCode"
+          clearable
+          density="compact"
+          hide-details
+          :items="statusCodeOptions"
+          :label="t('log.access.statusCode')"
+          variant="outlined"
+        />
+      </v-col>
+    </v-row>
+    <!-- Row 2: Username + Start Time + End Time -->
+    <v-row
+      align="center"
+      density="compact"
+    >
+      <v-col
+        cols="12"
+        md="2"
+        sm="4"
       >
         <v-autocomplete
           v-model="filters.username"
@@ -35,48 +74,8 @@
       </v-col>
       <v-col
         cols="12"
-        md="1"
-      >
-        <v-select
-          v-model="filters.method"
-          clearable
-          density="compact"
-          hide-details
-          :items="methodOptions"
-          :label="t('log.access.method')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="2"
-      >
-        <v-text-field
-          v-model="filters.path"
-          clearable
-          density="compact"
-          hide-details
-          :label="t('log.access.path')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="1"
-      >
-        <v-select
-          v-model="filters.statusCode"
-          clearable
-          density="compact"
-          hide-details
-          :items="statusCodeOptions"
-          :label="t('log.access.statusCode')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="2"
+        md="3"
+        sm="4"
       >
         <v-text-field
           v-model="filters.startTime"
@@ -89,7 +88,8 @@
       </v-col>
       <v-col
         cols="12"
-        md="2"
+        md="3"
+        sm="4"
       >
         <v-text-field
           v-model="filters.endTime"
@@ -101,11 +101,30 @@
         />
       </v-col>
     </v-row>
+    <!-- Row 3: Trace ID + Action Buttons -->
     <v-row
       align="center"
       density="compact"
     >
-      <v-col cols="auto">
+      <v-col
+        cols="12"
+        md="4"
+        sm="6"
+      >
+        <v-text-field
+          v-model="filters.traceId"
+          clearable
+          density="compact"
+          hide-details
+          :label="t('log.access.traceId')"
+          variant="outlined"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="auto"
+        sm="6"
+      >
         <v-btn
           color="primary"
           variant="elevated"
@@ -113,17 +132,15 @@
         >
           {{ t('log.common.search') }}
         </v-btn>
-      </v-col>
-      <v-col cols="auto">
         <v-btn
+          class="ml-2"
           variant="outlined"
           @click="handleReset"
         >
           {{ t('log.common.reset') }}
         </v-btn>
-      </v-col>
-      <v-col cols="auto">
         <v-btn
+          class="ml-2"
           :loading="exportLoading"
           prepend-icon="mdi-download"
           variant="tonal"
@@ -189,8 +206,8 @@ const { options: userOptions } = useSelectOptions('user')
 // Filter Conditions
 const filters = reactive({
   traceId: '',
-  username: null,
-  method: null,
+  username: null as string | null,
+  method: null as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | null,
   path: '',
   statusCode: null as number | null,
   startTime: '',
@@ -245,7 +262,7 @@ async function fetchLogs() {
       size: itemsPerPage.value,
       traceId: filters.traceId || undefined,
       username: filters.username || undefined,
-      method: filters.method as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | undefined,
+      method: filters.method ?? undefined,
       path: filters.path || undefined,
       statusCode: filters.statusCode || undefined,
       startTime: filters.startTime || undefined,
@@ -292,7 +309,7 @@ async function handleExport() {
     const blob = await exportAccessLogs({
       traceId: filters.traceId || undefined,
       username: filters.username || undefined,
-      method: filters.method as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | undefined,
+      method: filters.method ?? undefined,
       path: filters.path || undefined,
       statusCode: filters.statusCode || undefined,
       startTime: filters.startTime || undefined,

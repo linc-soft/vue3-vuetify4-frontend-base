@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <!-- Search and filter area -->
+    <!-- Row 1: Module + Operation Type -->
     <v-row
       align="center"
       density="compact"
@@ -8,33 +9,7 @@
       <v-col
         cols="12"
         md="2"
-      >
-        <v-text-field
-          v-model="filters.traceId"
-          clearable
-          density="compact"
-          hide-details
-          :label="t('log.operation.traceId')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="1"
-      >
-        <v-select
-          v-model="filters.operationType"
-          clearable
-          density="compact"
-          hide-details
-          :items="operationTypeOptions"
-          :label="t('log.operation.operationType')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="2"
+        sm="4"
       >
         <v-select
           v-model="filters.module"
@@ -49,6 +24,28 @@
       <v-col
         cols="12"
         md="2"
+        sm="4"
+      >
+        <v-select
+          v-model="filters.operationType"
+          clearable
+          density="compact"
+          hide-details
+          :items="operationTypeOptions"
+          :label="t('log.operation.operationType')"
+          variant="outlined"
+        />
+      </v-col>
+    </v-row>
+    <!-- Row 2: Username + Start Time + End Time -->
+    <v-row
+      align="center"
+      density="compact"
+    >
+      <v-col
+        cols="12"
+        md="2"
+        sm="4"
       >
         <v-autocomplete
           v-model="filters.username"
@@ -63,7 +60,8 @@
       </v-col>
       <v-col
         cols="12"
-        md="2"
+        md="3"
+        sm="4"
       >
         <v-text-field
           v-model="filters.startTime"
@@ -76,7 +74,8 @@
       </v-col>
       <v-col
         cols="12"
-        md="2"
+        md="3"
+        sm="4"
       >
         <v-text-field
           v-model="filters.endTime"
@@ -88,11 +87,30 @@
         />
       </v-col>
     </v-row>
+    <!-- Row 3: Trace ID + Action Buttons -->
     <v-row
       align="center"
       density="compact"
     >
-      <v-col cols="auto">
+      <v-col
+        cols="12"
+        md="4"
+        sm="6"
+      >
+        <v-text-field
+          v-model="filters.traceId"
+          clearable
+          density="compact"
+          hide-details
+          :label="t('log.operation.traceId')"
+          variant="outlined"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="auto"
+        sm="6"
+      >
         <v-btn
           color="primary"
           variant="elevated"
@@ -100,9 +118,8 @@
         >
           {{ t('log.common.search') }}
         </v-btn>
-      </v-col>
-      <v-col cols="auto">
         <v-btn
+          class="ml-2"
           variant="outlined"
           @click="handleReset"
         >
