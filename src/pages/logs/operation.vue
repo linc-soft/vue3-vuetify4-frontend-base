@@ -37,12 +37,12 @@
         md="2"
       >
         <v-select
-          v-model="filters.targetType"
+          v-model="filters.module"
           clearable
           density="compact"
           hide-details
-          :items="targetTypeOptions"
-          :label="t('log.operation.targetType')"
+          :items="moduleOptions"
+          :label="t('log.operation.module')"
           variant="outlined"
         />
       </v-col>
@@ -132,11 +132,29 @@
       </template>
       <template #item.operationType="{ value }">
         <v-chip
+          v-if="value"
           :color="getOperationTypeColor(value)"
           size="small"
         >
           {{ t(`log.operation.types.${value}`) }}
         </v-chip>
+        <span v-else>-</span>
+      </template>
+      <template #item.module="{ value }">
+        <span>{{ value || '-' }}</span>
+      </template>
+      <template #item.subModule="{ value }">
+        <span>{{ value || '-' }}</span>
+      </template>
+      <template #item.description="{ value }">
+        <span>{{ value || '-' }}</span>
+      </template>
+      <template #item.duration="{ value }">
+        <span v-if="value !== null && value !== undefined">{{ value }}ms</span>
+        <span v-else>-</span>
+      </template>
+      <template #item.username="{ value }">
+        <span>{{ value || '-' }}</span>
       </template>
       <template #item.createdAt="{ value }">
         {{ formatDateTime(value) }}
@@ -150,7 +168,7 @@ import type { OperationLogPageItem, OperationType } from '@/api/schemas/operatio
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { getOperationLogPage, getOperationTargetTypes } from '@/api/modules/operationLog'
+import { getOperationLogPage, getOperationModules } from '@/api/modules/operationLog'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
@@ -162,8 +180,8 @@ const { options: userOptions } = useSelectOptions('user')
 const filters = reactive({
   traceId: '',
   operationType: null as OperationType | null,
-  targetType: null,
-  username: null,
+  module: null as string | null,
+  username: null as string | null,
   startTime: '',
   endTime: '',
 })
@@ -177,31 +195,33 @@ const totalItems = ref(0)
 const items = ref<OperationLogPageItem[]>([])
 const loading = ref(false)
 
-// Target type options (loaded from backend)
-const targetTypeOptions = ref<string[]>([])
+// Module options (loaded from backend)
+const moduleOptions = ref<string[]>([])
 
 // Operation type options
 const operationTypeOptions = computed(() => [
   { title: t('log.operation.types.CREATE'), value: 'CREATE' },
   { title: t('log.operation.types.UPDATE'), value: 'UPDATE' },
   { title: t('log.operation.types.DELETE'), value: 'DELETE' },
+  { title: t('log.operation.types.OTHER'), value: 'OTHER' },
 ])
 
 // Table column definitions
 const headers = computed(() => [
   { title: t('log.operation.traceId'), key: 'traceId' },
   { title: t('log.operation.operationType'), key: 'operationType' },
-  { title: t('log.operation.targetType'), key: 'targetType' },
-  { title: t('log.operation.targetId'), key: 'targetId' },
-  { title: t('log.operation.summary'), key: 'summary' },
+  { title: t('log.operation.module'), key: 'module' },
+  { title: t('log.operation.subModule'), key: 'subModule' },
+  { title: t('log.operation.description'), key: 'description' },
+  { title: t('log.operation.duration'), key: 'duration' },
   { title: t('log.operation.username'), key: 'username' },
   { title: t('log.common.createdAt'), key: 'createdAt' },
 ])
 
-// Load target types on mount
+// Load modules on mount
 onMounted(async () => {
   try {
-    targetTypeOptions.value = await getOperationTargetTypes()
+    moduleOptions.value = await getOperationModules()
   } catch {
     // Silently fail
   }
@@ -216,7 +236,7 @@ async function fetchLogs() {
       size: itemsPerPage.value,
       traceId: filters.traceId || undefined,
       operationType: filters.operationType || undefined,
-      targetType: filters.targetType || undefined,
+      module: filters.module || undefined,
       username: filters.username || undefined,
       startTime: filters.startTime || undefined,
       endTime: filters.endTime || undefined,
@@ -247,7 +267,7 @@ function handleSearch() {
 function handleReset() {
   filters.traceId = ''
   filters.operationType = null
-  filters.targetType = null
+  filters.module = null
   filters.username = null
   filters.startTime = ''
   filters.endTime = ''

@@ -2,7 +2,7 @@ import { z } from 'zod/v4'
 
 // ─── Enums ───
 
-export const OperationTypeSchema = z.enum(['CREATE', 'UPDATE', 'DELETE'])
+export const OperationTypeSchema = z.enum(['CREATE', 'UPDATE', 'DELETE', 'OTHER'])
 
 export type OperationType = z.infer<typeof OperationTypeSchema>
 
@@ -13,7 +13,7 @@ export const OperationLogPageRequestSchema = z.object({
   size: z.number().int().min(1).max(100),
   traceId: z.string().optional(),
   operationType: OperationTypeSchema.optional(),
-  targetType: z.string().optional(),
+  module: z.string().optional(),
   username: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
@@ -26,11 +26,12 @@ export type OperationLogPageRequest = z.infer<typeof OperationLogPageRequestSche
 export const OperationLogPageItemSchema = z.object({
   id: z.number().int(),
   traceId: z.string(),
-  operationType: OperationTypeSchema,
-  targetType: z.string().nullish(),
-  targetId: z.number().int().nullish(),
-  summary: z.string().nullish(),
-  username: z.string().nullish(),
+  module: z.string().nullable(),
+  subModule: z.string().nullable(),
+  operationType: OperationTypeSchema.nullable(),
+  description: z.string().nullable(),
+  duration: z.number().int().nullable(),
+  username: z.string().nullable(),
   createdAt: z.string(),
 })
 
@@ -39,14 +40,15 @@ export type OperationLogPageItem = z.infer<typeof OperationLogPageItemSchema>
 export const OperationLogDetailSchema = z.object({
   id: z.number().int(),
   traceId: z.string(),
-  operationType: OperationTypeSchema,
-  targetType: z.string().nullish(),
-  targetId: z.number().int().nullish(),
-  summary: z.string().nullish(),
-  beforeData: z.string().nullish(),
-  afterData: z.string().nullish(),
-  diff: z.string().nullish(),
-  username: z.string().nullish(),
+  module: z.string().nullable(),
+  subModule: z.string().nullable(),
+  operationType: OperationTypeSchema.nullable(),
+  description: z.string().nullable(),
+  duration: z.number().int().nullable(),
+  requestMethod: z.string().nullable(),
+  requestUrl: z.string().nullable(),
+  clientIp: z.string().nullable(),
+  username: z.string().nullable(),
   createdAt: z.string(),
 })
 

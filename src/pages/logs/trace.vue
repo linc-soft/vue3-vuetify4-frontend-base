@@ -189,16 +189,17 @@
                   <v-expansion-panel-title>
                     <div class="d-flex align-center ga-2">
                       <v-chip
+                        v-if="log.operationType"
                         :color="getOperationTypeColor(log.operationType)"
                         size="small"
                       >
                         {{ t(`log.operation.types.${log.operationType}`) }}
                       </v-chip>
-                      <span>{{ log.targetType }}</span>
+                      <span>{{ log.module || '-' }}</span>
                       <span
-                        v-if="log.targetId"
+                        v-if="log.subModule"
                         class="text-medium-emphasis"
-                        >#{{ log.targetId }}</span
+                        >/ {{ log.subModule }}</span
                       >
                       <span class="text-medium-emphasis text-caption ml-2">
                         {{ formatTime(log.createdAt) }}
@@ -207,15 +208,28 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <div
-                      v-if="log.summary"
+                      v-if="log.description"
                       class="mb-2"
                     >
-                      {{ log.summary }}
+                      {{ log.description }}
                     </div>
-                    <DiffViewer
-                      :after="log.afterData"
-                      :before="log.beforeData"
-                    />
+                    <div
+                      v-if="log.duration !== null"
+                      class="mb-2 text-caption text-medium-emphasis"
+                    >
+                      {{ t('log.operation.duration') }}: {{ log.duration }}ms
+                    </div>
+                    <div
+                      v-if="log.requestMethod || log.requestUrl"
+                      class="mb-2 text-caption"
+                    >
+                      <span v-if="log.requestMethod">{{ log.requestMethod }}</span>
+                      <span
+                        v-if="log.requestUrl"
+                        class="ml-1"
+                        >{{ log.requestUrl }}</span
+                      >
+                    </div>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -301,7 +315,6 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 import { getTraceDetail } from '@/api/modules/trace'
-import DiffViewer from './components/DiffViewer.vue'
 import JsonViewer from './components/JsonViewer.vue'
 
 const { t } = useI18n()
@@ -338,7 +351,8 @@ function getStatusCodeColor(statusCode: number): string {
   return 'default'
 }
 
-function getOperationTypeColor(type: OperationType): string {
+function getOperationTypeColor(type: OperationType | null): string {
+  if (!type) return 'default'
   switch (type) {
     case 'CREATE': {
       return 'success'
