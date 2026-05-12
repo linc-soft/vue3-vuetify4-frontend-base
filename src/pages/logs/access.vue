@@ -22,11 +22,13 @@
         cols="12"
         md="2"
       >
-        <v-text-field
+        <v-autocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
+          item-value="label"
+          :items="userOptions"
           :label="t('log.access.username')"
           variant="outlined"
         />
@@ -176,14 +178,18 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
+import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
 const { smAndDown } = useDisplay()
 
+// User select options
+const { options: userOptions } = useSelectOptions('user')
+
 // Filter Conditions
 const filters = reactive({
   traceId: '',
-  username: '',
+  username: null,
   method: null,
   path: '',
   statusCode: null as number | null,
@@ -270,7 +276,7 @@ function handleSearch() {
 // Reset
 function handleReset() {
   filters.traceId = ''
-  filters.username = ''
+  filters.username = null
   filters.method = null
   filters.path = ''
   filters.statusCode = null

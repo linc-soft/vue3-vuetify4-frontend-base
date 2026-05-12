@@ -50,11 +50,13 @@
         cols="12"
         md="2"
       >
-        <v-text-field
+        <v-autocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
+          item-value="label"
+          :items="userOptions"
           :label="t('log.operation.username')"
           variant="outlined"
         />
@@ -149,15 +151,19 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getOperationLogPage, getOperationTargetTypes } from '@/api/modules/operationLog'
+import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
+
+// User select options
+const { options: userOptions } = useSelectOptions('user')
 
 // Filter Conditions
 const filters = reactive({
   traceId: '',
   operationType: null as OperationType | null,
-  targetType: '',
-  username: '',
+  targetType: null,
+  username: null,
   startTime: '',
   endTime: '',
 })
@@ -241,8 +247,8 @@ function handleSearch() {
 function handleReset() {
   filters.traceId = ''
   filters.operationType = null
-  filters.targetType = ''
-  filters.username = ''
+  filters.targetType = null
+  filters.username = null
   filters.startTime = ''
   filters.endTime = ''
   handleSearch()

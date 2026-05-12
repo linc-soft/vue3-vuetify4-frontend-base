@@ -35,11 +35,13 @@
         cols="12"
         md="2"
       >
-        <v-text-field
+        <v-autocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
+          item-value="label"
+          :items="userOptions"
           :label="t('log.error.username')"
           variant="outlined"
         />
@@ -129,14 +131,18 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getErrorLogPage } from '@/api/modules/errorLog'
+import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
+
+// User select options
+const { options: userOptions } = useSelectOptions('user')
 
 // Filter Conditions
 const filters = reactive({
   traceId: '',
   errorType: '',
-  username: '',
+  username: null,
   startTime: '',
   endTime: '',
 })
@@ -198,7 +204,7 @@ function handleSearch() {
 function handleReset() {
   filters.traceId = ''
   filters.errorType = ''
-  filters.username = ''
+  filters.username = null
   filters.startTime = ''
   filters.endTime = ''
   handleSearch()
