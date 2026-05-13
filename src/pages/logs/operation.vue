@@ -37,7 +37,7 @@
         />
       </v-col>
     </v-row>
-    <!-- Row 2: Username + Start Time + End Time -->
+    <!-- Row 2: Username + Time Range -->
     <v-row
       align="center"
       density="compact"
@@ -60,30 +60,12 @@
       </v-col>
       <v-col
         cols="12"
-        md="3"
-        sm="4"
+        md="4"
+        sm="8"
       >
-        <v-text-field
-          v-model="filters.startTime"
-          density="compact"
-          hide-details
-          :label="t('log.operation.startTime')"
-          type="datetime-local"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="3"
-        sm="4"
-      >
-        <v-text-field
-          v-model="filters.endTime"
-          density="compact"
-          hide-details
-          :label="t('log.operation.endTime')"
-          type="datetime-local"
-          variant="outlined"
+        <DatetimeRangePicker
+          v-model="timeRange"
+          :label="t('log.operation.timeRange')"
         />
       </v-col>
     </v-row>
@@ -182,10 +164,12 @@
 
 <script lang="ts" setup>
 import type { OperationLogPageItem, OperationType } from '@/api/schemas/operationLog'
+import type { DatetimeRange } from '@/components/DatetimeRangePicker.vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getOperationLogPage, getOperationModules } from '@/api/modules/operationLog'
+import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
@@ -199,9 +183,10 @@ const filters = reactive({
   operationType: null as OperationType | null,
   module: null as string | null,
   username: null as string | null,
-  startTime: '',
-  endTime: '',
 })
+
+// Time range for datetime picker
+const timeRange = ref<DatetimeRange | null>(null)
 
 // Pagination parameters
 const page = ref(1)
@@ -255,8 +240,8 @@ async function fetchLogs() {
       operationType: filters.operationType || undefined,
       module: filters.module || undefined,
       username: filters.username || undefined,
-      startTime: filters.startTime || undefined,
-      endTime: filters.endTime || undefined,
+      startTime: timeRange.value?.startTime || undefined,
+      endTime: timeRange.value?.endTime || undefined,
     })
     items.value = res.records
     totalItems.value = res.total
@@ -286,8 +271,7 @@ function handleReset() {
   filters.operationType = null
   filters.module = null
   filters.username = null
-  filters.startTime = ''
-  filters.endTime = ''
+  timeRange.value = null
   handleSearch()
 }
 

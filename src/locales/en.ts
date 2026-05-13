@@ -140,6 +140,7 @@ export default {
       clientIp: 'Client IP',
       startTime: 'Start Time',
       endTime: 'End Time',
+      timeRange: 'Time Range',
       queryString: 'Query String',
       requestBody: 'Request Body',
       responseBody: 'Response Body',
@@ -156,6 +157,7 @@ export default {
       username: 'Username',
       startTime: 'Start Time',
       endTime: 'End Time',
+      timeRange: 'Time Range',
       noError: 'No error in this request',
     },
     // Operation Log
@@ -170,6 +172,7 @@ export default {
       username: 'Username',
       startTime: 'Start Time',
       endTime: 'End Time',
+      timeRange: 'Time Range',
       beforeData: 'Before',
       afterData: 'After',
       diff: 'Diff',

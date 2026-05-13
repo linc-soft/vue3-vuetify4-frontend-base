@@ -140,6 +140,7 @@ export default {
       clientIp: 'クライアント IP',
       startTime: '開始時刻',
       endTime: '終了時刻',
+      timeRange: '時間範囲',
       queryString: 'クエリ文字列',
       requestBody: 'リクエストボディ',
       responseBody: 'レスポンスボディ',
@@ -156,6 +157,7 @@ export default {
       username: 'ユーザー名',
       startTime: '開始時刻',
       endTime: '終了時刻',
+      timeRange: '時間範囲',
       noError: 'このリクエストにエラーはありません',
     },
     // Operation Log
@@ -170,6 +172,7 @@ export default {
       username: 'ユーザー名',
       startTime: '開始時刻',
       endTime: '終了時刻',
+      timeRange: '時間範囲',
       beforeData: '変更前',
       afterData: '変更後',
       diff: '差分',

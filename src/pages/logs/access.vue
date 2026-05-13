@@ -51,7 +51,7 @@
         />
       </v-col>
     </v-row>
-    <!-- Row 2: Username + Start Time + End Time -->
+    <!-- Row 2: Username + Time Range -->
     <v-row
       align="center"
       density="compact"
@@ -74,30 +74,12 @@
       </v-col>
       <v-col
         cols="12"
-        md="3"
-        sm="4"
+        md="4"
+        sm="8"
       >
-        <v-text-field
-          v-model="filters.startTime"
-          density="compact"
-          hide-details
-          :label="t('log.access.startTime')"
-          type="datetime-local"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="3"
-        sm="4"
-      >
-        <v-text-field
-          v-model="filters.endTime"
-          density="compact"
-          hide-details
-          :label="t('log.access.endTime')"
-          type="datetime-local"
-          variant="outlined"
+        <DatetimeRangePicker
+          v-model="timeRange"
+          :label="t('log.access.timeRange')"
         />
       </v-col>
     </v-row>
@@ -190,11 +172,13 @@
 
 <script lang="ts" setup>
 import type { AccessLogPageItem } from '@/api/schemas/accessLog'
+import type { DatetimeRange } from '@/components/DatetimeRangePicker.vue'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
+import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
@@ -210,9 +194,10 @@ const filters = reactive({
   method: null as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | null,
   path: '',
   statusCode: null as number | null,
-  startTime: '',
-  endTime: '',
 })
+
+// Time range for datetime picker
+const timeRange = ref<DatetimeRange | null>(null)
 
 // Pagination parameters
 const page = ref(1)
@@ -265,8 +250,8 @@ async function fetchLogs() {
       method: filters.method ?? undefined,
       path: filters.path || undefined,
       statusCode: filters.statusCode || undefined,
-      startTime: filters.startTime || undefined,
-      endTime: filters.endTime || undefined,
+      startTime: timeRange.value?.startTime || undefined,
+      endTime: timeRange.value?.endTime || undefined,
     })
     items.value = res.records
     totalItems.value = res.total
@@ -297,8 +282,7 @@ function handleReset() {
   filters.method = null
   filters.path = ''
   filters.statusCode = null
-  filters.startTime = ''
-  filters.endTime = ''
+  timeRange.value = null
   handleSearch()
 }
 
@@ -312,8 +296,8 @@ async function handleExport() {
       method: filters.method ?? undefined,
       path: filters.path || undefined,
       statusCode: filters.statusCode || undefined,
-      startTime: filters.startTime || undefined,
-      endTime: filters.endTime || undefined,
+      startTime: timeRange.value?.startTime || undefined,
+      endTime: timeRange.value?.endTime || undefined,
     })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

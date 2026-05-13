@@ -136,6 +136,7 @@ export default {
       clientIp: '客户端 IP',
       startTime: '开始时间',
       endTime: '结束时间',
+      timeRange: '时间范围',
       queryString: '查询参数',
       requestBody: '请求参数',
       responseBody: '响应结果',
@@ -152,6 +153,7 @@ export default {
       username: '用户名',
       startTime: '开始时间',
       endTime: '结束时间',
+      timeRange: '时间范围',
       noError: '此请求无错误',
     },
     // Operation Log
@@ -166,6 +168,7 @@ export default {
       username: '用户名',
       startTime: '开始时间',
       endTime: '结束时间',
+      timeRange: '时间范围',
       beforeData: '变更前',
       afterData: '变更后',
       diff: '差异对比',
