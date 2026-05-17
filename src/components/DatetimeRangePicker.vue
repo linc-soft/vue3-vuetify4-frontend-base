@@ -27,7 +27,7 @@
       :min-date="minDate"
       :model-value="internalValue"
       range
-      :time-config="{ enableSeconds: true, timePickerInline: true }"
+      :time-config="timeConfig"
       year-first
       @update:model-value="handleUpdate"
     />
@@ -97,6 +97,17 @@ const { current: locale } = useLocale()
 const menuOpen = ref(false)
 
 const isDark = computed(() => theme.global.current.value.dark)
+
+// Default time configuration for range picker
+// Start time: 00:00:00, End time: 23:59:59
+const timeConfig = {
+  enableSeconds: true,
+  timePickerInline: true,
+  startTime: [
+    { hours: 0, minutes: 0, seconds: 0 }, // Start time: 00:00:00
+    { hours: 23, minutes: 59, seconds: 59 }, // End time: 23:59:59
+  ],
+}
 
 // Internal value for vue-datepicker
 const internalValue = ref<[Date, Date] | null>(null)
