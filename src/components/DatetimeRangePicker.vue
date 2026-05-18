@@ -143,7 +143,7 @@ const displayValue = computed({
     return `${start} - ${end}`
   },
   set: (value: string) => {
-    internalValue.value = value
+    emit('update:modelValue', value)
   },
 })
 

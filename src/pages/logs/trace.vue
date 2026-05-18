@@ -4,12 +4,6 @@
     <v-row class="mb-4">
       <v-col>
         <div class="d-flex align-center">
-          <v-btn
-            class="mr-4"
-            icon="mdi-arrow-left"
-            variant="text"
-            @click="router.push('/logs')"
-          />
           <div>
             <div class="text-h5">
               {{ t('log.trace.title') }}
@@ -312,14 +306,13 @@ import type { OperationType } from '@/api/schemas/operationLog'
 import type { TraceDetail } from '@/api/schemas/trace'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 import { getTraceDetail } from '@/api/modules/trace'
 import JsonViewer from './components/JsonViewer.vue'
 
 const { t } = useI18n()
 const route = useRoute()
-const router = useRouter()
 
 const traceId = route.params.traceId as string
 const traceDetail = ref<TraceDetail | null>(null)

@@ -145,12 +145,13 @@
       @update:options="onOptionsUpdate"
     >
       <template #item.traceId="{ value }">
-        <router-link
+        <a
           class="text-primary text-decoration-none"
-          :to="`/logs/trace/${value}`"
+          :href="`/logs/trace/${value}`"
+          target="_blank"
         >
           {{ truncateTraceId(value) }}
-        </router-link>
+        </a>
       </template>
       <template #item.statusCode="{ value }">
         <v-chip
