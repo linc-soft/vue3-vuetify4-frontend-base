@@ -18,3 +18,21 @@ export async function getSelectOptions(type: string): Promise<SelectOption[]> {
   })
   return SelectOptionListSchema.parse(data.data)
 }
+
+/** GET /api/common/i18n/test */
+export async function getI18nTest(): Promise<string> {
+  const { data } = await http.get<Result<string>>('/api/common/i18n/test')
+  return data.data
+}
+
+/** GET /api/common/i18n/result */
+export async function getI18nResult(): Promise<Record<string, unknown>> {
+  const { data } = await http.get<Result<Record<string, unknown>>>('/api/common/i18n/result')
+  return data.data
+}
+
+/** GET /api/common/i18n/result-formatted */
+export async function getI18nResultFormatted(): Promise<string> {
+  const { data } = await http.get<Result<string>>('/api/common/i18n/result-formatted')
+  return data.data
+}

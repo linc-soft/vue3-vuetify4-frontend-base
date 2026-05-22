@@ -62,6 +62,12 @@ export default {
       saveFailed: '保存失败',
       deleteFailed: '删除失败',
     },
+    pdf: {
+      exportList: '导出列表 PDF',
+      exportDetail: '导出详情 PDF',
+      listTitle: '角色列表',
+      detailTitle: '角色详情',
+    },
   },
   user: {
     title: '用户管理',
@@ -101,6 +107,12 @@ export default {
       statusRequired: '请选择状态',
     },
     error: { loadFailed: '加载用户数据失败', saveFailed: '保存失败', deleteFailed: '删除失败' },
+    pdf: {
+      exportList: '导出列表 PDF',
+      exportDetail: '导出详情 PDF',
+      listTitle: '用户列表',
+      detailTitle: '用户详情',
+    },
   },
   log: {
     // Navigation

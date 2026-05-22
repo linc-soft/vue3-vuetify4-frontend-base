@@ -52,6 +52,16 @@
           {{ t('user.search.reset') }}
         </v-btn>
         <v-btn
+          class="mr-2"
+          color="secondary"
+          :loading="exportLoading"
+          prepend-icon="mdi-file-pdf-box"
+          variant="outlined"
+          @click="exportPdf"
+        >
+          {{ t('user.pdf.exportList') }}
+        </v-btn>
+        <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -170,7 +180,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { deleteUser, getUserPage } from '@/api/modules/user'
+import { deleteUser, generateUserListPdf, getUserPage } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
@@ -201,6 +211,9 @@ const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
+
+// Export PDF loading state
+const exportLoading = ref(false)
 
 // Status options (from backend enums)
 const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
@@ -294,6 +307,27 @@ async function handleDelete() {
     errorMessage.value = error instanceof Error ? error.message : t('user.error.deleteFailed')
   } finally {
     deleteLoading.value = false
+  }
+}
+
+// Export PDF (downloaded from backend)
+async function exportPdf() {
+  exportLoading.value = true
+  try {
+    const { blob, filename } = await generateUserListPdf({
+      username: filters.username || undefined,
+      status: filters.status || undefined,
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename ?? `user_list_${Date.now()}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+  } catch (error: unknown) {
+    console.error('Failed to export user list PDF:', error)
+  } finally {
+    exportLoading.value = false
   }
 }
 </script>

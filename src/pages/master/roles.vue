@@ -61,6 +61,15 @@
           {{ t('role.search.reset') }}
         </v-btn>
         <v-btn
+          class="mr-2"
+          color="secondary"
+          prepend-icon="mdi-file-pdf-box"
+          variant="outlined"
+          @click="exportPdf"
+        >
+          {{ t('role.pdf.exportList') }}
+        </v-btn>
+        <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -181,6 +190,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
+import { generateListPdf, type TableColumn } from '@/utils/pdf'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
@@ -228,6 +238,15 @@ const visibleHeaders = computed(() => {
   }
   return allHeaders.value
 })
+
+// PDF columns definition
+const pdfColumns = computed<TableColumn<RoleListResponseItem>[]>(() => [
+  { header: t('role.table.roleName'), key: 'roleName' },
+  { header: t('role.table.roleCode'), key: 'roleCode' },
+  { header: t('role.table.description'), key: 'description' },
+  { header: t('role.table.updateBy'), key: 'updateBy' },
+  { header: t('role.table.updateAt'), key: 'updateAt' },
+])
 
 // Get role list
 async function fetchRoles() {
@@ -301,6 +320,18 @@ async function handleDelete() {
   } finally {
     deleteLoading.value = false
   }
+}
+
+// Export PDF
+async function exportPdf() {
+  await generateListPdf(
+    {
+      title: t('role.pdf.listTitle'),
+      orientation: 'landscape',
+    },
+    pdfColumns.value,
+    items.value,
+  )
 }
 
 // Initial Load

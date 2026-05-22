@@ -106,6 +106,15 @@
         </v-btn>
         <v-spacer />
         <v-btn
+          color="secondary"
+          :disabled="loading || !role"
+          prepend-icon="mdi-file-pdf-box"
+          variant="outlined"
+          @click="exportPdf"
+        >
+          {{ t('role.pdf.exportDetail') }}
+        </v-btn>
+        <v-btn
           :disabled="loading"
           variant="text"
           @click="emit('update:modelValue', false)"
@@ -166,6 +175,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRole, getRoleList } from '@/api/modules/role'
+import { type DetailField, generateDetailPdf } from '@/utils/pdf'
 
 const props = defineProps<{
   modelValue: boolean
@@ -221,6 +231,31 @@ const effectiveBaseRoles = computed<RoleListResponseItem[]>(() => {
   return result
 })
 
+// PDF fields definition
+const pdfFields = computed<DetailField<Awaited<ReturnType<typeof getRole>>>[]>(() => [
+  { label: t('role.table.roleName'), key: 'roleName' },
+  { label: t('role.table.roleCode'), key: 'roleCode' },
+  { label: t('role.table.description'), key: 'description' },
+  {
+    label: t('role.detail.parentRoles'),
+    key: 'parentRoleIds',
+    render: () => {
+      if (directParents.value.length === 0) return '-'
+      return directParents.value.map(r => r.roleName).join(', ')
+    },
+  },
+  {
+    label: t('role.detail.effectiveBaseRoles'),
+    key: 'effectiveBaseRoles',
+    render: () => {
+      if (effectiveBaseRoles.value.length === 0) {
+        return role.value?.roleCode ? t('role.detail.selfIsBaseRole') : '-'
+      }
+      return effectiveBaseRoles.value.map(r => `${r.roleName}(${r.roleCode})`).join(', ')
+    },
+  },
+])
+
 watch(
   () => props.modelValue,
   async open => {
@@ -255,5 +290,18 @@ async function handleDelete() {
   } finally {
     deleteLoading.value = false
   }
+}
+
+// Export PDF
+async function exportPdf() {
+  if (!role.value) return
+  await generateDetailPdf(
+    {
+      title: t('role.pdf.detailTitle'),
+      filename: `角色详情_${role.value.roleName}`,
+    },
+    pdfFields.value,
+    role.value,
+  )
 }
 </script>

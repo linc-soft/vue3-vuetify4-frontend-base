@@ -78,6 +78,15 @@
         </v-btn>
         <v-spacer />
         <v-btn
+          color="secondary"
+          :disabled="loading || !user"
+          prepend-icon="mdi-file-pdf-box"
+          variant="outlined"
+          @click="exportPdf"
+        >
+          {{ t('user.pdf.exportDetail') }}
+        </v-btn>
+        <v-btn
           variant="text"
           @click="emit('update:modelValue', false)"
         >
@@ -140,6 +149,7 @@ import { useDisplay } from 'vuetify'
 import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
+import { type DetailField, generateDetailPdf } from '@/utils/pdf'
 
 const props = defineProps<{
   modelValue: boolean
@@ -171,6 +181,24 @@ const assignedRoles = computed<RoleListResponseItem[]>(() => {
   const ids = user.value?.roleIds ?? []
   return ids.map(id => roleMap.value.get(id)).filter((r): r is RoleListResponseItem => r != null)
 })
+
+// PDF fields definition
+const pdfFields = computed<DetailField<UserInfoResponse>[]>(() => [
+  { label: t('user.table.username'), key: 'username' },
+  {
+    label: t('user.table.status'),
+    key: 'status',
+    render: data => statusLabelOf(data.status),
+  },
+  {
+    label: t('user.detail.roles'),
+    key: 'roleIds',
+    render: () => {
+      if (assignedRoles.value.length === 0) return t('user.detail.noRoles')
+      return assignedRoles.value.map(r => r.roleName).join(', ')
+    },
+  },
+])
 
 watch(
   () => props.modelValue,
@@ -206,5 +234,18 @@ async function handleDelete() {
   } finally {
     deleteLoading.value = false
   }
+}
+
+// Export PDF
+async function exportPdf() {
+  if (!user.value) return
+  await generateDetailPdf(
+    {
+      title: t('user.pdf.detailTitle'),
+      filename: `用户详情_${user.value.username}`,
+    },
+    pdfFields.value,
+    user.value,
+  )
 }
 </script>

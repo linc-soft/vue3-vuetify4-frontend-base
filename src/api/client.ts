@@ -1,6 +1,11 @@
 import type { Result } from './types'
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import {
+  LOCALE_STORAGE_KEY,
+  SUPPORTED_LOCALES,
+  type SupportedLocale,
+} from '@/composables/useLocale'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
 /**
@@ -20,6 +25,42 @@ const http: AxiosInstance = axios.create({
   xsrfHeaderName: 'X-CSRF-Token',
 })
 
+// ─── Locale Helpers ───
+
+function isSupported(value: unknown): value is SupportedLocale {
+  return typeof value === 'string' && (SUPPORTED_LOCALES as readonly string[]).includes(value)
+}
+
+function getCurrentLocale(): SupportedLocale {
+  try {
+    const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (isSupported(stored)) return stored
+  } catch {
+    // ignore
+  }
+  const envLocale = import.meta.env.VITE_DEFAULT_LOCALE
+  if (isSupported(envLocale)) return envLocale
+  return 'en'
+}
+
+/**
+ * Convert app locale to Accept-Language header value
+ * zh -> zh, ja -> ja, en -> en
+ */
+function toAcceptLanguage(locale: SupportedLocale): string {
+  switch (locale) {
+    case 'zh': {
+      return 'zh'
+    }
+    case 'ja': {
+      return 'ja'
+    }
+    default: {
+      return 'en'
+    }
+  }
+}
+
 // ─── Token Management ───
 
 let accessToken: string | null = null
@@ -38,6 +79,9 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (accessToken) {
     config.headers.set('Authorization', `Bearer ${accessToken}`)
   }
+  // Add Accept-Language header for i18n support
+  const locale = getCurrentLocale()
+  config.headers.set('Accept-Language', toAcceptLanguage(locale))
   return config
 })
 

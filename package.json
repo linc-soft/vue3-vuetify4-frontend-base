@@ -19,11 +19,14 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aspect-ratio/core": "^1.0.0",
     "@fontsource/roboto": "^5.2.10",
     "@mdi/font": "^7.4.47",
     "@vuepic/vue-datepicker": "^12.1.0",
     "axios": "^1.15.0",
     "date-fns": "^4.1.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.5.32",

@@ -1,6 +1,7 @@
 import type { Page, Result } from '@/api/types'
 import { z } from 'zod/v4'
 import http from '@/api/client'
+import { type DownloadResult, parseFilenameFromContentDisposition } from '@/api/download'
 import {
   type UserCreateRequest,
   type UserDeleteRequest,
@@ -51,4 +52,27 @@ export async function updateUser(params: UserUpdateRequest): Promise<void> {
 /** DELETE /api/users */
 export async function deleteUser(params: UserDeleteRequest): Promise<void> {
   await http.delete('/api/users', { data: params })
+}
+
+/** GET /api/pdf/users - Generate user list PDF */
+export async function generateUserListPdf(params?: UserListRequest): Promise<DownloadResult> {
+  const response = await http.get<Blob>('/api/pdf/users', {
+    params,
+    responseType: 'blob',
+  })
+  return {
+    blob: response.data,
+    filename: parseFilenameFromContentDisposition(response.headers['content-disposition']),
+  }
+}
+
+/** GET /api/pdf/users/{id} - Generate user detail PDF */
+export async function generateUserInfoPdf(id: number): Promise<DownloadResult> {
+  const response = await http.get<Blob>(`/api/pdf/users/${id}`, {
+    responseType: 'blob',
+  })
+  return {
+    blob: response.data,
+    filename: parseFilenameFromContentDisposition(response.headers['content-disposition']),
+  }
 }

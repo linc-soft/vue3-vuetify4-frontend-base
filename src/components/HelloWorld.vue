@@ -52,6 +52,115 @@
           </v-card>
         </v-col>
 
+        <!-- Backend I18n Test Section -->
+        <v-col cols="12">
+          <v-card
+            class="py-4"
+            color="surface-variant"
+            rounded="lg"
+            variant="tonal"
+          >
+            <template #prepend>
+              <v-avatar
+                class="ml-2 mr-4"
+                icon="mdi-translate"
+                size="60"
+                variant="tonal"
+              />
+            </template>
+
+            <template #title>
+              <div class="text-headline-medium font-weight-bold">Backend I18n Test</div>
+            </template>
+
+            <template #subtitle>
+              <div class="text-body-large">Test backend internationalization endpoints</div>
+            </template>
+
+            <v-card-text>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-btn
+                    block
+                    color="primary"
+                    :loading="loading.test"
+                    prepend-icon="mdi-play"
+                    variant="elevated"
+                    @click="testI18nTest"
+                  >
+                    GET /api/common/i18n/test
+                  </v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-btn
+                    block
+                    color="primary"
+                    :loading="loading.result"
+                    prepend-icon="mdi-play"
+                    variant="elevated"
+                    @click="testI18nResult"
+                  >
+                    GET /api/common/i18n/result
+                  </v-btn>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-btn
+                    block
+                    color="primary"
+                    :loading="loading.formatted"
+                    prepend-icon="mdi-play"
+                    variant="elevated"
+                    @click="testI18nResultFormatted"
+                  >
+                    GET /api/common/i18n/result-formatted
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <v-alert
+                v-if="error"
+                class="mt-4"
+                closable
+                density="compact"
+                type="error"
+                variant="tonal"
+                @click:close="error = null"
+              >
+                {{ error }}
+              </v-alert>
+
+              <v-card
+                v-if="responseData"
+                class="mt-4"
+                variant="outlined"
+              >
+                <v-card-title class="text-subtitle-1">
+                  Response
+                  <v-chip
+                    class="ml-2"
+                    color="success"
+                    size="small"
+                  >
+                    {{ currentEndpoint }}
+                  </v-chip>
+                </v-card-title>
+                <v-card-text>
+                  <pre class="text-body-2 overflow-auto">{{ formattedResponse }}</pre>
+                </v-card-text>
+              </v-card>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
         <v-col
           v-for="link in links"
           :key="link.href"
@@ -85,6 +194,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
+import { getI18nResult, getI18nResultFormatted, getI18nTest } from '@/api/modules/common'
+
 const links = [
   {
     href: 'https://vuetifyjs.com/',
@@ -111,4 +224,64 @@ const links = [
     title: 'Community',
   },
 ]
+
+const loading = ref({
+  test: false,
+  result: false,
+  formatted: false,
+})
+
+const error = ref<string | null>(null)
+const responseData = ref<unknown>(null)
+const currentEndpoint = ref('')
+
+const formattedResponse = ref('')
+
+async function testI18nTest() {
+  loading.value.test = true
+  error.value = null
+  currentEndpoint.value = '/api/common/i18n/test'
+  try {
+    const result = await getI18nTest()
+    responseData.value = result
+    formattedResponse.value = result
+  } catch (error_) {
+    error.value = error_ instanceof Error ? error_.message : 'Request failed'
+    responseData.value = null
+  } finally {
+    loading.value.test = false
+  }
+}
+
+async function testI18nResult() {
+  loading.value.result = true
+  error.value = null
+  currentEndpoint.value = '/api/common/i18n/result'
+  try {
+    const result = await getI18nResult()
+    responseData.value = result
+    formattedResponse.value = JSON.stringify(result, null, 2)
+  } catch (error_) {
+    error.value = error_ instanceof Error ? error_.message : 'Request failed'
+    responseData.value = null
+  } finally {
+    loading.value.result = false
+  }
+}
+
+async function testI18nResultFormatted() {
+  loading.value.formatted = true
+  error.value = null
+  currentEndpoint.value = '/api/common/i18n/result-formatted'
+  try {
+    const result = await getI18nResultFormatted()
+    responseData.value = result
+    formattedResponse.value = result
+  } catch (error_) {
+    error.value = error_ instanceof Error ? error_.message : 'Request failed'
+    responseData.value = null
+  } finally {
+    loading.value.formatted = false
+  }
+}
 </script>

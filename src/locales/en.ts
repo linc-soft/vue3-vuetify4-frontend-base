@@ -62,6 +62,12 @@ export default {
       saveFailed: 'Failed to save',
       deleteFailed: 'Failed to delete',
     },
+    pdf: {
+      exportList: 'Export List PDF',
+      exportDetail: 'Export Detail PDF',
+      listTitle: 'Role List',
+      detailTitle: 'Role Detail',
+    },
   },
   user: {
     title: 'User Management',
@@ -104,6 +110,12 @@ export default {
       loadFailed: 'Failed to load user data',
       saveFailed: 'Failed to save',
       deleteFailed: 'Failed to delete',
+    },
+    pdf: {
+      exportList: 'Export List PDF',
+      exportDetail: 'Export Detail PDF',
+      listTitle: 'User List',
+      detailTitle: 'User Detail',
     },
   },
   log: {

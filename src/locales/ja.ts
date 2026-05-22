@@ -62,6 +62,12 @@ export default {
       saveFailed: '保存に失敗しました',
       deleteFailed: '削除に失敗しました',
     },
+    pdf: {
+      exportList: 'リストPDFエクスポート',
+      exportDetail: '詳細PDFエクスポート',
+      listTitle: 'ロールリスト',
+      detailTitle: 'ロール詳細',
+    },
   },
   user: {
     title: 'ユーザー管理',
@@ -104,6 +110,12 @@ export default {
       loadFailed: 'ユーザーデータの読み込みに失敗しました',
       saveFailed: '保存に失敗しました',
       deleteFailed: '削除に失敗しました',
+    },
+    pdf: {
+      exportList: 'リストPDFエクスポート',
+      exportDetail: '詳細PDFエクスポート',
+      listTitle: 'ユーザーリスト',
+      detailTitle: 'ユーザー詳細',
     },
   },
   log: {

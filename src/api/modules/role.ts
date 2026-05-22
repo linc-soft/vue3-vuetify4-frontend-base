@@ -1,6 +1,7 @@
 import type { Result } from '@/api/types'
 import { z } from 'zod/v4'
 import http from '@/api/client'
+import { type DownloadResult, parseFilenameFromContentDisposition } from '@/api/download'
 import {
   type RoleCreateRequest,
   type RoleDeleteRequest,
@@ -38,4 +39,27 @@ export async function updateRole(params: RoleUpdateRequest): Promise<void> {
 /** DELETE /api/roles */
 export async function deleteRole(params: RoleDeleteRequest): Promise<void> {
   await http.delete('/api/roles', { data: params })
+}
+
+/** GET /api/pdf/roles - Generate role list PDF */
+export async function generateRoleListPdf(params?: RoleListRequest): Promise<DownloadResult> {
+  const response = await http.get<Blob>('/api/pdf/roles', {
+    params,
+    responseType: 'blob',
+  })
+  return {
+    blob: response.data,
+    filename: parseFilenameFromContentDisposition(response.headers['content-disposition']),
+  }
+}
+
+/** GET /api/pdf/roles/{id} - Generate role detail PDF */
+export async function generateRoleInfoPdf(id: number): Promise<DownloadResult> {
+  const response = await http.get<Blob>(`/api/pdf/roles/${id}`, {
+    responseType: 'blob',
+  })
+  return {
+    blob: response.data,
+    filename: parseFilenameFromContentDisposition(response.headers['content-disposition']),
+  }
 }
