@@ -74,6 +74,17 @@ export default {
       actions: '操作',
     },
     actions: { detail: '詳細', edit: '編集', delete: '削除', create: 'ユーザー作成' },
+    report: {
+      button: 'レポート生成',
+      groupBy: 'グループ化',
+      groupByNone: 'グループ化なし',
+      groupByRole: 'ロール別',
+      groupByBaseRole: '基底ロール別',
+      generate: '生成',
+      cancel: 'キャンセル',
+      title: 'ユーザー一覧レポート生成',
+      downloading: 'レポート生成中...',
+    },
     status: { enabled: '有効', disabled: '無効' },
     detail: { title: 'ユーザー詳細', close: '閉じる', roles: 'ロール', noRoles: '未割り当て' },
     form: {

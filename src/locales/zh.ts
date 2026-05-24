@@ -74,6 +74,17 @@ export default {
       actions: '操作',
     },
     actions: { detail: '详情', edit: '编辑', delete: '删除', create: '新建用户' },
+    report: {
+      button: '生成报表',
+      groupBy: '分组方式',
+      groupByNone: '无分组',
+      groupByRole: '按角色分组',
+      groupByBaseRole: '按基础角色分组',
+      generate: '生成',
+      cancel: '取消',
+      title: '生成用户列表报表',
+      downloading: '报表生成中...',
+    },
     status: { enabled: '启用', disabled: '禁用' },
     detail: { title: '用户详情', close: '关闭', roles: '角色', noRoles: '未分配角色' },
     form: {

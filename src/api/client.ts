@@ -1,6 +1,7 @@
 import type { Result } from './types'
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import { LOCALE_STORAGE_KEY, SUPPORTED_LOCALES } from '@/composables/useLocale'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
 /**
@@ -34,10 +35,21 @@ export function getAccessToken(): string | null {
 
 // ─── Request Interceptor ───
 
+function getCurrentLocale(): string {
+  try {
+    const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (stored && (SUPPORTED_LOCALES as readonly string[]).includes(stored)) return stored
+  } catch {
+    // localStorage may be unavailable
+  }
+  return 'en'
+}
+
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (accessToken) {
     config.headers.set('Authorization', `Bearer ${accessToken}`)
   }
+  config.headers.set('Accept-Language', getCurrentLocale())
   return config
 })
 

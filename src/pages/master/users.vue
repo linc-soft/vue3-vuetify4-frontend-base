@@ -59,6 +59,13 @@
         >
           {{ t('user.actions.create') }}
         </v-btn>
+        <v-btn
+          prepend-icon="mdi-file-pdf-box"
+          variant="tonal"
+          @click="reportDialog = true"
+        >
+          {{ t('user.report.button') }}
+        </v-btn>
       </v-col>
     </v-row>
 
@@ -120,6 +127,52 @@
       @saved="fetchUsers"
     />
 
+    <!-- Report Dialog -->
+    <v-dialog
+      v-model="reportDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title>{{ t('user.report.title') }}</v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="reportGroupBy"
+            :items="reportGroupByOptions"
+            :label="t('user.report.groupBy')"
+            variant="outlined"
+          />
+          <v-alert
+            v-if="reportError"
+            class="mt-3"
+            closable
+            density="compact"
+            type="error"
+            variant="tonal"
+            @click:close="reportError = ''"
+          >
+            {{ reportError }}
+          </v-alert>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            variant="text"
+            @click="reportDialog = false"
+          >
+            {{ t('user.report.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="reportLoading"
+            variant="elevated"
+            @click="handleGenerateReport"
+          >
+            {{ t('user.report.generate') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Delete Confirmation Dialog -->
     <v-dialog
       v-model="deleteDialog"
@@ -170,7 +223,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { deleteUser, getUserPage } from '@/api/modules/user'
+import { deleteUser, generateUserReport, getUserPage } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
@@ -201,6 +254,18 @@ const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
+
+// Report related
+const reportDialog = ref(false)
+const reportGroupBy = ref<string | null>(null)
+const reportLoading = ref(false)
+const reportError = ref('')
+
+const reportGroupByOptions = computed(() => [
+  { title: t('user.report.groupByNone'), value: '' },
+  { title: t('user.report.groupByRole'), value: 'role' },
+  { title: t('user.report.groupByBaseRole'), value: 'baseRole' },
+])
 
 // Status options (from backend enums)
 const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
@@ -294,6 +359,28 @@ async function handleDelete() {
     errorMessage.value = error instanceof Error ? error.message : t('user.error.deleteFailed')
   } finally {
     deleteLoading.value = false
+  }
+}
+
+async function handleGenerateReport() {
+  reportLoading.value = true
+  reportError.value = ''
+  try {
+    const blob = await generateUserReport({
+      username: filters.username || undefined,
+      groupBy: reportGroupBy.value || undefined,
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `user_report_${Date.now()}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+    reportDialog.value = false
+  } catch (error: unknown) {
+    reportError.value = error instanceof Error ? error.message : t('user.error.loadFailed')
+  } finally {
+    reportLoading.value = false
   }
 }
 </script>

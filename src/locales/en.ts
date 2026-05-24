@@ -74,6 +74,17 @@ export default {
       actions: 'Actions',
     },
     actions: { detail: 'Detail', edit: 'Edit', delete: 'Delete', create: 'Create User' },
+    report: {
+      button: 'Generate Report',
+      groupBy: 'Group By',
+      groupByNone: 'No Grouping',
+      groupByRole: 'By Role',
+      groupByBaseRole: 'By Base Role',
+      generate: 'Generate',
+      cancel: 'Cancel',
+      title: 'Generate User List Report',
+      downloading: 'Generating report...',
+    },
     status: { enabled: 'Enabled', disabled: 'Disabled' },
     detail: { title: 'User Detail', close: 'Close', roles: 'Roles', noRoles: 'No roles assigned' },
     form: {
