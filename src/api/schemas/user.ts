@@ -14,6 +14,8 @@ export const UserPageRequestSchema = z.object({
   size: z.number().int().min(1),
   username: z.string().optional(),
   status: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.string().optional(),
 })
 
 export type UserPageRequest = z.infer<typeof UserPageRequestSchema>

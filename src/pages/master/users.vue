@@ -78,6 +78,7 @@
       :items-per-page="itemsPerPage"
       :loading="loading"
       :page="page"
+      :sort-by="sortBy"
       @update:options="onOptionsUpdate"
     >
       <template #item.status="{ value }">
@@ -239,6 +240,9 @@ const page = ref(1)
 const itemsPerPage = ref(10)
 const totalItems = ref(0)
 
+// Sorting parameters
+const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
+
 // Table data and loading state
 const items = ref<UserPageResponseItem[]>([])
 const loading = ref(false)
@@ -295,6 +299,8 @@ async function fetchUsers() {
       size: itemsPerPage.value,
       username: filters.username || undefined,
       status: filters.status || undefined,
+      sortBy: sortBy.value.length > 0 ? sortBy.value.map(s => s.key).join(',') : undefined,
+      sortOrder: sortBy.value.length > 0 ? sortBy.value.map(s => s.order).join(',') : undefined,
     })
     items.value = res.records
     totalItems.value = res.total
@@ -305,10 +311,15 @@ async function fetchUsers() {
   }
 }
 
-// Handle pagination option changes
-function onOptionsUpdate(options: { page: number; itemsPerPage: number }) {
+// Handle pagination and sorting option changes
+function onOptionsUpdate(options: {
+  page: number
+  itemsPerPage: number
+  sortBy: { key: string; order: 'asc' | 'desc' }[]
+}) {
   page.value = options.page
   itemsPerPage.value = options.itemsPerPage
+  sortBy.value = options.sortBy ?? []
   fetchUsers()
 }
 
@@ -322,6 +333,7 @@ function handleSearch() {
 function handleReset() {
   filters.username = ''
   filters.status = '1'
+  sortBy.value = []
   handleSearch()
 }
 
