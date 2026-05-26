@@ -56,12 +56,27 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // ─── Response Interceptor ───
 
 http.interceptors.response.use(
-  (response: AxiosResponse<Result>) => {
+  async (response: AxiosResponse<Result>) => {
+    // When responseType is 'blob', the response body is a Blob even if it contains JSON.
+    // Check the Content-Type header to detect JSON-wrapped errors.
+    if (response.config.responseType === 'blob' && response.data instanceof Blob) {
+      const contentType = response.headers['content-type'] ?? ''
+      if (contentType.includes('application/json')) {
+        const text = await response.data.text()
+        const result = JSON.parse(text) as Result
+        if (result.code !== undefined && result.code !== 200) {
+          throw new ApiError(result.code, result.message ?? 'Request failed')
+        }
+        // code === 200: return the blob as-is for the caller.
+        return response
+      }
+    }
+
     const result = response.data
     // The backend uniformly wraps responses into Result&lt;T&gt; via GlobalResponseAdvice.
     // code === 200 indicates success.
     if (result.code !== undefined && result.code !== 200) {
-      return Promise.reject(new ApiError(result.code, result.message ?? 'Request failed'))
+      throw new ApiError(result.code, result.message ?? 'Request failed')
     }
     return response
   },
@@ -79,10 +94,24 @@ http.interceptors.response.use(
       handleUnauthorized()
     }
 
+    // Handle blob error responses — read the blob as text to extract the error message.
+    if (error.response?.data instanceof Blob) {
+      try {
+        const text = await error.response.data.text()
+        const result = JSON.parse(text) as Result
+        if (result?.code !== undefined) {
+          throw new ApiError(result.code, result.message ?? 'Request failed')
+        }
+      } catch (error_) {
+        if (error_ instanceof ApiError) throw error_
+        // Failed to parse blob as JSON; fall through to default error handling.
+      }
+    }
+
     // Extract error information returned by the backend.
     const result = error.response?.data
     if (result?.code !== undefined) {
-      throw Promise.reject(new ApiError(result.code, result.message ?? 'Request failed'))
+      throw new ApiError(result.code, result.message ?? 'Request failed')
     }
 
     // Handle network errors
@@ -92,7 +121,7 @@ http.interceptors.response.use(
     if (!error.response) {
       throw new ApiError(-1, 'Network error, please check your connection')
     }
-    throw Promise.reject(error)
+    throw error
   },
 )
 
