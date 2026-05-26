@@ -9,7 +9,7 @@ export const AccessLogPageRequestSchema = z.object({
   username: z.string().optional(),
   method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).optional(),
   path: z.string().optional(),
-  statusCode: z.number().int().optional(),
+  statusCode: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
 })

@@ -194,7 +194,7 @@ const filters = reactive({
   username: null as string | null,
   method: null as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | null,
   path: '',
-  statusCode: null as number | null,
+  statusCode: null as string | null,
 })
 
 // Time range for datetime picker
@@ -215,9 +215,9 @@ const methodOptions = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
 // Status code options
 const statusCodeOptions = [
-  { title: '2xx', value: 200 },
-  { title: '4xx', value: 400 },
-  { title: '5xx', value: 500 },
+  { title: '2xx', value: '200' },
+  { title: '4xx', value: '4XX' },
+  { title: '5xx', value: '5XX' },
 ]
 
 // Table column definitions
