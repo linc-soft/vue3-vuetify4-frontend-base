@@ -2,7 +2,17 @@ import { z } from 'zod/v4'
 
 // ─── Enums ───
 
-export const OperationTypeSchema = z.enum(['CREATE', 'UPDATE', 'DELETE', 'OTHER'])
+export const OperationTypeSchema = z.enum([
+  'CREATE',
+  'DELETE',
+  'EXPORT',
+  'IMPORT',
+  'LOGIN',
+  'LOGOUT',
+  'OTHER',
+  'QUERY',
+  'UPDATE',
+])
 
 export type OperationType = z.infer<typeof OperationTypeSchema>
 

@@ -204,9 +204,14 @@ const moduleOptions = ref<string[]>([])
 // Operation type options
 const operationTypeOptions = computed(() => [
   { title: t('log.operation.types.CREATE'), value: 'CREATE' },
-  { title: t('log.operation.types.UPDATE'), value: 'UPDATE' },
   { title: t('log.operation.types.DELETE'), value: 'DELETE' },
+  { title: t('log.operation.types.EXPORT'), value: 'EXPORT' },
+  { title: t('log.operation.types.IMPORT'), value: 'IMPORT' },
+  { title: t('log.operation.types.LOGIN'), value: 'LOGIN' },
+  { title: t('log.operation.types.LOGOUT'), value: 'LOGOUT' },
   { title: t('log.operation.types.OTHER'), value: 'OTHER' },
+  { title: t('log.operation.types.QUERY'), value: 'QUERY' },
+  { title: t('log.operation.types.UPDATE'), value: 'UPDATE' },
 ])
 
 // Table column definitions

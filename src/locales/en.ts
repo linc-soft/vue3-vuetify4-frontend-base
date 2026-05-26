@@ -193,9 +193,14 @@ export default {
       clientIp: 'Client IP',
       types: {
         CREATE: 'Create',
-        UPDATE: 'Update',
         DELETE: 'Delete',
+        EXPORT: 'Export',
+        IMPORT: 'Import',
+        LOGIN: 'Login',
+        LOGOUT: 'Logout',
         OTHER: 'Other',
+        QUERY: 'Query',
+        UPDATE: 'Update',
       },
     },
     // Trace

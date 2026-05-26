@@ -189,9 +189,14 @@ export default {
       clientIp: '客户端 IP',
       types: {
         CREATE: '创建',
-        UPDATE: '更新',
         DELETE: '删除',
+        EXPORT: '导出',
+        IMPORT: '导入',
+        LOGIN: '登录',
+        LOGOUT: '登出',
         OTHER: '其他',
+        QUERY: '查询',
+        UPDATE: '更新',
       },
     },
     // Trace

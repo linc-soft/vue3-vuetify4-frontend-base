@@ -193,9 +193,14 @@ export default {
       clientIp: 'クライアント IP',
       types: {
         CREATE: '作成',
-        UPDATE: '更新',
         DELETE: '削除',
+        EXPORT: 'エクスポート',
+        IMPORT: 'インポート',
+        LOGIN: 'ログイン',
+        LOGOUT: 'ログアウト',
         OTHER: 'その他',
+        QUERY: 'クエリ',
+        UPDATE: '更新',
       },
     },
     // Trace
