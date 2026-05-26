@@ -10,6 +10,8 @@ export const ErrorLogPageRequestSchema = z.object({
   username: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.string().optional(),
 })
 
 export type ErrorLogPageRequest = z.infer<typeof ErrorLogPageRequestSchema>

@@ -142,6 +142,7 @@
       :items-per-page="itemsPerPage"
       :loading="loading"
       :page="page"
+      :sort-by="sortBy"
       @update:options="onOptionsUpdate"
     >
       <template #item.traceId="{ value }">
@@ -205,6 +206,9 @@ const page = ref(1)
 const itemsPerPage = ref(10)
 const totalItems = ref(0)
 
+// Sorting parameters
+const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
+
 // Table data and loading state
 const items = ref<AccessLogPageItem[]>([])
 const loading = ref(false)
@@ -219,6 +223,14 @@ const statusCodeOptions = [
   { title: '4xx', value: '4XX' },
   { title: '5xx', value: '5XX' },
 ]
+
+// Sort field mapping (frontend key → backend entity field name)
+const sortFieldMap: Record<string, string> = {
+  method: 'requestMethod',
+  path: 'requestUrl',
+  statusCode: 'responseStatus',
+  createdAt: 'createTime',
+}
 
 // Table column definitions
 const allHeaders = computed(() => [
@@ -253,6 +265,11 @@ async function fetchLogs() {
       statusCode: filters.statusCode || undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
+      sortBy:
+        sortBy.value.length > 0
+          ? sortBy.value.map(s => sortFieldMap[s.key] ?? s.key).join(',')
+          : undefined,
+      sortOrder: sortBy.value.length > 0 ? sortBy.value.map(s => s.order).join(',') : undefined,
     })
     items.value = res.records
     totalItems.value = res.total
@@ -263,10 +280,15 @@ async function fetchLogs() {
   }
 }
 
-// Handle pagination option changes
-function onOptionsUpdate(options: { page: number; itemsPerPage: number }) {
+// Handle pagination and sorting option changes
+function onOptionsUpdate(options: {
+  page: number
+  itemsPerPage: number
+  sortBy: { key: string; order: 'asc' | 'desc' }[]
+}) {
   page.value = options.page
   itemsPerPage.value = options.itemsPerPage
+  sortBy.value = options.sortBy ?? []
   fetchLogs()
 }
 
@@ -284,6 +306,7 @@ function handleReset() {
   filters.path = ''
   filters.statusCode = null
   timeRange.value = null
+  sortBy.value = []
   handleSearch()
 }
 

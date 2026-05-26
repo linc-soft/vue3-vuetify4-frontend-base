@@ -27,6 +27,8 @@ export const OperationLogPageRequestSchema = z.object({
   username: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.string().optional(),
 })
 
 export type OperationLogPageRequest = z.infer<typeof OperationLogPageRequestSchema>

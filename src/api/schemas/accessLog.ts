@@ -12,6 +12,8 @@ export const AccessLogPageRequestSchema = z.object({
   statusCode: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.string().optional(),
 })
 
 export type AccessLogPageRequest = z.infer<typeof AccessLogPageRequestSchema>
