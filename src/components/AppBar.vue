@@ -70,7 +70,7 @@ async function handleLogout() {
           variant="text"
           v-bind="props"
         >
-          {{ authStore.username }}
+          <span class="d-none d-sm-inline">{{ authStore.username }}</span>
         </v-btn>
       </template>
 

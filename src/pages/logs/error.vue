@@ -96,6 +96,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading="loading"
+      :mobile="mobile"
       :page="page"
       :sort-by="sortBy"
       @update:options="onOptionsUpdate"
@@ -124,12 +125,14 @@ import type { ErrorLogPageItem } from '@/api/schemas/errorLog'
 import type { DatetimeRange } from '@/components/DatetimeRangePicker.vue'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useDisplay } from 'vuetify'
 
 import { getErrorLogPage } from '@/api/modules/errorLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
+const { mobile } = useDisplay()
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')

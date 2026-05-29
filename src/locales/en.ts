@@ -138,6 +138,8 @@ export default {
       collapse: 'Collapse',
       expand: 'Expand',
       noData: 'No data',
+      loadMore: 'Load More',
+      totalRecords: '{count} records in total',
     },
     // Access Log
     access: {

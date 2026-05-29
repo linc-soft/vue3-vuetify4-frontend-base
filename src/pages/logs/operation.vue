@@ -118,6 +118,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading="loading"
+      :mobile="mobile"
       :page="page"
       :sort-by="sortBy"
       @update:options="onOptionsUpdate"
@@ -169,12 +170,14 @@ import type { OperationLogPageItem, OperationType } from '@/api/schemas/operatio
 import type { DatetimeRange } from '@/components/DatetimeRangePicker.vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useDisplay } from 'vuetify'
 
 import { getOperationLogPage, getOperationModules } from '@/api/modules/operationLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
+const { mobile } = useDisplay()
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')

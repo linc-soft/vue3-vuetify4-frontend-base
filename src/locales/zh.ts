@@ -134,6 +134,8 @@ export default {
       collapse: '收起',
       expand: '展开',
       noData: '暂无数据',
+      loadMore: '加载更多',
+      totalRecords: '共 {count} 条记录',
     },
     // Access Log
     access: {

@@ -136,11 +136,12 @@
     <!-- Paginated data table -->
     <v-data-table-server
       class="mt-4"
-      :headers="visibleHeaders"
+      :headers="allHeaders"
       :items="items"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading="loading"
+      :mobile="mobile"
       :page="page"
       :sort-by="sortBy"
       @update:options="onOptionsUpdate"
@@ -184,7 +185,7 @@ import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
-const { smAndDown } = useDisplay()
+const { mobile } = useDisplay()
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')
@@ -243,13 +244,6 @@ const allHeaders = computed(() => [
   { title: t('log.access.clientIp'), key: 'clientIp' },
   { title: t('log.common.createdAt'), key: 'createdAt' },
 ])
-
-const visibleHeaders = computed(() => {
-  if (smAndDown.value) {
-    return allHeaders.value.filter(h => h.key !== 'clientIp')
-  }
-  return allHeaders.value
-})
 
 // Fetch paginated data
 async function fetchLogs() {

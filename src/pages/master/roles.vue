@@ -74,10 +74,11 @@
     <!-- Role List -->
     <v-data-table
       class="mt-4"
-      :headers="visibleHeaders"
+      :headers="allHeaders"
       :items="items"
       :items-per-page="itemsPerPage"
       :loading="loading"
+      :mobile="mobile"
       @update:items-per-page="itemsPerPage = $event"
     >
       <template #item.description="{ value }">
@@ -133,7 +134,8 @@
     <!-- Delete Confirm Dialog -->
     <v-dialog
       v-model="deleteDialog"
-      max-width="400"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
     >
       <v-card>
         <v-card-title>{{ t('role.delete.title') }}</v-card-title>
@@ -185,7 +187,7 @@ import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
 const { t } = useI18n()
-const { smAndDown } = useDisplay()
+const { mobile } = useDisplay()
 
 // Filter Conditions
 const filters = reactive({ roleName: '', roleCode: undefined })
@@ -210,24 +212,15 @@ const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
-// table column definitions
+// Table column definitions
 const allHeaders = computed(() => [
   { title: t('role.table.roleName'), key: 'roleName' },
   { title: t('role.table.roleCode'), key: 'roleCode' },
   { title: t('role.table.description'), key: 'description' },
   { title: t('role.table.updateBy'), key: 'updateBy' },
   { title: t('role.table.updateAt'), key: 'updateAt' },
-  { title: t('role.table.actions'), key: 'actions', sortable: false },
+  { title: t('role.table.actions'), key: 'actions', sortable: false, cellClass: 'column-actions' },
 ])
-
-const visibleHeaders = computed(() => {
-  if (smAndDown.value) {
-    return allHeaders.value.filter(
-      h => h.key !== 'description' && h.key !== 'updateBy' && h.key !== 'updateAt',
-    )
-  }
-  return allHeaders.value
-})
 
 // Get role list
 async function fetchRoles() {

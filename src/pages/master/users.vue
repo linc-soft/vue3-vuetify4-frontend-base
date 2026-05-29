@@ -72,11 +72,13 @@
     <!-- Paginated data table -->
     <v-data-table-server
       class="mt-4"
-      :headers="visibleHeaders"
+      :headers="allHeaders"
       :items="items"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading="loading"
+      :mobile="mobile"
+      multi-sort
       :page="page"
       :sort-by="sortBy"
       @update:options="onOptionsUpdate"
@@ -131,7 +133,8 @@
     <!-- Report Dialog -->
     <v-dialog
       v-model="reportDialog"
-      max-width="400"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
     >
       <v-card>
         <v-card-title>{{ t('user.report.title') }}</v-card-title>
@@ -177,7 +180,8 @@
     <!-- Delete Confirmation Dialog -->
     <v-dialog
       v-model="deleteDialog"
-      max-width="400"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
     >
       <v-card>
         <v-card-title>{{ t('user.delete.title') }}</v-card-title>
@@ -230,7 +234,7 @@ import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
 const { t } = useI18n()
-const { smAndDown } = useDisplay()
+const { mobile } = useDisplay()
 
 // Filter Conditions
 const filters = reactive({ username: '', status: '1' })
@@ -280,15 +284,8 @@ const allHeaders = computed(() => [
   { title: t('user.table.status'), key: 'status' },
   { title: t('user.table.updateBy'), key: 'updateBy' },
   { title: t('user.table.updateAt'), key: 'updateAt' },
-  { title: t('user.table.actions'), key: 'actions', sortable: false },
+  { title: t('user.table.actions'), key: 'actions', sortable: false, cellClass: 'column-actions' },
 ])
-
-const visibleHeaders = computed(() => {
-  if (smAndDown.value) {
-    return allHeaders.value.filter(h => h.key !== 'updateBy' && h.key !== 'updateAt')
-  }
-  return allHeaders.value
-})
 
 // Fetch paginated data
 async function fetchUsers() {

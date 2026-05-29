@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :fullscreen="smAndDown"
-    :max-width="smAndDown ? undefined : 640"
+    :fullscreen="mobile"
+    :max-width="mobile ? undefined : 640"
     :model-value="modelValue"
     scrollable
     @update:model-value="emit('update:modelValue', $event)"
@@ -222,7 +222,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const { smAndDown } = useDisplay()
+const { mobile } = useDisplay()
 
 const form = reactive<{
   roleName: string

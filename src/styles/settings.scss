@@ -8,3 +8,7 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+
+.v-data-table-rows .v-data-table__tr--mobile > td.column-actions .v-data-table__td-title {
+  display: none;
+}

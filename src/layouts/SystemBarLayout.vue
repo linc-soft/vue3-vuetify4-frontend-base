@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 import AppBar from '@/components/AppBar.vue'
 import NavigationDrawer from '@/components/NavigationDrawer.vue'
 import { navItems } from '@/layouts/navItems'
 
-const drawer = ref(true)
+const { mobile } = useDisplay()
+const drawer = ref(!mobile.value)
 
 function toggleDrawer() {
   drawer.value = !drawer.value

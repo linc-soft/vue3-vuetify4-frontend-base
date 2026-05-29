@@ -138,6 +138,8 @@ export default {
       collapse: '折りたたむ',
       expand: '展開',
       noData: 'データなし',
+      loadMore: 'もっと読み込む',
+      totalRecords: '全 {count} 件',
     },
     // Access Log
     access: {

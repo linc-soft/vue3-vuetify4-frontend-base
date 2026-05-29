@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :fullscreen="smAndDown"
-    :max-width="smAndDown ? undefined : 500"
+    :fullscreen="mobile"
+    :max-width="mobile ? undefined : 500"
     :model-value="modelValue"
     @update:model-value="emit('update:modelValue', $event)"
   >
@@ -178,7 +178,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const { smAndDown } = useDisplay()
+const { mobile } = useDisplay()
 
 const role = ref<Awaited<ReturnType<typeof getRole>> | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])
