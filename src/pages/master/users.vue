@@ -69,19 +69,14 @@
       </v-col>
     </v-row>
 
-    <!-- Paginated data table -->
-    <v-data-table-server
+    <!-- Data table with client-side pagination -->
+    <v-data-table
       class="mt-4"
       :headers="allHeaders"
       :items="items"
-      :items-length="totalItems"
-      :items-per-page="itemsPerPage"
       :loading="loading"
       :mobile="mobile"
       multi-sort
-      :page="page"
-      :sort-by="sortBy"
-      @update:options="onOptionsUpdate"
     >
       <template #item.status="{ value }">
         {{ statusLabelOf(value) }}
@@ -113,7 +108,7 @@
           @click="openDeleteConfirm(item)"
         />
       </template>
-    </v-data-table-server>
+    </v-data-table>
 
     <!-- User Details Dialog -->
     <UserDetailDialog
@@ -223,12 +218,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { UserPageResponseItem } from '@/api/schemas/user'
-import { computed, reactive, ref } from 'vue'
+import type { UserListResponseItem } from '@/api/schemas/user'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { deleteUser, generateUserReport, getUserPage } from '@/api/modules/user'
+import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
@@ -239,16 +234,8 @@ const { mobile } = useDisplay()
 // Filter Conditions
 const filters = reactive({ username: '', status: '1' })
 
-// Pagination parameters
-const page = ref(1)
-const itemsPerPage = ref(10)
-const totalItems = ref(0)
-
-// Sorting parameters
-const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
-
 // Table data and loading state
-const items = ref<UserPageResponseItem[]>([])
+const items = ref<UserListResponseItem[]>([])
 const loading = ref(false)
 
 // Dialog control
@@ -287,20 +274,14 @@ const allHeaders = computed(() => [
   { title: t('user.table.actions'), key: 'actions', sortable: false, cellClass: 'column-actions' },
 ])
 
-// Fetch paginated data
+// Fetch data
 async function fetchUsers() {
   loading.value = true
   try {
-    const res = await getUserPage({
-      page: page.value,
-      size: itemsPerPage.value,
+    items.value = await getUserList({
       username: filters.username || undefined,
       status: filters.status || undefined,
-      sortBy: sortBy.value.length > 0 ? sortBy.value.map(s => s.key).join(',') : undefined,
-      sortOrder: sortBy.value.length > 0 ? sortBy.value.map(s => s.order).join(',') : undefined,
     })
-    items.value = res.records
-    totalItems.value = res.total
   } catch (error: unknown) {
     console.error('Failed to fetch users:', error)
   } finally {
@@ -308,21 +289,12 @@ async function fetchUsers() {
   }
 }
 
-// Handle pagination and sorting option changes
-function onOptionsUpdate(options: {
-  page: number
-  itemsPerPage: number
-  sortBy: { key: string; order: 'asc' | 'desc' }[]
-}) {
-  page.value = options.page
-  itemsPerPage.value = options.itemsPerPage
-  sortBy.value = options.sortBy ?? []
+onMounted(() => {
   fetchUsers()
-}
+})
 
 // Search
 function handleSearch() {
-  page.value = 1
   fetchUsers()
 }
 
@@ -330,8 +302,7 @@ function handleSearch() {
 function handleReset() {
   filters.username = ''
   filters.status = '1'
-  sortBy.value = []
-  handleSearch()
+  fetchUsers()
 }
 
 // Open the details dialog
@@ -348,7 +319,7 @@ function openForm(mode: 'create' | 'edit', id?: number) {
 }
 
 // Open the delete confirmation box
-async function openDeleteConfirm(item: UserPageResponseItem) {
+async function openDeleteConfirm(item: UserListResponseItem) {
   errorMessage.value = ''
   deleteTarget.value = { id: item.id, version: item.version }
   deleteDialog.value = true
