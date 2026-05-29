@@ -35,6 +35,12 @@
             :rules="mode === 'create' ? [rules.passwordRequired] : []"
             type="password"
           />
+          <v-text-field
+            v-model="form.email"
+            :label="t('user.form.email')"
+            :rules="[rules.emailPattern]"
+            type="email"
+          />
           <v-select
             v-model="form.status"
             :items="statusOptions"
@@ -125,11 +131,13 @@ const { mobile } = useDisplay()
 const form = reactive<{
   username: string
   password: string
+  email: string
   status: string
   roleIds: number[]
 }>({
   username: '',
   password: '',
+  email: '',
   status: '',
   roleIds: [],
 })
@@ -155,6 +163,8 @@ const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
   passwordRequired: (v: string) => !!v || t('user.validation.passwordRequired'),
   statusRequired: (v: string) => !!v || t('user.validation.statusRequired'),
+  emailPattern: (v: string) =>
+    !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || t('user.validation.emailInvalid'),
 }
 
 watch(
@@ -171,6 +181,7 @@ watch(
       if (props.mode === 'create') {
         form.username = ''
         form.password = ''
+        form.email = ''
         form.status = '1'
         form.roleIds = []
         version.value = 0
@@ -178,6 +189,7 @@ watch(
       } else if (user) {
         form.username = user.username
         form.password = ''
+        form.email = user.email ?? ''
         form.status = user.status
         form.roleIds = [...(user.roleIds ?? [])]
         version.value = user.version
@@ -202,6 +214,7 @@ async function handleSubmit() {
       ? createUser({
           username: form.username,
           password: form.password,
+          email: form.email || undefined,
           status: form.status,
           roleIds: form.roleIds,
         })
@@ -209,6 +222,7 @@ async function handleSubmit() {
           id: props.userId!,
           username: form.username,
           password: form.password || undefined,
+          email: form.email || undefined,
           status: form.status,
           roleIds: form.roleIds,
           version: version.value,

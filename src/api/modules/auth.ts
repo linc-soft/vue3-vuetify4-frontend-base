@@ -1,6 +1,13 @@
 import type { Result } from '@/api/types'
 import http, { setAccessToken } from '@/api/client'
-import { type LoginRequest, type LoginResponse, LoginResponseSchema } from '@/api/schemas/auth'
+import {
+  type ChangePasswordRequest,
+  type ForgotPasswordRequest,
+  type LoginRequest,
+  type LoginResponse,
+  LoginResponseSchema,
+  type ResetPasswordRequest,
+} from '@/api/schemas/auth'
 
 /**
  * User Login
@@ -26,4 +33,40 @@ export async function login(params: LoginRequest): Promise<LoginResponse> {
 export async function logout(): Promise<void> {
   await http.post('/api/auth/logout')
   setAccessToken(null)
+}
+
+/**
+ * Forgot Password
+ *
+ * POST /api/auth/forgot-password
+ * - Public endpoint (no auth, no CSRF)
+ * - Always returns success for security (prevents username enumeration)
+ */
+export async function forgotPassword(params: ForgotPasswordRequest): Promise<Result<void>> {
+  const { data } = await http.post<Result<void>>('/api/auth/forgot-password', params)
+  return data
+}
+
+/**
+ * Reset Password
+ *
+ * POST /api/auth/reset-password
+ * - Public endpoint (no auth, no CSRF)
+ * - Uses token from email link to set a new password
+ */
+export async function resetPassword(params: ResetPasswordRequest): Promise<Result<void>> {
+  const { data } = await http.post<Result<void>>('/api/auth/reset-password', params)
+  return data
+}
+
+/**
+ * Change Password (Authenticated)
+ *
+ * POST /api/auth/change-password
+ * - Requires authentication + CSRF
+ * - Verifies current password before updating
+ */
+export async function changePassword(params: ChangePasswordRequest): Promise<Result<void>> {
+  const { data } = await http.post<Result<void>>('/api/auth/change-password', params)
+  return data
 }

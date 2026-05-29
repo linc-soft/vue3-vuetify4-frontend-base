@@ -2,6 +2,7 @@ export default {
   app: {
     logout: 'Sign Out',
     language: 'Language',
+    changePassword: 'Change Password',
   },
   login: {
     title: 'Sign In',
@@ -10,6 +11,40 @@ export default {
     submit: 'Sign In',
     required: 'This field is required',
     failed: 'Login failed, please try again',
+    forgotPassword: 'Forgot Password?',
+  },
+  forgotPassword: {
+    title: 'Forgot Password',
+    usernameOrEmail: 'Username or Email',
+    submit: 'Send Reset Link',
+    backToLogin: 'Back to Sign In',
+    successMessage:
+      'If an account with that username or email exists, a password reset link has been sent to the associated email address.',
+    sendFailed: 'Failed to send reset link. Please try again.',
+  },
+  resetPassword: {
+    title: 'Reset Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    submit: 'Reset Password',
+    backToLogin: 'Back to Sign In',
+    successMessage: 'Password has been reset successfully. Redirecting to sign in page...',
+    tokenInvalidMessage: 'This reset link is invalid or has expired. Please request a new one.',
+    passwordMismatch: 'Passwords do not match',
+    required: 'This field is required',
+    minLength: 'Password must be at least 8 characters',
+  },
+  changePassword: {
+    title: 'Change Password',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    submit: 'Change Password',
+    cancel: 'Cancel',
+    successMessage: 'Password has been changed successfully.',
+    passwordMismatch: 'Passwords do not match',
+    required: 'This field is required',
+    minLength: 'Password must be at least 8 characters',
   },
   role: {
     title: 'Role Management',
@@ -68,6 +103,7 @@ export default {
     search: { username: 'Username', status: 'Status', search: 'Search', reset: 'Reset' },
     table: {
       username: 'Username',
+      email: 'Email',
       status: 'Status',
       updateBy: 'Updated By',
       updateAt: 'Updated At',
@@ -92,6 +128,7 @@ export default {
       editTitle: 'Edit User',
       username: 'Username',
       password: 'Password',
+      email: 'Email',
       status: 'Status',
       roles: 'Roles',
       rolesHint: 'Multi-select; permissions of selected roles will be granted to this user',
@@ -110,6 +147,7 @@ export default {
       usernameRequired: 'Please enter a username',
       passwordRequired: 'Please enter a password',
       statusRequired: 'Please select a status',
+      emailInvalid: 'Please enter a valid email address',
     },
     error: {
       loadFailed: 'Failed to load user data',

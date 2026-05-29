@@ -49,41 +49,65 @@
           <v-card-title class="text-center text-h5 pb-2">
             <v-icon
               class="mr-2"
-              icon="mdi-lock-outline"
+              icon="mdi-lock-reset"
               size="32"
             />
-            {{ t('login.title') }}
+            {{ t('resetPassword.title') }}
           </v-card-title>
 
           <v-card-text>
+            <v-alert
+              v-if="tokenInvalid"
+              class="mb-4"
+              density="compact"
+              type="error"
+              variant="tonal"
+            >
+              {{ t('resetPassword.tokenInvalidMessage') }}
+            </v-alert>
+
+            <v-alert
+              v-if="successMessage"
+              class="mb-4"
+              density="compact"
+              type="success"
+              variant="tonal"
+            >
+              {{ successMessage }}
+            </v-alert>
+
             <v-form
+              v-if="!tokenInvalid && !successMessage"
               ref="formRef"
               v-model="formValid"
-              @submit.prevent="handleLogin"
+              @submit.prevent="handleSubmit"
             >
               <v-text-field
-                v-model="form.username"
-                autocomplete="username"
-                class="mb-2"
-                :disabled="loading"
-                :label="t('login.username')"
-                prepend-inner-icon="mdi-account-outline"
-                :rules="[rules.required]"
-                variant="outlined"
-              />
-
-              <v-text-field
-                v-model="form.password"
+                v-model="form.newPassword"
                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="current-password"
+                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
-                :label="t('login.password')"
+                :label="t('resetPassword.newPassword')"
                 prepend-inner-icon="mdi-lock-outline"
-                :rules="[rules.required]"
+                :rules="[rules.required, rules.minLength]"
                 :type="showPassword ? 'text' : 'password'"
                 variant="outlined"
                 @click:append-inner="showPassword = !showPassword"
+              />
+
+              <v-text-field
+                v-model="form.confirmNewPassword"
+                :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                autocomplete="new-password"
+                class="mb-2"
+                :disabled="loading"
+                :label="t('resetPassword.confirmNewPassword')"
+                prepend-inner-icon="mdi-lock-outline"
+                :rules="[rules.required, rules.passwordMatch]"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                variant="outlined"
+                @click:append-inner="showConfirmPassword = !showConfirmPassword"
               />
 
               <v-alert
@@ -106,18 +130,18 @@
                 size="large"
                 type="submit"
               >
-                {{ t('login.submit') }}
+                {{ t('resetPassword.submit') }}
               </v-btn>
-
-              <div class="text-center mt-4">
-                <router-link
-                  class="text-body-2 text-decoration-none"
-                  :to="{ name: 'forgot-password' }"
-                >
-                  {{ t('login.forgotPassword') }}
-                </router-link>
-              </div>
             </v-form>
+
+            <div class="text-center mt-4">
+              <router-link
+                class="text-body-2 text-decoration-none"
+                :to="{ name: 'login' }"
+              >
+                {{ t('resetPassword.backToLogin') }}
+              </router-link>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -127,12 +151,11 @@
 
 <script lang="ts" setup>
 import type { VForm } from 'vuetify/components'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-
+import { resetPassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
-import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
 const {
@@ -143,24 +166,39 @@ const {
 } = useLocale()
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
 
 const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const formValid = ref(false)
 const loading = ref(false)
 const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+const tokenInvalid = ref(false)
+const successMessage = ref('')
 const errorMessage = ref('')
 
 const form = reactive({
-  username: '',
-  password: '',
+  newPassword: '',
+  confirmNewPassword: '',
+})
+
+let token = ''
+
+onMounted(() => {
+  const tokenParam = route.query.token
+  if (!tokenParam || typeof tokenParam !== 'string') {
+    tokenInvalid.value = true
+    return
+  }
+  token = tokenParam
 })
 
 const rules = {
-  required: (v: string) => !!v || t('login.required'),
+  required: (v: string) => !!v || t('resetPassword.required'),
+  minLength: (v: string) => (!v || v.length >= 8 ? true : t('resetPassword.minLength')),
+  passwordMatch: (v: string) => v === form.newPassword || t('resetPassword.passwordMismatch'),
 }
 
-async function handleLogin() {
+async function handleSubmit() {
   const { valid } = await formRef.value!.validate()
   if (!valid) return
 
@@ -168,11 +206,19 @@ async function handleLogin() {
   errorMessage.value = ''
 
   try {
-    await authStore.login({ username: form.username, password: form.password })
-    const redirect = (route.query.redirect as string) || '/'
-    router.push(redirect)
+    await resetPassword({ token, newPassword: form.newPassword })
+    successMessage.value = t('resetPassword.successMessage')
+    setTimeout(() => {
+      router.replace({ name: 'login' })
+    }, 3000)
   } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : t('login.failed')
+    const err = error as { code?: number }
+    if (err.code === 999_404 || err.code === 999_410) {
+      tokenInvalid.value = true
+    } else {
+      errorMessage.value =
+        error instanceof Error ? error.message : t('resetPassword.tokenInvalidMessage')
+    }
   } finally {
     loading.value = false
   }

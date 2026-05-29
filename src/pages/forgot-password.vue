@@ -49,42 +49,40 @@
           <v-card-title class="text-center text-h5 pb-2">
             <v-icon
               class="mr-2"
-              icon="mdi-lock-outline"
+              icon="mdi-key-variant"
               size="32"
             />
-            {{ t('login.title') }}
+            {{ t('forgotPassword.title') }}
           </v-card-title>
 
           <v-card-text>
             <v-form
               ref="formRef"
               v-model="formValid"
-              @submit.prevent="handleLogin"
+              @submit.prevent="handleSubmit"
             >
               <v-text-field
-                v-model="form.username"
+                v-model="form.usernameOrEmail"
                 autocomplete="username"
                 class="mb-2"
-                :disabled="loading"
-                :label="t('login.username')"
+                :disabled="loading || submitted"
+                :label="t('forgotPassword.usernameOrEmail')"
                 prepend-inner-icon="mdi-account-outline"
                 :rules="[rules.required]"
                 variant="outlined"
               />
 
-              <v-text-field
-                v-model="form.password"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="current-password"
-                class="mb-2"
-                :disabled="loading"
-                :label="t('login.password')"
-                prepend-inner-icon="mdi-lock-outline"
-                :rules="[rules.required]"
-                :type="showPassword ? 'text' : 'password'"
-                variant="outlined"
-                @click:append-inner="showPassword = !showPassword"
-              />
+              <v-alert
+                v-if="successMessage"
+                class="mb-4"
+                closable
+                density="compact"
+                type="success"
+                variant="tonal"
+                @click:close="successMessage = ''"
+              >
+                {{ successMessage }}
+              </v-alert>
 
               <v-alert
                 v-if="errorMessage"
@@ -99,6 +97,7 @@
               </v-alert>
 
               <v-btn
+                v-if="!submitted"
                 block
                 color="primary"
                 :disabled="!formValid"
@@ -106,18 +105,18 @@
                 size="large"
                 type="submit"
               >
-                {{ t('login.submit') }}
+                {{ t('forgotPassword.submit') }}
               </v-btn>
-
-              <div class="text-center mt-4">
-                <router-link
-                  class="text-body-2 text-decoration-none"
-                  :to="{ name: 'forgot-password' }"
-                >
-                  {{ t('login.forgotPassword') }}
-                </router-link>
-              </div>
             </v-form>
+
+            <div class="text-center mt-4">
+              <router-link
+                class="text-body-2 text-decoration-none"
+                :to="{ name: 'login' }"
+              >
+                {{ t('forgotPassword.backToLogin') }}
+              </router-link>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -129,10 +128,8 @@
 import type { VForm } from 'vuetify/components'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
-
+import { forgotPassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
-import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
 const {
@@ -141,38 +138,36 @@ const {
   labels: localeLabels,
   setLocale,
 } = useLocale()
-const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
 
 const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const formValid = ref(false)
 const loading = ref(false)
-const showPassword = ref(false)
+const submitted = ref(false)
+const successMessage = ref('')
 const errorMessage = ref('')
 
 const form = reactive({
-  username: '',
-  password: '',
+  usernameOrEmail: '',
 })
 
 const rules = {
   required: (v: string) => !!v || t('login.required'),
 }
 
-async function handleLogin() {
+async function handleSubmit() {
   const { valid } = await formRef.value!.validate()
   if (!valid) return
 
   loading.value = true
   errorMessage.value = ''
+  successMessage.value = ''
 
   try {
-    await authStore.login({ username: form.username, password: form.password })
-    const redirect = (route.query.redirect as string) || '/'
-    router.push(redirect)
+    await forgotPassword({ usernameOrEmail: form.usernameOrEmail })
+    successMessage.value = t('forgotPassword.successMessage')
+    submitted.value = true
   } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : t('login.failed')
+    errorMessage.value = error instanceof Error ? error.message : t('forgotPassword.sendFailed')
   } finally {
     loading.value = false
   }

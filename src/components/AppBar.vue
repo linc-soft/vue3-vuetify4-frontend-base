@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import ChangePasswordDialog from '@/components/ChangePasswordDialog.vue'
 import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
 
@@ -12,6 +14,8 @@ const authStore = useAuthStore()
 const router = useRouter()
 const { t } = useI18n()
 const { current: currentLocale, supported, labels, setLocale } = useLocale()
+
+const showChangePasswordDialog = ref(false)
 
 async function handleLogout() {
   try {
@@ -79,11 +83,18 @@ async function handleLogout() {
         min-width="160"
       >
         <v-list-item
+          prepend-icon="mdi-key-variant"
+          :title="$t('app.changePassword')"
+          @click="showChangePasswordDialog = true"
+        />
+        <v-list-item
           prepend-icon="mdi-logout"
           :title="$t('app.logout')"
           @click="handleLogout"
         />
       </v-list>
     </v-menu>
+
+    <ChangePasswordDialog v-model="showChangePasswordDialog" />
   </v-app-bar>
 </template>

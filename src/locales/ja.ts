@@ -2,6 +2,7 @@ export default {
   app: {
     logout: 'ログアウト',
     language: '言語',
+    changePassword: 'パスワード変更',
   },
   login: {
     title: 'ログイン',
@@ -10,6 +11,41 @@ export default {
     submit: 'ログイン',
     required: 'この項目は必須です',
     failed: 'ログインに失敗しました。もう一度お試しください',
+    forgotPassword: 'パスワードをお忘れですか？',
+  },
+  forgotPassword: {
+    title: 'パスワードをお忘れの方',
+    usernameOrEmail: 'ユーザー名またはメールアドレス',
+    submit: 'リセットリンクを送信',
+    backToLogin: 'ログインに戻る',
+    successMessage:
+      'そのユーザー名またはメールアドレスに対応するアカウントが存在する場合、パスワードリセットリンクが関連メールアドレスに送信されました。',
+    sendFailed: 'リセットリンクの送信に失敗しました。後でもう一度お試しください。',
+  },
+  resetPassword: {
+    title: 'パスワードをリセット',
+    newPassword: '新しいパスワード',
+    confirmNewPassword: '新しいパスワード（確認）',
+    submit: 'パスワードをリセット',
+    backToLogin: 'ログインに戻る',
+    successMessage: 'パスワードが正常にリセットされました。ログインページに移動します...',
+    tokenInvalidMessage:
+      'このリセットリンクは無効または期限切れです。新しいリンクをリクエストしてください。',
+    passwordMismatch: 'パスワードが一致しません',
+    required: 'この項目は必須です',
+    minLength: 'パスワードは8文字以上必要です',
+  },
+  changePassword: {
+    title: 'パスワード変更',
+    currentPassword: '現在のパスワード',
+    newPassword: '新しいパスワード',
+    confirmNewPassword: '新しいパスワード（確認）',
+    submit: 'パスワードを変更',
+    cancel: 'キャンセル',
+    successMessage: 'パスワードが正常に変更されました。',
+    passwordMismatch: 'パスワードが一致しません',
+    required: 'この項目は必須です',
+    minLength: 'パスワードは8文字以上必要です',
   },
   role: {
     title: 'ロール管理',
@@ -68,6 +104,7 @@ export default {
     search: { username: 'ユーザー名', status: 'ステータス', search: '検索', reset: 'リセット' },
     table: {
       username: 'ユーザー名',
+      email: 'メールアドレス',
       status: 'ステータス',
       updateBy: '更新者',
       updateAt: '更新日時',
@@ -92,6 +129,7 @@ export default {
       editTitle: 'ユーザー編集',
       username: 'ユーザー名',
       password: 'パスワード',
+      email: 'メールアドレス',
       status: 'ステータス',
       roles: 'ロール',
       rolesHint: '複数選択可。選択したロールの権限がこのユーザーに付与されます',
@@ -110,6 +148,7 @@ export default {
       usernameRequired: 'ユーザー名を入力してください',
       passwordRequired: 'パスワードを入力してください',
       statusRequired: 'ステータスを選択してください',
+      emailInvalid: '有効なメールアドレスを入力してください',
     },
     error: {
       loadFailed: 'ユーザーデータの読み込みに失敗しました',

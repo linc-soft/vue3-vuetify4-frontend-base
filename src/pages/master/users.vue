@@ -268,6 +268,7 @@ const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status
 // Table column definitions
 const allHeaders = computed(() => [
   { title: t('user.table.username'), key: 'username' },
+  { title: t('user.table.email'), key: 'email' },
   { title: t('user.table.status'), key: 'status' },
   { title: t('user.table.updateBy'), key: 'updateBy' },
   { title: t('user.table.updateAt'), key: 'updateAt' },

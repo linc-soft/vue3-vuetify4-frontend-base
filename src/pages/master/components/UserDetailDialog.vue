@@ -19,6 +19,9 @@
             <v-list-item :title="t('user.table.username')">
               <template #subtitle>{{ user.username }}</template>
             </v-list-item>
+            <v-list-item :title="t('user.table.email')">
+              <template #subtitle>{{ user.email || '-' }}</template>
+            </v-list-item>
             <v-list-item :title="t('user.table.status')">
               <template #subtitle>{{ statusLabelOf(user.status) }}</template>
             </v-list-item>
