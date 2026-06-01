@@ -49,7 +49,9 @@
             <v-card-text class="d-flex ga-6">
               <div>
                 <span class="text-medium-emphasis">{{ t('log.trace.totalDuration') }}:</span>
-                <span class="ml-2 font-weight-bold">{{ traceDetail.accessLog.duration }}ms</span>
+                <span class="ml-2 font-weight-bold">{{
+                  traceDetail.accessLog ? `${traceDetail.accessLog.duration}ms` : '-'
+                }}</span>
               </div>
               <div>
                 <span class="text-medium-emphasis">{{ t('log.trace.operationCount') }}:</span>
@@ -81,7 +83,10 @@
           icon="mdi-web"
           size="small"
         >
-          <v-card variant="outlined">
+          <v-card
+            v-if="traceDetail.accessLog"
+            variant="outlined"
+          >
             <v-card-title class="text-subtitle-1">
               {{ t('log.access.title') }}
             </v-card-title>
@@ -159,6 +164,15 @@
                 </div>
                 <JsonViewer :data="traceDetail.accessLog.responseBody" />
               </div>
+            </v-card-text>
+          </v-card>
+          <v-card
+            v-else
+            variant="outlined"
+          >
+            <v-card-text class="text-medium-emphasis">
+              <v-icon class="mr-2">mdi-alert-outline</v-icon>
+              {{ t('log.trace.noAccessLog') }}
             </v-card-text>
           </v-card>
         </v-timeline-item>

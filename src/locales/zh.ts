@@ -244,6 +244,7 @@ export default {
       totalDuration: '总耗时',
       operationCount: '操作数',
       errorCount: '错误数',
+      noAccessLog: '暂无访问日志记录',
     },
   },
 }

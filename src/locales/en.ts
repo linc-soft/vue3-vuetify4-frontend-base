@@ -249,6 +249,7 @@ export default {
       totalDuration: 'Total Duration',
       operationCount: 'Operations',
       errorCount: 'Errors',
+      noAccessLog: 'No access log recorded',
     },
   },
 }

@@ -6,7 +6,7 @@ import { OperationLogDetailSchema } from './operationLog'
 // ─── Response ───
 
 export const TraceDetailSchema = z.object({
-  accessLog: AccessLogDetailSchema,
+  accessLog: AccessLogDetailSchema.nullable(),
   errorLog: ErrorLogDetailSchema.nullable(),
   operationLogs: z.array(OperationLogDetailSchema),
 })

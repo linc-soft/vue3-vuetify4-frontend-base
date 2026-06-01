@@ -250,6 +250,7 @@ export default {
       totalDuration: '合計所要時間',
       operationCount: '操作数',
       errorCount: 'エラー数',
+      noAccessLog: 'アクセスログが記録されていません',
     },
   },
 }
