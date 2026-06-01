@@ -12,3 +12,24 @@
 .v-data-table-rows .v-data-table__tr--mobile > td.column-actions .v-data-table__td-title {
   display: none;
 }
+
+/**
+ * Hide browser-native password reveal toggle (Chrome/Edge/IE)
+ *
+ * These conflict with the custom append-inner-icon eye toggle used in
+ * login, reset-password, and change-password pages.
+ *
+ * Browser native reveals only appear when the field has content + focus,
+ * but our custom toggle is always visible, so we suppress the native one.
+ */
+
+/* Chromium (Chrome, Edge) */
+.v-text-field input[type='password']::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
+/* Legacy Edge / IE */
+.v-text-field input[type='password']::-ms-reveal,
+.v-text-field input[type='password']::-ms-clear {
+  display: none;
+}
