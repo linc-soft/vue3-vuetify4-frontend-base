@@ -47,6 +47,17 @@ export default {
     required: 'この項目は必須です',
     minLength: 'パスワードは8文字以上必要です',
   },
+  forceChangePassword: {
+    title: 'パスワード変更',
+    description: '続行するには新しいパスワードを設定する必要があります。',
+    newPassword: '新しいパスワード',
+    confirmPassword: '新しいパスワード（確認）',
+    submit: 'パスワードを変更',
+    required: 'この項目は必須です',
+    minLength: 'パスワードは8文字以上必要です',
+    passwordMismatch: 'パスワードが一致しません',
+    failed: 'パスワードの変更に失敗しました。もう一度お試しください。',
+  },
   role: {
     title: 'ロール管理',
     search: { roleName: 'ロール名', roleCode: 'ロールコード', search: '検索', reset: 'リセット' },
@@ -122,7 +133,7 @@ export default {
       title: 'ユーザー一覧レポート生成',
       downloading: 'レポート生成中...',
     },
-    status: { enabled: '有効', disabled: '無効' },
+    status: { enabled: '有効', disabled: '無効', inactive: '未激活' },
     detail: { title: 'ユーザー詳細', close: '閉じる', roles: 'ロール', noRoles: '未割り当て' },
     form: {
       createTitle: 'ユーザー作成',
@@ -149,6 +160,7 @@ export default {
       passwordRequired: 'パスワードを入力してください',
       statusRequired: 'ステータスを選択してください',
       emailInvalid: '有効なメールアドレスを入力してください',
+      emailRequired: 'メールアドレスは必須です',
     },
     error: {
       loadFailed: 'ユーザーデータの読み込みに失敗しました',

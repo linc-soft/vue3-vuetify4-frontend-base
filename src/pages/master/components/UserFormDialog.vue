@@ -28,17 +28,19 @@
             :rules="[rules.usernameRequired]"
           />
           <v-text-field
+            v-if="mode === 'edit'"
             v-model="form.password"
-            :hint="mode === 'edit' ? t('user.form.passwordHint') : undefined"
+            :hint="t('user.form.passwordHint')"
             :label="t('user.form.password')"
-            :persistent-hint="mode === 'edit'"
-            :rules="mode === 'create' ? [rules.passwordRequired] : []"
+            persistent-hint
             type="password"
           />
           <v-text-field
             v-model="form.email"
             :label="t('user.form.email')"
-            :rules="[rules.emailPattern]"
+            :rules="
+              mode === 'create' ? [rules.emailRequired, rules.emailPattern] : [rules.emailPattern]
+            "
             type="email"
           />
           <v-select
@@ -161,8 +163,8 @@ const roleOptions = computed(() =>
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
-  passwordRequired: (v: string) => !!v || t('user.validation.passwordRequired'),
   statusRequired: (v: string) => !!v || t('user.validation.statusRequired'),
+  emailRequired: (v: string) => !!v || t('user.validation.emailRequired'),
   emailPattern: (v: string) =>
     !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || t('user.validation.emailInvalid'),
 }
@@ -182,7 +184,7 @@ watch(
         form.username = ''
         form.password = ''
         form.email = ''
-        form.status = '1'
+        form.status = '2' // INACTIVE by default
         form.roleIds = []
         version.value = 0
         formRef.value?.resetValidation()
@@ -213,9 +215,7 @@ async function handleSubmit() {
     await (props.mode === 'create'
       ? createUser({
           username: form.username,
-          password: form.password,
-          email: form.email || undefined,
-          status: form.status,
+          email: form.email,
           roleIds: form.roleIds,
         })
       : updateUser({

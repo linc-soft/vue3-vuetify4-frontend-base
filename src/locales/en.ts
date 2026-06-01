@@ -46,6 +46,17 @@ export default {
     required: 'This field is required',
     minLength: 'Password must be at least 8 characters',
   },
+  forceChangePassword: {
+    title: 'Change Password',
+    description: 'You are required to set a new password before continuing.',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm New Password',
+    submit: 'Change Password',
+    required: 'This field is required',
+    minLength: 'Password must be at least 8 characters',
+    passwordMismatch: 'Passwords do not match',
+    failed: 'Failed to change password. Please try again.',
+  },
   role: {
     title: 'Role Management',
     search: { roleName: 'Role Name', roleCode: 'Role Code', search: 'Search', reset: 'Reset' },
@@ -121,7 +132,7 @@ export default {
       title: 'Generate User List Report',
       downloading: 'Generating report...',
     },
-    status: { enabled: 'Enabled', disabled: 'Disabled' },
+    status: { enabled: 'Enabled', disabled: 'Disabled', inactive: 'Inactive' },
     detail: { title: 'User Detail', close: 'Close', roles: 'Roles', noRoles: 'No roles assigned' },
     form: {
       createTitle: 'Create User',
@@ -148,6 +159,7 @@ export default {
       passwordRequired: 'Please enter a password',
       statusRequired: 'Please select a status',
       emailInvalid: 'Please enter a valid email address',
+      emailRequired: 'Email is required',
     },
     error: {
       loadFailed: 'Failed to load user data',

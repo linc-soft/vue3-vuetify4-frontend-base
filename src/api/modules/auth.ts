@@ -2,6 +2,7 @@ import type { Result } from '@/api/types'
 import http, { setAccessToken } from '@/api/client'
 import {
   type ChangePasswordRequest,
+  type ForceChangePasswordRequest,
   type ForgotPasswordRequest,
   type LoginRequest,
   type LoginResponse,
@@ -69,4 +70,22 @@ export async function resetPassword(params: ResetPasswordRequest): Promise<Resul
 export async function changePassword(params: ChangePasswordRequest): Promise<Result<void>> {
   const { data } = await http.post<Result<void>>('/api/auth/change-password', params)
   return data
+}
+
+/**
+ * Force Change Password (Authenticated, INACTIVE users only)
+ *
+ * POST /api/auth/force-change-password
+ * - Requires authentication + CSRF
+ * - For INACTIVE users who must change password on first login
+ * - After success, user status changes from INACTIVE to ENABLED
+ * - Returns a new access token with updated (ENABLED) status
+ */
+export async function forceChangePassword(
+  params: ForceChangePasswordRequest,
+): Promise<LoginResponse> {
+  const { data } = await http.post<Result<LoginResponse>>('/api/auth/force-change-password', params)
+  const parsed = LoginResponseSchema.parse(data.data)
+  setAccessToken(parsed.accessToken)
+  return parsed
 }

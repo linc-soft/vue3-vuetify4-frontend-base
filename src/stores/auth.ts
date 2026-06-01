@@ -10,12 +10,14 @@ export const useAuthStore = defineStore(
   () => {
     const username = ref<string | null>(null)
     const isAuthenticated = ref(false)
+    const requirePasswordChange = ref(false)
 
     async function login(params: LoginRequest) {
       const res = await apiLogin(params)
       if (res.accessToken) {
         username.value = params.username
         isAuthenticated.value = true
+        requirePasswordChange.value = res.requirePasswordChange ?? false
       }
       return res
     }
@@ -24,6 +26,7 @@ export const useAuthStore = defineStore(
       await apiLogout()
       username.value = null
       isAuthenticated.value = false
+      requirePasswordChange.value = false
       clearSelectOptionsCache()
     }
 
@@ -31,7 +34,7 @@ export const useAuthStore = defineStore(
       isAuthenticated.value = !!getAccessToken()
     }
 
-    return { username, isAuthenticated, login, logout, checkAuth }
+    return { username, isAuthenticated, requirePasswordChange, login, logout, checkAuth }
   },
   { persist: true },
 )

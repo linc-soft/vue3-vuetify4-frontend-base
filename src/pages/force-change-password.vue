@@ -3,7 +3,7 @@
     class="fill-height position-relative"
     fluid
   >
-    <div class="login-locale-switcher">
+    <div class="force-change-password-locale-switcher">
       <v-menu offset="8">
         <template #activator="{ props }">
           <v-btn
@@ -49,41 +49,49 @@
           <v-card-title class="text-center text-h5 pb-2">
             <v-icon
               class="mr-2"
-              icon="mdi-lock-outline"
+              icon="mdi-lock-reset"
               size="32"
             />
-            {{ t('login.title') }}
+            {{ t('forceChangePassword.title') }}
           </v-card-title>
 
           <v-card-text>
+            <v-alert
+              class="mb-4"
+              density="compact"
+              type="warning"
+              variant="tonal"
+            >
+              {{ t('forceChangePassword.description') }}
+            </v-alert>
+
             <v-form
               ref="formRef"
               v-model="formValid"
-              @submit.prevent="handleLogin"
+              @submit.prevent="handleSubmit"
             >
               <v-text-field
-                v-model="form.username"
-                autocomplete="username"
+                v-model="form.newPassword"
+                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
-                :label="t('login.username')"
-                prepend-inner-icon="mdi-account-outline"
-                :rules="[rules.required]"
+                :label="t('forceChangePassword.newPassword')"
+                prepend-inner-icon="mdi-lock-outline"
+                :rules="[rules.required, rules.minLength]"
+                type="password"
                 variant="outlined"
               />
 
               <v-text-field
-                v-model="form.password"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="current-password"
+                v-model="form.confirmPassword"
+                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
-                :label="t('login.password')"
-                prepend-inner-icon="mdi-lock-outline"
-                :rules="[rules.required]"
-                :type="showPassword ? 'text' : 'password'"
+                :label="t('forceChangePassword.confirmPassword')"
+                prepend-inner-icon="mdi-lock-check-outline"
+                :rules="[rules.required, rules.minLength, rules.passwordMatch]"
+                type="password"
                 variant="outlined"
-                @click:append-inner="showPassword = !showPassword"
               />
 
               <v-alert
@@ -106,17 +114,8 @@
                 size="large"
                 type="submit"
               >
-                {{ t('login.submit') }}
+                {{ t('forceChangePassword.submit') }}
               </v-btn>
-
-              <div class="text-center mt-4">
-                <router-link
-                  class="text-body-2 text-decoration-none"
-                  :to="{ name: 'forgot-password' }"
-                >
-                  {{ t('login.forgotPassword') }}
-                </router-link>
-              </div>
             </v-form>
           </v-card-text>
         </v-card>
@@ -129,38 +128,40 @@
 import type { VForm } from 'vuetify/components'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
+import { ApiError } from '@/api/client'
+import { forceChangePassword as apiForceChangePassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
+const router = useRouter()
 const {
   current: currentLocale,
   supported: supportedLocales,
   labels: localeLabels,
   setLocale,
 } = useLocale()
-const route = useRoute()
-const router = useRouter()
 const authStore = useAuthStore()
 
 const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const formValid = ref(false)
 const loading = ref(false)
-const showPassword = ref(false)
 const errorMessage = ref('')
 
 const form = reactive({
-  username: '',
-  password: '',
+  newPassword: '',
+  confirmPassword: '',
 })
 
 const rules = {
-  required: (v: string) => !!v || t('login.required'),
+  required: (v: string) => !!v || t('forceChangePassword.required'),
+  minLength: (v: string) => v.length >= 8 || t('forceChangePassword.minLength'),
+  passwordMatch: (v: string) => v === form.newPassword || t('forceChangePassword.passwordMismatch'),
 }
 
-async function handleLogin() {
+async function handleSubmit() {
   const { valid } = await formRef.value!.validate()
   if (!valid) return
 
@@ -168,15 +169,11 @@ async function handleLogin() {
   errorMessage.value = ''
 
   try {
-    const res = await authStore.login({ username: form.username, password: form.password })
-    if (res.requirePasswordChange) {
-      router.push({ name: 'force-change-password' })
-    } else {
-      const redirect = (route.query.redirect as string) || '/'
-      router.push(redirect)
-    }
+    await apiForceChangePassword({ newPassword: form.newPassword })
+    authStore.requirePasswordChange = false
+    await router.push({ name: 'home' })
   } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : t('login.failed')
+    errorMessage.value = error instanceof ApiError ? error.message : t('forceChangePassword.failed')
   } finally {
     loading.value = false
   }
@@ -184,7 +181,7 @@ async function handleLogin() {
 </script>
 
 <style scoped>
-.login-locale-switcher {
+.force-change-password-locale-switcher {
   position: absolute;
   top: 12px;
   right: 16px;

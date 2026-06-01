@@ -33,6 +33,13 @@ export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequestSchema>
 
 export const LoginResponseSchema = z.object({
   accessToken: z.string(),
+  requirePasswordChange: z.boolean().optional().default(false),
 })
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>
+
+export const ForceChangePasswordRequestSchema = z.object({
+  newPassword: z.string().min(8),
+})
+
+export type ForceChangePasswordRequest = z.infer<typeof ForceChangePasswordRequestSchema>

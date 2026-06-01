@@ -94,6 +94,12 @@ http.interceptors.response.use(
       handleUnauthorized()
     }
 
+    // Handle force password change requirement (INACTIVE user status)
+    const errResult = error.response?.data
+    if (errResult?.code === 999_422) {
+      handleForcePasswordChange()
+    }
+
     // Handle blob error responses — read the blob as text to extract the error message.
     if (error.response?.data instanceof Blob) {
       try {
@@ -187,6 +193,21 @@ function handleUnauthorized() {
   const currentPath = window.location.pathname + window.location.search
   const redirect = currentPath && currentPath !== '/' && currentPath !== '/login' ? currentPath : ''
   window.location.href = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'
+}
+
+function handleForcePasswordChange() {
+  // Mark that the user must change their password and redirect to the force-change-password page
+  try {
+    const authData = localStorage.getItem('auth')
+    if (authData) {
+      const parsed = JSON.parse(authData)
+      parsed.requirePasswordChange = true
+      localStorage.setItem('auth', JSON.stringify(parsed))
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  window.location.href = '/force-change-password'
 }
 
 export default http

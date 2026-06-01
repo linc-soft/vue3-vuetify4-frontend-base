@@ -31,6 +31,11 @@ const router = createRouter({
       meta: { guest: true },
     },
     {
+      path: '/force-change-password',
+      name: 'force-change-password',
+      component: () => import('@/pages/force-change-password.vue'),
+    },
+    {
       path: '/',
       component: resolveLayout(),
       children: [
@@ -60,6 +65,7 @@ const router = createRouter({
 })
 
 // Navigation guard: Redirect to the login page when not logged in.
+// Force password change redirect for INACTIVE users.
 router.beforeEach(async to => {
   const { useAuthStore } = await import('@/stores/auth')
   const authStore = useAuthStore()
@@ -70,6 +76,15 @@ router.beforeEach(async to => {
 
   if (to.meta.guest && authStore.isAuthenticated) {
     return { name: 'home' }
+  }
+
+  // INACTIVE users must change password before accessing other pages
+  if (
+    authStore.requirePasswordChange &&
+    to.name !== 'force-change-password' &&
+    to.name !== 'logout'
+  ) {
+    return { name: 'force-change-password' }
   }
 })
 
