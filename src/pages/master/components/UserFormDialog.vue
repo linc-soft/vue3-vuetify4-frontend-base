@@ -44,6 +44,7 @@
             type="email"
           />
           <v-select
+            v-if="mode === 'edit'"
             v-model="form.status"
             :items="statusOptions"
             :label="t('user.form.status')"
