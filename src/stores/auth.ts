@@ -1,7 +1,7 @@
 import type { LoginRequest } from '@/api/schemas/auth'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getAccessToken } from '@/api/client'
+import { getAccessToken, setAccessToken, tryRefreshToken } from '@/api/client'
 import { login as apiLogin, logout as apiLogout } from '@/api/modules/auth'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
@@ -23,7 +23,12 @@ export const useAuthStore = defineStore(
     }
 
     async function logout() {
-      await apiLogout()
+      try {
+        await apiLogout()
+      } catch {
+        // Ignore API errors — clear local state regardless
+      }
+      setAccessToken(null)
       username.value = null
       isAuthenticated.value = false
       requirePasswordChange.value = false
@@ -34,7 +39,39 @@ export const useAuthStore = defineStore(
       isAuthenticated.value = !!getAccessToken()
     }
 
-    return { username, isAuthenticated, requirePasswordChange, login, logout, checkAuth }
+    async function validateAuth() {
+      if (getAccessToken()) {
+        isAuthenticated.value = true
+        return
+      }
+
+      if (!isAuthenticated.value) {
+        return
+      }
+
+      const refreshed = await tryRefreshToken()
+      if (refreshed) {
+        if (requirePasswordChange.value) {
+          await logout()
+        } else {
+          isAuthenticated.value = true
+        }
+      } else {
+        isAuthenticated.value = false
+        requirePasswordChange.value = false
+        username.value = null
+      }
+    }
+
+    return {
+      username,
+      isAuthenticated,
+      requirePasswordChange,
+      login,
+      logout,
+      checkAuth,
+      validateAuth,
+    }
   },
   { persist: true },
 )

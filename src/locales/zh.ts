@@ -51,6 +51,7 @@ export default {
     newPassword: '新密码',
     confirmPassword: '确认新密码',
     submit: '修改密码',
+    logout: '退出登录',
     required: '此项为必填',
     minLength: '密码至少需要 8 位字符',
     passwordMismatch: '两次输入的密码不一致',

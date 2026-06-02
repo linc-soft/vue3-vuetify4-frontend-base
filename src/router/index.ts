@@ -70,6 +70,12 @@ router.beforeEach(async to => {
   const { useAuthStore } = await import('@/stores/auth')
   const authStore = useAuthStore()
 
+  // Synchronize in-memory token state with the persisted auth store before
+  // evaluating guards. This prevents bypassing login after browser restart
+  // when the access token is lost but isAuthenticated still appears true
+  // from localStorage.
+  await authStore.validateAuth()
+
   if (!to.meta.guest && !authStore.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }

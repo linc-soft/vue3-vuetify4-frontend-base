@@ -118,6 +118,16 @@
               </v-btn>
             </v-form>
           </v-card-text>
+          <v-card-actions class="pa-4 pt-0">
+            <v-spacer />
+            <v-btn
+              :disabled="loading"
+              variant="text"
+              @click="handleLogout"
+            >
+              {{ t('forceChangePassword.logout') }}
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -177,6 +187,11 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
+}
+
+async function handleLogout() {
+  await authStore.logout()
+  await router.push({ name: 'login' })
 }
 </script>
 

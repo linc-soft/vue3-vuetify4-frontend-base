@@ -53,6 +53,7 @@ export default {
     newPassword: '新しいパスワード',
     confirmPassword: '新しいパスワード（確認）',
     submit: 'パスワードを変更',
+    logout: 'ログアウト',
     required: 'この項目は必須です',
     minLength: 'パスワードは8文字以上必要です',
     passwordMismatch: 'パスワードが一致しません',

@@ -52,6 +52,7 @@ export default {
     newPassword: 'New Password',
     confirmPassword: 'Confirm New Password',
     submit: 'Change Password',
+    logout: 'Sign Out',
     required: 'This field is required',
     minLength: 'Password must be at least 8 characters',
     passwordMismatch: 'Passwords do not match',

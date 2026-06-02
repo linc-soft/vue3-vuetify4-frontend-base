@@ -147,7 +147,7 @@ export class ApiError extends Error {
 
 let refreshPromise: Promise<boolean> | null = null
 
-async function tryRefreshToken(): Promise<boolean> {
+export async function tryRefreshToken(): Promise<boolean> {
   // Prevent concurrent refresh
   if (refreshPromise) return refreshPromise
 
