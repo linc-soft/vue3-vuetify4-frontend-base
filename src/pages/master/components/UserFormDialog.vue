@@ -113,8 +113,8 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createUser, getUser, updateUser } from '@/api/modules/user'
-import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
+import { useUserStatus } from '@/composables/useUserStatus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -149,7 +149,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
 
-const { options: statusOptions } = useEnums('user-status')
+const { options: statusOptions } = useUserStatus()
 const { items: roleItems, descriptionOf: roleDescriptionOf } = useSelectOptions('role')
 
 // Map role items to options with composite role label for empty description

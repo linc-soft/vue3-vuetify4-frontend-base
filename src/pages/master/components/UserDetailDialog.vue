@@ -142,7 +142,7 @@ import { useDisplay } from 'vuetify'
 
 import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
-import { useEnums } from '@/composables/useEnums'
+import { useUserStatus } from '@/composables/useUserStatus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -156,7 +156,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: statusLabelOf } = useEnums('user-status')
+const { labelOf: statusLabelOf } = useUserStatus()
 
 const user = ref<UserInfoResponse | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])

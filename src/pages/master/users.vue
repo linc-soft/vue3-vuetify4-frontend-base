@@ -224,7 +224,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
-import { useEnums } from '@/composables/useEnums'
+import { useUserStatus } from '@/composables/useUserStatus'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
@@ -262,8 +262,8 @@ const reportGroupByOptions = computed(() => [
   { title: t('user.report.groupByBaseRole'), value: 'baseRole' },
 ])
 
-// Status options (from backend enums)
-const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
+// Status options (client-side i18n mapping)
+const { options: statusOptions, labelOf: statusLabelOf } = useUserStatus()
 
 // Table column definitions
 const allHeaders = computed(() => [
