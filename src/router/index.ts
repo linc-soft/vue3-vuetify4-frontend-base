@@ -42,6 +42,33 @@ const router = createRouter({
         { path: '', name: 'home', component: Index },
         { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
         { path: 'roles', name: 'roles', component: () => import('@/pages/master/roles.vue') },
+        {
+          path: 'employees',
+          name: 'employees',
+          component: () => import('@/pages/employee/index.vue'),
+        },
+        // Leave
+        {
+          path: 'leaves/apply',
+          name: 'leave-apply',
+          component: () => import('@/pages/leave/Apply.vue'),
+        },
+        {
+          path: 'leaves/list',
+          name: 'leave-list',
+          component: () => import('@/pages/leave/List.vue'),
+        },
+        {
+          path: 'leaves/approval',
+          name: 'leave-approval',
+          component: () => import('@/pages/leave/Approval.vue'),
+        },
+        // Regulations
+        {
+          path: 'regulations',
+          name: 'regulations',
+          component: () => import('@/pages/regulations/index.vue'),
+        },
         // Logs
         { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
         {
