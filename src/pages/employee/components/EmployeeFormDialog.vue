@@ -239,7 +239,7 @@ watch(
         form.email = employee.email ?? ''
         form.nickname = employee.nickname ?? ''
         form.mobile = employee.mobile ?? ''
-        form.sex = employee.sex === 1 ? 'MALE' : employee.sex === 0 ? 'FEMALE' : ''
+        form.sex = employee.sex === 0 ? 'MALE' : employee.sex === 1 ? 'FEMALE' : ''
         form.hiredDate = employee.hiredDate ?? ''
         form.status = employee.status
         form.roleIds = [...(employee.roleIds ?? [])]

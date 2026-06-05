@@ -193,8 +193,8 @@ const assignedRoles = computed<RoleListResponseItem[]>(() => {
 })
 
 function sexLabelOf(sex: number | null) {
-  if (sex === 1) return t('employee.sex.male')
-  if (sex === 0) return t('employee.sex.female')
+  if (sex === 0) return t('employee.sex.male')
+  if (sex === 1) return t('employee.sex.female')
   return '-'
 }
 
