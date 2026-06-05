@@ -2,12 +2,13 @@ import type { Page, Result } from '@/api/types'
 import { z } from 'zod/v4'
 import http from '@/api/client'
 import {
+  type EmployeeCreateRequest,
   type EmployeeListResponse,
   EmployeeListResponseSchema,
   type EmployeePageRequest,
   type EmployeeResponse,
   EmployeeResponseSchema,
-  type SaveEmployeeRequest,
+  type EmployeeUpdateRequest,
 } from '@/api/schemas/employee'
 
 /** GET /api/employees/{id} — Get employee by ID */
@@ -36,13 +37,13 @@ export async function getEmployeePage(
 }
 
 /** POST /api/employees — Create employee */
-export async function createEmployee(params: SaveEmployeeRequest): Promise<number> {
+export async function createEmployee(params: EmployeeCreateRequest): Promise<number> {
   const { data } = await http.post<Result<number>>('/api/employees', params)
   return data.data
 }
 
 /** PUT /api/employees — Update employee */
-export async function updateEmployee(params: SaveEmployeeRequest): Promise<void> {
+export async function updateEmployee(params: EmployeeUpdateRequest): Promise<void> {
   await http.put('/api/employees', params)
 }
 

@@ -23,7 +23,6 @@ export type UserPageRequest = z.infer<typeof UserPageRequestSchema>
 export const UserCreateRequestSchema = z.object({
   username: z.string().min(1),
   email: z.string().email(),
-  status: z.string().min(1).optional(),
   roleIds: z.array(z.number()).optional(),
 })
 

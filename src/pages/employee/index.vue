@@ -99,6 +99,46 @@
         />
       </template>
     </v-data-table-server>
+
+    <EmployeeFormDialog
+      v-model="formDialog"
+      :employee-id="selectedEmployeeId"
+      :mode="formMode"
+      @saved="fetchEmployees"
+    />
+    <EmployeeDetailDialog
+      v-model="detailDialog"
+      :employee-id="selectedEmployeeId"
+      @deleted="fetchEmployees"
+    />
+
+    <v-dialog
+      v-model="deleteConfirmDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title>{{ t('employee.delete.title') }}</v-card-title>
+        <v-card-text>{{ t('employee.delete.message') }}</v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="deleteLoading"
+            variant="text"
+            @click="deleteConfirmDialog = false"
+          >
+            {{ t('employee.delete.cancel') }}
+          </v-btn>
+          <v-btn
+            color="error"
+            :loading="deleteLoading"
+            variant="elevated"
+            @click="confirmDelete"
+          >
+            {{ t('employee.delete.confirm') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -109,6 +149,8 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 import { deleteEmployee, getEmployeePage } from '@/api/modules/employee'
 import { useUserStatus } from '@/composables/useUserStatus'
+import EmployeeDetailDialog from './components/EmployeeDetailDialog.vue'
+import EmployeeFormDialog from './components/EmployeeFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
@@ -124,6 +166,14 @@ const filters = reactive({
   keyword: '',
   status: '1' as string | undefined,
 })
+
+const detailDialog = ref(false)
+const formDialog = ref(false)
+const formMode = ref<'create' | 'edit'>('create')
+const selectedEmployeeId = ref<number | null>(null)
+const deleteConfirmDialog = ref(false)
+const deleteLoading = ref(false)
+const deleteTarget = ref<EmployeeListResponse | null>(null)
 
 const headers = computed(() => [
   { title: t('employee.table.username'), key: 'username' },
@@ -159,14 +209,34 @@ function resetFilters() {
 }
 
 function openDetail(id: number) {
-  // TODO: navigate to detail
+  selectedEmployeeId.value = id
+  detailDialog.value = true
 }
 
 function openForm(mode: 'create' | 'edit', id?: number) {
-  // TODO: navigate to form
+  formMode.value = mode
+  selectedEmployeeId.value = id ?? null
+  formDialog.value = true
 }
 
-async function handleDelete(item: EmployeeListResponse) {
-  // TODO: confirm and delete
+function handleDelete(item: EmployeeListResponse) {
+  deleteTarget.value = item
+  deleteConfirmDialog.value = true
 }
+
+async function confirmDelete() {
+  if (!deleteTarget.value) return
+  deleteLoading.value = true
+  try {
+    await deleteEmployee(deleteTarget.value.id)
+    deleteConfirmDialog.value = false
+    fetchEmployees()
+  } catch {
+    // error handled by API interceptor
+  } finally {
+    deleteLoading.value = false
+  }
+}
+
+onMounted(fetchEmployees)
 </script>

@@ -6,16 +6,28 @@ export const SexTypeSchema = z.enum(['MALE', 'FEMALE'])
 
 // ─── Request ───
 
-export const SaveEmployeeRequestSchema = z.object({
-  username: z.string().min(4, 'Username must be at least 4 characters').optional(),
-  password: z.string().min(8).max(128).optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  status: z.string().optional(),
-  roleIds: z.array(z.number()).optional(),
+export const EmployeeCreateRequestSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  email: z.string().email('Email must be a valid email address'),
   nickname: z.string().min(1, 'Nickname is required'),
   mobile: z.string().optional(),
   sex: SexTypeSchema.optional(),
   hiredDate: z.string().optional(),
+  roleIds: z.array(z.number()).optional(),
+  remark: z.string().optional(),
+})
+
+export const EmployeeUpdateRequestSchema = z.object({
+  id: z.number(),
+  version: z.number(),
+  email: z.string().email().optional(),
+  password: z.string().min(8).max(128).optional(),
+  status: z.string().optional(),
+  nickname: z.string().optional(),
+  mobile: z.string().optional(),
+  sex: SexTypeSchema.optional(),
+  hiredDate: z.string().optional(),
+  roleIds: z.array(z.number()).optional(),
   remark: z.string().optional(),
 })
 
@@ -66,7 +78,8 @@ export const EmployeeListResponseSchema = z.object({
 
 // ─── Types ───
 
-export type SaveEmployeeRequest = z.infer<typeof SaveEmployeeRequestSchema>
+export type EmployeeCreateRequest = z.infer<typeof EmployeeCreateRequestSchema>
+export type EmployeeUpdateRequest = z.infer<typeof EmployeeUpdateRequestSchema>
 export type EmployeePageRequest = z.infer<typeof EmployeePageRequestSchema>
 export type EmployeeResponse = z.infer<typeof EmployeeResponseSchema>
 export type EmployeeListResponse = z.infer<typeof EmployeeListResponseSchema>
