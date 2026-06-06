@@ -37,8 +37,8 @@ export async function getEmployeePage(
 }
 
 /** POST /api/employees — Create employee */
-export async function createEmployee(params: EmployeeCreateRequest): Promise<number> {
-  const { data } = await http.post<Result<number>>('/api/employees', params)
+export async function createEmployee(params: EmployeeCreateRequest): Promise<string> {
+  const { data } = await http.post<Result<string>>('/api/employees', params)
   return data.data
 }
 

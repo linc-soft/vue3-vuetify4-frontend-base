@@ -355,6 +355,7 @@ export default {
       sex: '性别',
       hiredDate: '入职日期',
       status: '状态',
+      remainAnnualDays: '剩余年假',
       actions: '操作',
     },
     actions: {
@@ -391,6 +392,13 @@ export default {
       close: '关闭',
       roles: '角色',
       noRoles: '未分配角色',
+      annualLeave: '年假信息',
+      totalAnnualDays: '年假总额',
+      usedAnnualDays: '已用天数',
+      remainAnnualDays: '剩余天数',
+      otherLeaveDays: '其他假期',
+      notInitialized: '未初始化',
+      days: '天',
     },
     delete: {
       title: '确认删除',

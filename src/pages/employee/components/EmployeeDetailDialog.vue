@@ -74,6 +74,66 @@
             >
               <template #subtitle>{{ employee.remark }}</template>
             </v-list-item>
+            <v-divider class="my-3" />
+            <v-list-subheader>{{ t('employee.detail.annualLeave') }}</v-list-subheader>
+            <v-alert
+              v-if="!hasAnnualLeave"
+              class="mb-3"
+              density="compact"
+              type="info"
+              variant="tonal"
+            >
+              {{ t('employee.detail.notInitialized') }}
+            </v-alert>
+            <div
+              v-else
+              class="d-flex flex-wrap ga-6 px-3 pb-3"
+            >
+              <div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('employee.detail.totalAnnualDays') }}
+                </div>
+                <div class="text-h6">
+                  {{ employee.totalAnnualDays }}
+                  <span class="text-caption text-medium-emphasis">
+                    {{ t('employee.detail.days') }}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('employee.detail.usedAnnualDays') }}
+                </div>
+                <div class="text-h6">
+                  {{ employee.usedAnnualDays }}
+                  <span class="text-caption text-medium-emphasis">
+                    {{ t('employee.detail.days') }}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('employee.detail.remainAnnualDays') }}
+                </div>
+                <div class="text-h6">
+                  {{ employee.remainAnnualDays }}
+                  <span class="text-caption text-medium-emphasis">
+                    {{ t('employee.detail.days') }}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('employee.detail.otherLeaveDays') }}
+                </div>
+                <div class="text-h6">
+                  {{ employee.otherLeaveDays }}
+                  <span class="text-caption text-medium-emphasis">
+                    {{ t('employee.detail.days') }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </v-list>
         </template>
         <v-alert
@@ -191,6 +251,10 @@ const assignedRoles = computed<RoleListResponseItem[]>(() => {
   const ids = employee.value?.roleIds ?? []
   return ids.map(id => roleMap.value.get(id)).filter((r): r is RoleListResponseItem => r != null)
 })
+
+const hasAnnualLeave = computed(
+  () => employee.value?.totalAnnualDays != null && employee.value?.remainAnnualDays != null,
+)
 
 function sexLabelOf(sex: number | null) {
   if (sex === 0) return t('employee.sex.male')

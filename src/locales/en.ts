@@ -360,6 +360,7 @@ export default {
       sex: 'Gender',
       hiredDate: 'Hire Date',
       status: 'Status',
+      remainAnnualDays: 'Remaining Annual Leave',
       actions: 'Actions',
     },
     actions: {
@@ -396,6 +397,13 @@ export default {
       close: 'Close',
       roles: 'Roles',
       noRoles: 'No roles assigned',
+      annualLeave: 'Annual Leave',
+      totalAnnualDays: 'Total Days',
+      usedAnnualDays: 'Used Days',
+      remainAnnualDays: 'Remaining Days',
+      otherLeaveDays: 'Other Leave Days',
+      notInitialized: 'Not initialized',
+      days: 'days',
     },
     delete: {
       title: 'Confirm Delete',

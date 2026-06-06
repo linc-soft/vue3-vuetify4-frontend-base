@@ -74,6 +74,22 @@
       <template #item.status="{ value }">
         {{ statusLabelOf(value) }}
       </template>
+      <template #item.remainAnnualDays="{ value }">
+        <v-chip
+          v-if="value != null"
+          :color="remainAnnualColor(value)"
+          size="small"
+          variant="tonal"
+        >
+          {{ value }} {{ t('employee.detail.days') }}
+        </v-chip>
+        <span
+          v-else
+          class="text-medium-emphasis"
+        >
+          -
+        </span>
+      </template>
       <template #item.actions="{ item }">
         <v-btn
           density="compact"
@@ -181,8 +197,16 @@ const headers = computed(() => [
   { title: t('employee.table.sex'), key: 'sex' },
   { title: t('employee.table.hiredDate'), key: 'hiredDate' },
   { title: t('employee.table.status'), key: 'status' },
+  { title: t('employee.table.remainAnnualDays'), key: 'remainAnnualDays' },
   { title: t('employee.table.actions'), key: 'actions', sortable: false },
 ])
+
+function remainAnnualColor(days: number | null): string {
+  if (days == null) return 'grey'
+  if (days <= 0) return 'error'
+  if (days <= 3) return 'warning'
+  return 'success'
+}
 
 async function fetchEmployees() {
   loading.value = true

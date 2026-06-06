@@ -361,6 +361,7 @@ export default {
       sex: '性別',
       hiredDate: '入社日',
       status: 'ステータス',
+      remainAnnualDays: '残年次休暇',
       actions: '操作',
     },
     actions: {
@@ -397,6 +398,13 @@ export default {
       close: '閉じる',
       roles: 'ロール',
       noRoles: '未割り当て',
+      annualLeave: '年次休暇情報',
+      totalAnnualDays: '休暇総日数',
+      usedAnnualDays: '使用日数',
+      remainAnnualDays: '残日数',
+      otherLeaveDays: 'その他の休暇',
+      notInitialized: '未初期化',
+      days: '日',
     },
     delete: {
       title: '削除確認',
