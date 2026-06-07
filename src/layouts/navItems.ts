@@ -19,6 +19,14 @@ export const navItems: NavItem[] = [
     ],
   },
   {
+    title: 'Leave',
+    icon: 'mdi-calendar-account-outline',
+    children: [
+      { title: 'My Leaves', icon: 'mdi-calendar-edit-outline', to: '/leaves' },
+      { title: 'Approval Tasks', icon: 'mdi-gavel', to: '/leave-tasks' },
+    ],
+  },
+  {
     title: 'Logs',
     icon: 'mdi-file-document-outline',
     children: [
