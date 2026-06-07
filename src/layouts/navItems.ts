@@ -10,6 +10,15 @@ export const navItems: NavItem[] = [
   { title: 'Users', icon: 'mdi-account-group', to: '/users' },
   { title: 'Roles', icon: 'mdi-shield-account-outline', to: '/roles' },
   {
+    title: 'Organization',
+    icon: 'mdi-sitemap-outline',
+    children: [
+      { title: 'Departments', icon: 'mdi-office-building-outline', to: '/departments' },
+      { title: 'Positions', icon: 'mdi-badge-account-horizontal-outline', to: '/positions' },
+      { title: 'Employees', icon: 'mdi-account-tie-outline', to: '/employees' },
+    ],
+  },
+  {
     title: 'Logs',
     icon: 'mdi-file-document-outline',
     children: [

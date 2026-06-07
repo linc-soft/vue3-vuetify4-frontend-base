@@ -42,6 +42,22 @@ const router = createRouter({
         { path: '', name: 'home', component: Index },
         { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
         { path: 'roles', name: 'roles', component: () => import('@/pages/master/roles.vue') },
+        // OA — Organization
+        {
+          path: 'departments',
+          name: 'departments',
+          component: () => import('@/pages/oa/departments.vue'),
+        },
+        {
+          path: 'positions',
+          name: 'positions',
+          component: () => import('@/pages/oa/positions.vue'),
+        },
+        {
+          path: 'employees',
+          name: 'employees',
+          component: () => import('@/pages/oa/employees.vue'),
+        },
         // Logs
         { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
         {
