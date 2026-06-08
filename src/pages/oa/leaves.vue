@@ -189,15 +189,15 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getLeavePage, withdrawLeave } from '@/api/modules/leave'
-import { useEnums } from '@/composables/useEnums'
 import { useLeaveStatus } from '@/composables/useLeaveStatus'
+import { useLeaveType } from '@/composables/useLeaveType'
 import AnnualBalanceCard from './components/AnnualBalanceCard.vue'
 import LeaveDetailDialog from './components/LeaveDetailDialog.vue'
 import LeaveSubmitDialog from './components/LeaveSubmitDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: leaveTypeOptions, labelOf: leaveTypeLabelOf } = useEnums('leave-type')
+const { options: leaveTypeOptions, labelOf: leaveTypeLabelOf } = useLeaveType()
 const { options: statusOptions, labelOf: statusLabelOf, colorOf: statusColorOf } = useLeaveStatus()
 
 const filters = reactive<{ leaveType: string; status: string }>({ leaveType: '', status: '' })

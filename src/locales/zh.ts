@@ -422,6 +422,14 @@ export default {
       rejected: '已驳回',
       withdrawn: '已撤回',
     },
+    type: {
+      annual: '年假',
+      sick: '病假',
+      personal: '事假',
+      marriage: '婚假',
+      maternity: '产假',
+      other: '其他',
+    },
     balance: {
       title: '年假余额',
       daysAvailable: '天可用',

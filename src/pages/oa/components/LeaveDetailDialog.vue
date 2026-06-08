@@ -80,8 +80,8 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getLeave } from '@/api/modules/leave'
-import { useEnums } from '@/composables/useEnums'
 import { useLeaveStatus } from '@/composables/useLeaveStatus'
+import { useLeaveType } from '@/composables/useLeaveType'
 
 const props = defineProps<{
   modelValue: boolean
@@ -94,7 +94,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: leaveTypeLabelOf } = useEnums('leave-type')
+const { labelOf: leaveTypeLabelOf } = useLeaveType()
 const { labelOf: statusLabelOf, colorOf: statusColorOf } = useLeaveStatus()
 
 const leave = ref<LeaveInfoResponse | null>(null)

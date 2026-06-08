@@ -65,12 +65,12 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getMyPendingTasks } from '@/api/modules/leave'
-import { useEnums } from '@/composables/useEnums'
+import { useLeaveType } from '@/composables/useLeaveType'
 import LeaveReviewDialog from './components/LeaveReviewDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: leaveTypeLabelOf } = useEnums('leave-type')
+const { labelOf: leaveTypeLabelOf } = useLeaveType()
 
 const items = ref<LeaveTaskResponseItem[]>([])
 const loading = ref(false)

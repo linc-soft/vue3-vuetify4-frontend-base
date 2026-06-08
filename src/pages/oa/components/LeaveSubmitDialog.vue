@@ -87,7 +87,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { submitLeave } from '@/api/modules/leave'
-import { useEnums } from '@/composables/useEnums'
+import { useLeaveType } from '@/composables/useLeaveType'
 
 const props = defineProps<{
   modelValue: boolean
@@ -100,7 +100,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: leaveTypeOptions } = useEnums('leave-type')
+const { options: leaveTypeOptions } = useLeaveType()
 
 const form = reactive<{
   leaveType: string

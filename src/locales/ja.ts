@@ -428,6 +428,14 @@ export default {
       rejected: '却下',
       withdrawn: '取り消し済み',
     },
+    type: {
+      annual: '年次有給休暇',
+      sick: '病気休暇',
+      personal: '私用休暇',
+      marriage: '結婚休暇',
+      maternity: '産休',
+      other: 'その他',
+    },
     balance: {
       title: '年次有給休暇残高',
       daysAvailable: '日利用可能',

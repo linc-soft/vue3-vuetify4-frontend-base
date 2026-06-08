@@ -87,7 +87,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { reviewLeave } from '@/api/modules/leave'
-import { useEnums } from '@/composables/useEnums'
+import { useLeaveType } from '@/composables/useLeaveType'
 
 const props = defineProps<{
   modelValue: boolean
@@ -101,7 +101,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: leaveTypeLabelOf } = useEnums('leave-type')
+const { labelOf: leaveTypeLabelOf } = useLeaveType()
 
 const comment = ref('')
 const submitting = ref(false)

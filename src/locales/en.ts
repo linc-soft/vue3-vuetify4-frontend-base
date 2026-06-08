@@ -427,6 +427,14 @@ export default {
       rejected: 'Rejected',
       withdrawn: 'Withdrawn',
     },
+    type: {
+      annual: 'Annual Leave',
+      sick: 'Sick Leave',
+      personal: 'Personal Leave',
+      marriage: 'Marriage Leave',
+      maternity: 'Maternity Leave',
+      other: 'Other Leave',
+    },
     balance: {
       title: 'Annual Leave Balance',
       daysAvailable: 'days available',
