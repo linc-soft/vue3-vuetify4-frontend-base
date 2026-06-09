@@ -448,8 +448,11 @@ export default {
     submit: {
       title: 'Apply for Leave',
       leaveType: 'Leave Type',
-      startTime: 'Start Time',
-      endTime: 'End Time',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      period: 'Period',
+      am: 'AM',
+      pm: 'PM',
       days: 'Days',
       daysHint: 'Must be a positive multiple of 0.5',
       reason: 'Reason',

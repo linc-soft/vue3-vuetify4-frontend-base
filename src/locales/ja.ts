@@ -449,8 +449,11 @@ export default {
     submit: {
       title: '休暇を申請',
       leaveType: '休暇種別',
-      startTime: '開始日時',
-      endTime: '終了日時',
+      startDate: '開始日',
+      endDate: '終了日',
+      period: '時間帯',
+      am: '午前',
+      pm: '午後',
       days: '日数',
       daysHint: '0.5 の正の倍数である必要があります',
       reason: '理由',

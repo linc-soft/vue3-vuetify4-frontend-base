@@ -443,8 +443,11 @@ export default {
     submit: {
       title: '申请请假',
       leaveType: '请假类型',
-      startTime: '开始时间',
-      endTime: '结束时间',
+      startDate: '开始日期',
+      endDate: '结束日期',
+      period: '时段',
+      am: '上午',
+      pm: '下午',
       days: '天数',
       daysHint: '必须是 0.5 的正整数倍',
       reason: '事由',
