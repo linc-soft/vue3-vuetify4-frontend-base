@@ -411,7 +411,14 @@ export default {
   },
   leave: {
     title: '私の休暇',
-    search: { leaveType: '休暇種別', status: 'ステータス', search: '検索', reset: 'リセット' },
+    employeeTitle: '従業員の休暇',
+    search: {
+      employee: '従業員',
+      leaveType: '休暇種別',
+      status: 'ステータス',
+      search: '検索',
+      reset: 'リセット',
+    },
     table: {
       leaveType: '休暇種別',
       startTime: '開始日時',

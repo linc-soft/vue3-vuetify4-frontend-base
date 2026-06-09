@@ -405,7 +405,14 @@ export default {
   },
   leave: {
     title: '我的请假',
-    search: { leaveType: '请假类型', status: '状态', search: '搜索', reset: '重置' },
+    employeeTitle: '员工请假',
+    search: {
+      employee: '员工',
+      leaveType: '请假类型',
+      status: '状态',
+      search: '搜索',
+      reset: '重置',
+    },
     table: {
       leaveType: '请假类型',
       startTime: '开始时间',

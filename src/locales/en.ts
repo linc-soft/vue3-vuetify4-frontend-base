@@ -410,7 +410,14 @@ export default {
   },
   leave: {
     title: 'My Leaves',
-    search: { leaveType: 'Leave Type', status: 'Status', search: 'Search', reset: 'Reset' },
+    employeeTitle: 'Employee Leaves',
+    search: {
+      employee: 'Employee',
+      leaveType: 'Leave Type',
+      status: 'Status',
+      search: 'Search',
+      reset: 'Reset',
+    },
     table: {
       leaveType: 'Leave Type',
       startTime: 'Start Time',

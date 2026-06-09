@@ -65,6 +65,11 @@ const router = createRouter({
           name: 'leave-tasks',
           component: () => import('@/pages/oa/leave-tasks.vue'),
         },
+        {
+          path: 'employee-leaves',
+          name: 'employee-leaves',
+          component: () => import('@/pages/oa/employee-leaves.vue'),
+        },
         // Logs
         { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
         {
