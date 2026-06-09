@@ -32,10 +32,16 @@
               </template>
             </v-list-item>
             <v-list-item :title="t('leave.table.startTime')">
-              <template #subtitle>{{ formatDateTime(leave.startTime) }}</template>
+              <template #subtitle>{{
+                leave.startDate
+                  ? `${leave.startDate} ${periodLabelOf(leave.startPeriod ?? '')}`
+                  : '-'
+              }}</template>
             </v-list-item>
             <v-list-item :title="t('leave.table.endTime')">
-              <template #subtitle>{{ formatDateTime(leave.endTime) }}</template>
+              <template #subtitle>{{
+                leave.endDate ? `${leave.endDate} ${periodLabelOf(leave.endPeriod ?? '')}` : '-'
+              }}</template>
             </v-list-item>
             <v-list-item :title="t('leave.table.days')">
               <template #subtitle>{{ leave.days ?? '-' }}</template>
@@ -82,6 +88,7 @@ import { useDisplay } from 'vuetify'
 import { getLeave } from '@/api/modules/leave'
 import { useLeaveStatus } from '@/composables/useLeaveStatus'
 import { useLeaveType } from '@/composables/useLeaveType'
+import { usePeriodType } from '@/composables/usePeriodType'
 
 const props = defineProps<{
   modelValue: boolean
@@ -96,14 +103,11 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { labelOf: leaveTypeLabelOf } = useLeaveType()
 const { labelOf: statusLabelOf, colorOf: statusColorOf } = useLeaveStatus()
+const { labelOf: periodLabelOf } = usePeriodType()
 
 const leave = ref<LeaveInfoResponse | null>(null)
 const loading = ref(false)
 const errorMessage = ref('')
-
-function formatDateTime(value: string | null | undefined): string {
-  return value ? new Date(value).toLocaleString() : '-'
-}
 
 watch(
   () => props.modelValue,

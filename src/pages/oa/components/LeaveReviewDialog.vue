@@ -18,10 +18,14 @@
               <template #subtitle>{{ leaveTypeLabelOf(task.leaveType) }}</template>
             </v-list-item>
             <v-list-item :title="t('leave.table.startTime')">
-              <template #subtitle>{{ formatDateTime(task.startTime) }}</template>
+              <template #subtitle>{{
+                task.startDate ? `${task.startDate} ${periodLabelOf(task.startPeriod ?? '')}` : '-'
+              }}</template>
             </v-list-item>
             <v-list-item :title="t('leave.table.endTime')">
-              <template #subtitle>{{ formatDateTime(task.endTime) }}</template>
+              <template #subtitle>{{
+                task.endDate ? `${task.endDate} ${periodLabelOf(task.endPeriod ?? '')}` : '-'
+              }}</template>
             </v-list-item>
             <v-list-item :title="t('leave.table.days')">
               <template #subtitle>{{ task.days ?? '-' }}</template>
@@ -88,6 +92,7 @@ import { useDisplay } from 'vuetify'
 
 import { reviewLeave } from '@/api/modules/leave'
 import { useLeaveType } from '@/composables/useLeaveType'
+import { usePeriodType } from '@/composables/usePeriodType'
 
 const props = defineProps<{
   modelValue: boolean
@@ -102,15 +107,12 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { labelOf: leaveTypeLabelOf } = useLeaveType()
+const { labelOf: periodLabelOf } = usePeriodType()
 
 const comment = ref('')
 const submitting = ref(false)
 const decision = ref<boolean | null>(null)
 const errorMessage = ref('')
-
-function formatDateTime(value: string | null | undefined): string {
-  return value ? new Date(value).toLocaleString() : '-'
-}
 
 watch(
   () => props.modelValue,

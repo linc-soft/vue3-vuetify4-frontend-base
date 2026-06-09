@@ -26,11 +26,11 @@
       <template #item.leaveType="{ value }">
         {{ leaveTypeLabelOf(value) }}
       </template>
-      <template #item.startTime="{ value }">
-        {{ formatDateTime(value) }}
+      <template #item.startDate="{ item }">
+        {{ item.startDate ? `${item.startDate} ${periodLabelOf(item.startPeriod ?? '')}` : '-' }}
       </template>
-      <template #item.endTime="{ value }">
-        {{ formatDateTime(value) }}
+      <template #item.endDate="{ item }">
+        {{ item.endDate ? `${item.endDate} ${periodLabelOf(item.endPeriod ?? '')}` : '-' }}
       </template>
       <template #item.createAt="{ value }">
         {{ formatDateTime(value) }}
@@ -66,11 +66,13 @@ import { useDisplay } from 'vuetify'
 
 import { getMyPendingTasks } from '@/api/modules/leave'
 import { useLeaveType } from '@/composables/useLeaveType'
+import { usePeriodType } from '@/composables/usePeriodType'
 import LeaveReviewDialog from './components/LeaveReviewDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { labelOf: leaveTypeLabelOf } = useLeaveType()
+const { labelOf: periodLabelOf } = usePeriodType()
 
 const items = ref<LeaveTaskResponseItem[]>([])
 const loading = ref(false)
@@ -80,8 +82,8 @@ const selectedTask = ref<LeaveTaskResponseItem | null>(null)
 
 const headers = computed(() => [
   { title: t('leave.table.leaveType'), key: 'leaveType' },
-  { title: t('leave.table.startTime'), key: 'startTime' },
-  { title: t('leave.table.endTime'), key: 'endTime' },
+  { title: t('leave.table.startTime'), key: 'startDate' },
+  { title: t('leave.table.endTime'), key: 'endDate' },
   { title: t('leave.table.days'), key: 'days' },
   { title: t('leave.submit.reason'), key: 'reason' },
   { title: t('leave.table.createAt'), key: 'createAt' },

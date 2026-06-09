@@ -85,11 +85,11 @@
       <template #item.leaveType="{ value }">
         {{ leaveTypeLabelOf(value) }}
       </template>
-      <template #item.startTime="{ value }">
-        {{ formatDateTime(value) }}
+      <template #item.startDate="{ item }">
+        {{ item.startDate ? `${item.startDate} ${periodLabelOf(item.startPeriod ?? '')}` : '-' }}
       </template>
-      <template #item.endTime="{ value }">
-        {{ formatDateTime(value) }}
+      <template #item.endDate="{ item }">
+        {{ item.endDate ? `${item.endDate} ${periodLabelOf(item.endPeriod ?? '')}` : '-' }}
       </template>
       <template #item.status="{ value }">
         <v-chip
@@ -191,6 +191,7 @@ import { useDisplay } from 'vuetify'
 import { getLeavePage, withdrawLeave } from '@/api/modules/leave'
 import { useLeaveStatus } from '@/composables/useLeaveStatus'
 import { useLeaveType } from '@/composables/useLeaveType'
+import { usePeriodType } from '@/composables/usePeriodType'
 import AnnualBalanceCard from './components/AnnualBalanceCard.vue'
 import LeaveDetailDialog from './components/LeaveDetailDialog.vue'
 import LeaveSubmitDialog from './components/LeaveSubmitDialog.vue'
@@ -199,6 +200,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { options: leaveTypeOptions, labelOf: leaveTypeLabelOf } = useLeaveType()
 const { options: statusOptions, labelOf: statusLabelOf, colorOf: statusColorOf } = useLeaveStatus()
+const { labelOf: periodLabelOf } = usePeriodType()
 
 const filters = reactive<{ leaveType: string; status: string }>({ leaveType: '', status: '' })
 
@@ -222,16 +224,16 @@ const errorMessage = ref('')
 const balanceCard = ref<InstanceType<typeof AnnualBalanceCard> | null>(null)
 
 const sortFieldMap: Record<string, string> = {
-  startTime: 'start_time',
-  endTime: 'end_time',
+  startDate: 'start_date',
+  endDate: 'end_date',
   days: 'days',
   createAt: 'create_at',
 }
 
 const headers = computed(() => [
   { title: t('leave.table.leaveType'), key: 'leaveType', sortable: false },
-  { title: t('leave.table.startTime'), key: 'startTime' },
-  { title: t('leave.table.endTime'), key: 'endTime' },
+  { title: t('leave.table.startTime'), key: 'startDate' },
+  { title: t('leave.table.endTime'), key: 'endDate' },
   { title: t('leave.table.days'), key: 'days' },
   { title: t('leave.table.status'), key: 'status', sortable: false },
   { title: t('leave.table.createAt'), key: 'createAt' },
