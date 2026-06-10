@@ -24,8 +24,41 @@
         >
           <v-text-field
             v-model="form.username"
-            :label="t('user.form.username')"
+            :disabled="mode === 'edit'"
+            :label="t('user.form.loginId')"
             :rules="[rules.usernameRequired]"
+          />
+          <v-text-field
+            v-model="form.realName"
+            :label="t('user.form.realName')"
+            :rules="mode === 'create' ? [rules.realNameRequired] : undefined"
+          />
+          <v-select
+            v-model="form.deptId"
+            clearable
+            :items="deptOptions"
+            :label="t('user.form.dept')"
+          />
+          <v-select
+            v-model="form.positionId"
+            clearable
+            :items="positionOptions"
+            :label="t('user.form.position')"
+          />
+          <v-text-field
+            v-model="form.mobile"
+            :label="t('user.form.mobile')"
+          />
+          <v-select
+            v-model="form.gender"
+            clearable
+            :items="genderOptions"
+            :label="t('user.form.gender')"
+          />
+          <v-text-field
+            v-model="form.birthday"
+            :label="t('user.form.birthday')"
+            type="date"
           />
           <v-text-field
             v-if="mode === 'edit'"
@@ -114,6 +147,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createUser, getUser, updateUser } from '@/api/modules/user'
+import { useGender } from '@/composables/useCommonStatus'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 import { useUserStatus } from '@/composables/useUserStatus'
 
@@ -130,17 +164,30 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { options: genderOptions } = useGender()
 
 const form = reactive<{
   username: string
   password: string
+  realName: string
+  deptId: number | null
+  positionId: number | null
+  mobile: string
   email: string
+  gender: string | null
+  birthday: string
   status: string
   roleIds: number[]
 }>({
   username: '',
   password: '',
+  realName: '',
+  deptId: null,
+  positionId: null,
+  mobile: '',
   email: '',
+  gender: null,
+  birthday: '',
   status: '',
   roleIds: [],
 })
@@ -152,6 +199,8 @@ const errorMessage = ref('')
 
 const { options: statusOptions } = useUserStatus()
 const { items: roleItems, descriptionOf: roleDescriptionOf } = useSelectOptions('role')
+const { options: deptOptions } = useSelectOptions('department')
+const { options: positionOptions } = useSelectOptions('position')
 
 // Map role items to options with composite role label for empty description
 const roleOptions = computed(() =>
@@ -164,6 +213,7 @@ const roleOptions = computed(() =>
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
+  realNameRequired: (v: string) => !!v || t('user.validation.realNameRequired'),
   statusRequired: (v: string) => !!v || t('user.validation.statusRequired'),
   emailRequired: (v: string) => !!v || t('user.validation.emailRequired'),
   emailPattern: (v: string) =>
@@ -184,7 +234,13 @@ watch(
       if (props.mode === 'create') {
         form.username = ''
         form.password = ''
+        form.realName = ''
+        form.deptId = null
+        form.positionId = null
+        form.mobile = ''
         form.email = ''
+        form.gender = null
+        form.birthday = ''
         form.status = '2' // INACTIVE by default
         form.roleIds = []
         version.value = 0
@@ -192,7 +248,13 @@ watch(
       } else if (user) {
         form.username = user.username
         form.password = ''
+        form.realName = user.realName ?? ''
+        form.deptId = user.deptId ?? null
+        form.positionId = user.positionId ?? null
+        form.mobile = user.mobile ?? ''
         form.email = user.email ?? ''
+        form.gender = user.gender ?? null
+        form.birthday = user.birthday ?? ''
         form.status = user.status
         form.roleIds = [...(user.roleIds ?? [])]
         version.value = user.version
@@ -218,6 +280,12 @@ async function handleSubmit() {
           username: form.username,
           email: form.email,
           roleIds: form.roleIds,
+          realName: form.realName || undefined,
+          deptId: form.deptId ?? undefined,
+          positionId: form.positionId ?? undefined,
+          mobile: form.mobile || undefined,
+          gender: form.gender || undefined,
+          birthday: form.birthday || undefined,
         })
       : updateUser({
           id: props.userId!,
@@ -226,6 +294,12 @@ async function handleSubmit() {
           email: form.email || undefined,
           status: form.status,
           roleIds: form.roleIds,
+          realName: form.realName || undefined,
+          deptId: form.deptId ?? undefined,
+          positionId: form.positionId ?? undefined,
+          mobile: form.mobile || undefined,
+          gender: form.gender || undefined,
+          birthday: form.birthday || undefined,
           version: version.value,
         }))
     emit('saved')

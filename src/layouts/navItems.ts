@@ -15,7 +15,6 @@ export const navItems: NavItem[] = [
     children: [
       { title: 'Departments', icon: 'mdi-office-building-outline', to: '/departments' },
       { title: 'Positions', icon: 'mdi-badge-account-horizontal-outline', to: '/positions' },
-      { title: 'Employees', icon: 'mdi-account-tie-outline', to: '/employees' },
     ],
   },
   {

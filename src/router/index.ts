@@ -53,11 +53,7 @@ const router = createRouter({
           name: 'positions',
           component: () => import('@/pages/oa/positions.vue'),
         },
-        {
-          path: 'employees',
-          name: 'employees',
-          component: () => import('@/pages/oa/employees.vue'),
-        },
+        { path: 'employees', redirect: '/users' },
         // Logs
         { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
         {

@@ -142,8 +142,10 @@ const displayValue = computed({
     const end = formatDateDisplay(internalValue.value[1])
     return `${start} - ${end}`
   },
-  set: (value: string) => {
-    emit('update:modelValue', value)
+  set: (value: string | null) => {
+    if (value === null || value === '') {
+      emit('update:modelValue', null)
+    }
   },
 })
 

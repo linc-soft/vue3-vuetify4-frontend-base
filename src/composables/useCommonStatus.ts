@@ -7,13 +7,6 @@ const COMMON_STATUS_I18N_MAP: Record<string, string> = {
   '0': 'oa.common.status.disabled',
 }
 
-/** Employment status used by employee (0 left / 1 active / 2 on leave). */
-const EMPLOYEE_STATUS_I18N_MAP: Record<string, string> = {
-  '1': 'oa.employee.status.active',
-  '0': 'oa.employee.status.left',
-  '2': 'oa.employee.status.onLeave',
-}
-
 /** Gender used by employee (0 unknown / 1 male / 2 female). */
 const GENDER_I18N_MAP: Record<string, string> = {
   '0': 'oa.employee.gender.unknown',
@@ -41,11 +34,6 @@ function buildStatus(map: Record<string, string>) {
 /** Enabled/disabled status options (department, position). */
 export function useCommonStatus() {
   return buildStatus(COMMON_STATUS_I18N_MAP)
-}
-
-/** Employment status options (employee). */
-export function useEmployeeStatus() {
-  return buildStatus(EMPLOYEE_STATUS_I18N_MAP)
 }
 
 /** Gender options (employee). */

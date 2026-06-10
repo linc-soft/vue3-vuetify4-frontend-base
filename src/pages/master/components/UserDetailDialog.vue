@@ -16,8 +16,26 @@
         </div>
         <template v-else-if="user">
           <v-list>
-            <v-list-item :title="t('user.table.username')">
+            <v-list-item :title="t('user.detail.loginId')">
               <template #subtitle>{{ user.username }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.realName')">
+              <template #subtitle>{{ user.realName || '-' }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.dept')">
+              <template #subtitle>{{ deptLabel }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.position')">
+              <template #subtitle>{{ positionLabel }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.mobile')">
+              <template #subtitle>{{ user.mobile || '-' }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.gender')">
+              <template #subtitle>{{ user.gender ? genderLabelOf(user.gender) : '-' }}</template>
+            </v-list-item>
+            <v-list-item :title="t('user.detail.birthday')">
+              <template #subtitle>{{ birthdayLabel }}</template>
             </v-list-item>
             <v-list-item :title="t('user.table.email')">
               <template #subtitle>{{ user.email || '-' }}</template>
@@ -134,14 +152,19 @@
 </template>
 
 <script lang="ts" setup>
+import type { DepartmentTreeResponse } from '@/api/schemas/department'
+import type { PositionInfoResponse } from '@/api/schemas/position'
 import type { RoleListResponseItem } from '@/api/schemas/role'
 import type { UserInfoResponse } from '@/api/schemas/user'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
+import { getDepartmentTree } from '@/api/modules/department'
+import { getPositionList } from '@/api/modules/position'
 import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
+import { useGender } from '@/composables/useCommonStatus'
 import { useUserStatus } from '@/composables/useUserStatus'
 
 const props = defineProps<{
@@ -157,9 +180,12 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { labelOf: statusLabelOf } = useUserStatus()
+const { labelOf: genderLabelOf } = useGender()
 
 const user = ref<UserInfoResponse | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])
+const departments = ref<DepartmentTreeResponse[]>([])
+const positions = ref<PositionInfoResponse[]>([])
 const loading = ref(false)
 const errorMessage = ref('')
 const deleteDialog = ref(false)
@@ -175,6 +201,37 @@ const assignedRoles = computed<RoleListResponseItem[]>(() => {
   return ids.map(id => roleMap.value.get(id)).filter((r): r is RoleListResponseItem => r != null)
 })
 
+const deptNameMap = computed(() => {
+  const map = new Map<number, string>()
+  const walk = (nodes: DepartmentTreeResponse[]) => {
+    for (const node of nodes) {
+      map.set(node.id, node.deptName)
+      if (node.children?.length) walk(node.children)
+    }
+  }
+  walk(departments.value)
+  return map
+})
+
+const deptLabel = computed(() =>
+  user.value?.deptId == null ? '-' : (deptNameMap.value.get(user.value.deptId) ?? '-'),
+)
+
+const positionLabel = computed(() => {
+  if (user.value?.positionId == null) return '-'
+  return positions.value.find(p => p.id === user.value!.positionId)?.positionName ?? '-'
+})
+
+const birthdayLabel = computed(() => {
+  if (!user.value?.birthday) return '-'
+  const d = new Date(user.value.birthday)
+  if (Number.isNaN(d.getTime())) return user.value.birthday
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+})
+
 watch(
   () => props.modelValue,
   async open => {
@@ -183,9 +240,16 @@ watch(
       errorMessage.value = ''
       user.value = null
       try {
-        const [detail, roles] = await Promise.all([getUser(props.userId), getRoleList()])
+        const [detail, roles, deptTree, positionList] = await Promise.all([
+          getUser(props.userId),
+          getRoleList(),
+          getDepartmentTree(),
+          getPositionList(),
+        ])
         user.value = detail
         allRoles.value = roles
+        departments.value = deptTree
+        positions.value = positionList
       } catch (error: unknown) {
         errorMessage.value = error instanceof Error ? error.message : t('user.error.loadFailed')
       } finally {

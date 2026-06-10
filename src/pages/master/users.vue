@@ -78,6 +78,18 @@
       :mobile="mobile"
       multi-sort
     >
+      <template #item.realName="{ value }">
+        {{ value ?? '-' }}
+      </template>
+      <template #item.deptId="{ value }">
+        {{ value != null ? (deptNameMap.get(value) ?? '-') : '-' }}
+      </template>
+      <template #item.positionId="{ value }">
+        {{ value != null ? (positionNameMap.get(value) ?? '-') : '-' }}
+      </template>
+      <template #item.gender="{ value }">
+        {{ value != null ? genderLabelOf(value) : '-' }}
+      </template>
       <template #item.status="{ value }">
         {{ statusLabelOf(value) }}
       </template>
@@ -218,12 +230,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { DepartmentTreeResponse } from '@/api/schemas/department'
+import type { PositionInfoResponse } from '@/api/schemas/position'
 import type { UserListResponseItem } from '@/api/schemas/user'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
+import { getDepartmentTree } from '@/api/modules/department'
+import { getPositionList } from '@/api/modules/position'
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
+import { useGender } from '@/composables/useCommonStatus'
 import { useUserStatus } from '@/composables/useUserStatus'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
@@ -264,14 +281,37 @@ const reportGroupByOptions = computed(() => [
 
 // Status options (client-side i18n mapping)
 const { options: statusOptions, labelOf: statusLabelOf } = useUserStatus()
+const { labelOf: genderLabelOf } = useGender()
+
+// Reference data for resolving dept / position display names.
+const departments = ref<DepartmentTreeResponse[]>([])
+const positions = ref<PositionInfoResponse[]>([])
+
+const deptNameMap = computed(() => {
+  const map = new Map<number, string>()
+  const walk = (nodes: DepartmentTreeResponse[]) => {
+    for (const node of nodes) {
+      map.set(node.id, node.deptName)
+      if (node.children?.length) walk(node.children)
+    }
+  }
+  walk(departments.value)
+  return map
+})
+
+const positionNameMap = computed(
+  () => new Map<number, string>(positions.value.map(p => [p.id, p.positionName])),
+)
 
 // Table column definitions
 const allHeaders = computed(() => [
-  { title: t('user.table.username'), key: 'username' },
-  { title: t('user.table.email'), key: 'email' },
+  { title: t('user.table.realName'), key: 'realName' },
+  { title: t('user.table.dept'), key: 'deptId', sortable: false },
+  { title: t('user.table.position'), key: 'positionId', sortable: false },
+  { title: t('user.table.mobile'), key: 'mobile', sortable: false },
+  { title: t('user.table.gender'), key: 'gender', sortable: false },
+  { title: t('user.table.birthday'), key: 'birthday', sortable: false },
   { title: t('user.table.status'), key: 'status' },
-  { title: t('user.table.updateBy'), key: 'updateBy' },
-  { title: t('user.table.updateAt'), key: 'updateAt' },
   { title: t('user.table.actions'), key: 'actions', sortable: false, cellClass: 'column-actions' },
 ])
 
@@ -290,7 +330,14 @@ async function fetchUsers() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const [deptTree, positionList] = await Promise.all([getDepartmentTree(), getPositionList()])
+    departments.value = deptTree
+    positions.value = positionList
+  } catch (error: unknown) {
+    console.error('Failed to load reference data:', error)
+  }
   fetchUsers()
 })
 
