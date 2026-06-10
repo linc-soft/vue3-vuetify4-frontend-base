@@ -40,20 +40,26 @@ const router = createRouter({
       component: resolveLayout(),
       children: [
         { path: '', name: 'home', component: Index },
-        { path: 'users', name: 'users', component: () => import('@/pages/master/users.vue') },
-        { path: 'roles', name: 'roles', component: () => import('@/pages/master/roles.vue') },
-        // OA — Organization
         {
-          path: 'departments',
+          path: 'master/users',
+          name: 'users',
+          component: () => import('@/pages/master/users.vue'),
+        },
+        {
+          path: 'master/roles',
+          name: 'roles',
+          component: () => import('@/pages/master/roles.vue'),
+        },
+        {
+          path: 'master/departments',
           name: 'departments',
-          component: () => import('@/pages/oa/departments.vue'),
+          component: () => import('@/pages/master/departments.vue'),
         },
         {
-          path: 'positions',
+          path: 'master/positions',
           name: 'positions',
-          component: () => import('@/pages/oa/positions.vue'),
+          component: () => import('@/pages/master/positions.vue'),
         },
-        { path: 'employees', redirect: '/users' },
         // Logs
         { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
         {

@@ -7,14 +7,14 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { title: 'Home', icon: 'mdi-home', to: '/' },
-  { title: 'Users', icon: 'mdi-account-group', to: '/users' },
-  { title: 'Roles', icon: 'mdi-shield-account-outline', to: '/roles' },
   {
-    title: 'Organization',
-    icon: 'mdi-sitemap-outline',
+    title: 'Master Data',
+    icon: 'mdi-database-outline',
     children: [
-      { title: 'Departments', icon: 'mdi-office-building-outline', to: '/departments' },
-      { title: 'Positions', icon: 'mdi-badge-account-horizontal-outline', to: '/positions' },
+      { title: 'Users', icon: 'mdi-account-group', to: '/master/users' },
+      { title: 'Roles', icon: 'mdi-shield-account-outline', to: '/master/roles' },
+      { title: 'Departments', icon: 'mdi-office-building-outline', to: '/master/departments' },
+      { title: 'Positions', icon: 'mdi-badge-account-horizontal-outline', to: '/master/positions' },
     ],
   },
   {
