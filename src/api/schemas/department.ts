@@ -6,7 +6,7 @@ export const DepartmentCreateRequestSchema = z.object({
   deptName: z.string().min(1).max(64),
   deptCode: z.string().max(64).optional(),
   parentId: z.number().optional(),
-  leaderEmployeeId: z.number().optional(),
+  leaderUserId: z.number().optional(),
   sortOrder: z.number().int().optional(),
   status: z.string().max(1).optional(),
 })
@@ -18,7 +18,7 @@ export const DepartmentUpdateRequestSchema = z.object({
   deptName: z.string().min(1).max(64),
   deptCode: z.string().max(64).optional(),
   parentId: z.number().optional(),
-  leaderEmployeeId: z.number().optional(),
+  leaderUserId: z.number().optional(),
   sortOrder: z.number().int().optional(),
   status: z.string().max(1).optional(),
   version: z.number(),
@@ -40,7 +40,7 @@ export const DepartmentInfoResponseSchema = z.object({
   deptName: z.string(),
   deptCode: z.string().nullable().optional(),
   parentId: z.number().nullable().optional(),
-  leaderEmployeeId: z.number().nullable().optional(),
+  leaderUserId: z.number().nullable().optional(),
   sortOrder: z.number().nullable().optional(),
   status: z.string(),
   version: z.number(),
@@ -54,7 +54,7 @@ export interface DepartmentTreeResponse {
   deptName: string
   deptCode?: string | null
   parentId?: number | null
-  leaderEmployeeId?: number | null
+  leaderUserId?: number | null
   sortOrder?: number | null
   status: string
   version: number
@@ -67,7 +67,7 @@ export const DepartmentTreeResponseSchema: z.ZodType<DepartmentTreeResponse> = z
     deptName: z.string(),
     deptCode: z.string().nullable().optional(),
     parentId: z.number().nullable().optional(),
-    leaderEmployeeId: z.number().nullable().optional(),
+    leaderUserId: z.number().nullable().optional(),
     sortOrder: z.number().nullable().optional(),
     status: z.string(),
     version: z.number(),

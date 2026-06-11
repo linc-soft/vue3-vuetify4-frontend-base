@@ -1,4 +1,17 @@
 export default {
+  nav: {
+    admin: 'Admin',
+    home: 'Home',
+    master: 'Master Data',
+    users: 'Users',
+    roles: 'Roles',
+    departments: 'Departments',
+    positions: 'Positions',
+    logs: 'Logs',
+    accessLogs: 'Access Logs',
+    errorLogs: 'Error Logs',
+    operationLogs: 'Operation Logs',
+  },
   app: {
     logout: 'Sign Out',
     language: 'Language',
@@ -320,6 +333,7 @@ export default {
       parentHint: 'Leave empty for a top-level department',
       sortOrder: 'Sort Order',
       status: 'Status',
+      leader: 'Department Head',
       cancel: 'Cancel',
       submit: 'Submit',
     },

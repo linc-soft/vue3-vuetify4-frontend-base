@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { NavItem } from '@/layouts/navItems'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
   modelValue: boolean
@@ -9,6 +10,8 @@ defineProps<{
 defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -16,7 +19,7 @@ defineEmits<{
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <div class="pa-4 text-h6">Admin</div>
+    <div class="pa-4 text-h6">{{ t('nav.admin') }}</div>
 
     <v-divider />
 
@@ -28,15 +31,13 @@ defineEmits<{
         v-for="item in items"
         :key="item.to || item.title"
       >
-        <!-- Item without children -->
         <v-list-item
           v-if="!item.children"
           :prepend-icon="item.icon"
-          :title="item.title"
+          :title="t(item.title)"
           :to="item.to"
         />
 
-        <!-- Item with children (expandable) -->
         <v-list-group
           v-else
           :value="item.title"
@@ -45,7 +46,7 @@ defineEmits<{
             <v-list-item
               v-bind="props"
               :prepend-icon="item.icon"
-              :title="item.title"
+              :title="t(item.title)"
             />
           </template>
 
@@ -53,7 +54,7 @@ defineEmits<{
             v-for="child in item.children"
             :key="child.to"
             :prepend-icon="child.icon"
-            :title="child.title"
+            :title="t(child.title)"
             :to="child.to"
           />
         </v-list-group>

@@ -1,4 +1,17 @@
 export default {
+  nav: {
+    admin: '管理画面',
+    home: 'ホーム',
+    master: 'マスターデータ',
+    users: 'ユーザー管理',
+    roles: 'ロール管理',
+    departments: '部門管理',
+    positions: '職位管理',
+    logs: 'ログ',
+    accessLogs: 'アクセスログ',
+    errorLogs: 'エラーログ',
+    operationLogs: '操作ログ',
+  },
   app: {
     logout: 'ログアウト',
     language: '言語',
@@ -321,6 +334,7 @@ export default {
       parentHint: '空欄の場合はトップレベル部門になります',
       sortOrder: '並び順',
       status: 'ステータス',
+      leader: '部門長',
       cancel: 'キャンセル',
       submit: '送信',
     },

@@ -6,24 +6,28 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { title: 'Home', icon: 'mdi-home', to: '/' },
+  { title: 'nav.home', icon: 'mdi-home', to: '/' },
   {
-    title: 'Master Data',
+    title: 'nav.master',
     icon: 'mdi-database-outline',
     children: [
-      { title: 'Users', icon: 'mdi-account-group', to: '/master/users' },
-      { title: 'Roles', icon: 'mdi-shield-account-outline', to: '/master/roles' },
-      { title: 'Departments', icon: 'mdi-office-building-outline', to: '/master/departments' },
-      { title: 'Positions', icon: 'mdi-badge-account-horizontal-outline', to: '/master/positions' },
+      { title: 'nav.users', icon: 'mdi-account-group', to: '/master/users' },
+      { title: 'nav.roles', icon: 'mdi-shield-account-outline', to: '/master/roles' },
+      { title: 'nav.departments', icon: 'mdi-office-building-outline', to: '/master/departments' },
+      {
+        title: 'nav.positions',
+        icon: 'mdi-badge-account-horizontal-outline',
+        to: '/master/positions',
+      },
     ],
   },
   {
-    title: 'Logs',
+    title: 'nav.logs',
     icon: 'mdi-file-document-outline',
     children: [
-      { title: 'Access Logs', icon: 'mdi-web', to: '/logs' },
-      { title: 'Error Logs', icon: 'mdi-alert-circle-outline', to: '/logs/error' },
-      { title: 'Operation Logs', icon: 'mdi-cog-outline', to: '/logs/operation' },
+      { title: 'nav.accessLogs', icon: 'mdi-web', to: '/logs' },
+      { title: 'nav.errorLogs', icon: 'mdi-alert-circle-outline', to: '/logs/error' },
+      { title: 'nav.operationLogs', icon: 'mdi-cog-outline', to: '/logs/operation' },
     ],
   },
 ]

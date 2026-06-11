@@ -1,4 +1,17 @@
 export default {
+  nav: {
+    admin: '管理后台',
+    home: '首页',
+    master: '基础数据',
+    users: '用户管理',
+    roles: '角色管理',
+    departments: '部门管理',
+    positions: '职位管理',
+    logs: '日志中心',
+    accessLogs: '访问日志',
+    errorLogs: '错误日志',
+    operationLogs: '操作日志',
+  },
   app: {
     logout: '退出登录',
     language: '语言',
@@ -315,6 +328,7 @@ export default {
       parentHint: '留空表示顶级部门',
       sortOrder: '排序',
       status: '状态',
+      leader: '主管',
       cancel: '取消',
       submit: '提交',
     },

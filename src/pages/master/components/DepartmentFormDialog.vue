@@ -49,6 +49,12 @@
             :items="statusOptions"
             :label="t('department.form.status')"
           />
+          <v-select
+            v-model="form.leaderUserId"
+            clearable
+            :items="userOptions"
+            :label="t('department.form.leader')"
+          />
         </v-form>
         <v-alert
           v-if="errorMessage"
@@ -99,6 +105,7 @@ import {
   updateDepartment,
 } from '@/api/modules/department'
 import { useCommonStatus } from '@/composables/useCommonStatus'
+import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
   modelValue: boolean
@@ -116,22 +123,24 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { options: statusOptions } = useCommonStatus()
+const { options: userOptions } = useSelectOptions('user')
 
 const form = reactive<{
   deptName: string
   deptCode: string
   parentId: number | null
+  leaderUserId: number | null
   sortOrder: number | null
   status: string
 }>({
   deptName: '',
   deptCode: '',
   parentId: null,
+  leaderUserId: null,
   sortOrder: 0,
   status: '1',
 })
 const version = ref(0)
-const leaderEmployeeId = ref<number | null>(null)
 const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
@@ -183,19 +192,19 @@ watch(
         form.deptName = ''
         form.deptCode = ''
         form.parentId = props.presetParentId ?? null
+        form.leaderUserId = null
         form.sortOrder = 0
         form.status = '1'
         version.value = 0
-        leaderEmployeeId.value = null
         formRef.value?.resetValidation()
       } else if (dept) {
         form.deptName = dept.deptName
         form.deptCode = dept.deptCode ?? ''
         form.parentId = dept.parentId && dept.parentId !== 0 ? dept.parentId : null
+        form.leaderUserId = dept.leaderUserId ?? null
         form.sortOrder = dept.sortOrder ?? 0
         form.status = dept.status
         version.value = dept.version
-        leaderEmployeeId.value = dept.leaderEmployeeId ?? null
       }
     } catch (error: unknown) {
       errorMessage.value = error instanceof Error ? error.message : t('department.error.loadFailed')
@@ -218,6 +227,7 @@ async function handleSubmit() {
           deptName: form.deptName,
           deptCode: form.deptCode || undefined,
           parentId: form.parentId ?? 0,
+          leaderUserId: form.leaderUserId ?? undefined,
           sortOrder: form.sortOrder ?? undefined,
           status: form.status || undefined,
         })
@@ -226,7 +236,7 @@ async function handleSubmit() {
           deptName: form.deptName,
           deptCode: form.deptCode || undefined,
           parentId: form.parentId ?? 0,
-          leaderEmployeeId: leaderEmployeeId.value ?? undefined,
+          leaderUserId: form.leaderUserId ?? undefined,
           sortOrder: form.sortOrder ?? undefined,
           status: form.status || undefined,
           version: version.value,
