@@ -73,7 +73,13 @@ export default {
   },
   role: {
     title: 'Role Management',
-    search: { roleName: 'Role Name', roleCode: 'Role Code', search: 'Search', reset: 'Reset' },
+    search: {
+      roleName: 'Role Name',
+      roleCode: 'Role Code',
+      aggregatedOnly: 'Aggregated Only',
+      search: 'Search',
+      reset: 'Reset',
+    },
     table: {
       roleName: 'Role Name',
       roleCode: 'Role Code',

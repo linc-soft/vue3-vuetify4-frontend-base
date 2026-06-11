@@ -45,6 +45,17 @@
         cols="12"
         md="auto"
       >
+        <v-checkbox
+          v-model="filters.aggregatedOnly"
+          density="compact"
+          hide-details
+          :label="t('role.search.aggregatedOnly')"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="auto"
+      >
         <v-btn
           class="mr-2"
           color="primary"
@@ -190,7 +201,11 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 
 // Filter Conditions
-const filters = reactive({ roleName: '', roleCode: undefined })
+const filters = reactive({
+  roleName: '',
+  roleCode: undefined,
+  aggregatedOnly: true,
+})
 
 // Table data and loading state
 const items = ref<RoleListResponseItem[]>([])
@@ -212,15 +227,29 @@ const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
+// Last search state for column visibility — updated only on actual search
+const lastSearchAggregatedOnly = ref(true)
+
 // Table column definitions
-const allHeaders = computed(() => [
-  { title: t('role.table.roleName'), key: 'roleName' },
-  { title: t('role.table.roleCode'), key: 'roleCode' },
-  { title: t('role.table.description'), key: 'description' },
-  { title: t('role.table.updateBy'), key: 'updateBy' },
-  { title: t('role.table.updateAt'), key: 'updateAt' },
-  { title: t('role.table.actions'), key: 'actions', sortable: false, cellClass: 'column-actions' },
-])
+const allHeaders = computed(() => {
+  const headers = [
+    { title: t('role.table.roleName'), key: 'roleName' },
+    { title: t('role.table.roleCode'), key: 'roleCode' },
+    { title: t('role.table.description'), key: 'description' },
+    { title: t('role.table.updateBy'), key: 'updateBy' },
+    { title: t('role.table.updateAt'), key: 'updateAt' },
+    {
+      title: t('role.table.actions'),
+      key: 'actions',
+      sortable: false,
+      cellClass: 'column-actions',
+    },
+  ]
+  if (lastSearchAggregatedOnly.value) {
+    return headers.filter(h => h.key !== 'roleCode')
+  }
+  return headers
+})
 
 // Get role list
 async function fetchRoles() {
@@ -229,7 +258,9 @@ async function fetchRoles() {
     items.value = await getRoleList({
       roleName: filters.roleName || undefined,
       roleCode: filters.roleCode || undefined,
+      aggregatedOnly: filters.aggregatedOnly,
     })
+    lastSearchAggregatedOnly.value = filters.aggregatedOnly
   } catch (error: unknown) {
     console.error('Failed to fetch roles:', error)
   } finally {
@@ -256,6 +287,7 @@ function handleSearch() {
 function handleReset() {
   filters.roleName = ''
   filters.roleCode = undefined
+  filters.aggregatedOnly = true
   handleSearch()
 }
 

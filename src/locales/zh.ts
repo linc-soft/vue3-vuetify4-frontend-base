@@ -72,7 +72,13 @@ export default {
   },
   role: {
     title: '角色管理',
-    search: { roleName: '角色名称', roleCode: '角色代码', search: '搜索', reset: '重置' },
+    search: {
+      roleName: '角色名称',
+      roleCode: '角色代码',
+      aggregatedOnly: '仅聚合角色',
+      search: '搜索',
+      reset: '重置',
+    },
     table: {
       roleName: '角色名称',
       roleCode: '角色代码',

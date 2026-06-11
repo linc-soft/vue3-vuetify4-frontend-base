@@ -5,6 +5,7 @@ import { z } from 'zod/v4'
 export const RoleListRequestSchema = z.object({
   roleName: z.string().optional(),
   roleCode: z.string().optional(),
+  aggregatedOnly: z.boolean().optional(),
 })
 
 export type RoleListRequest = z.infer<typeof RoleListRequestSchema>

@@ -74,7 +74,13 @@ export default {
   },
   role: {
     title: 'ロール管理',
-    search: { roleName: 'ロール名', roleCode: 'ロールコード', search: '検索', reset: 'リセット' },
+    search: {
+      roleName: 'ロール名',
+      roleCode: 'ロールコード',
+      aggregatedOnly: '集約ロールのみ',
+      search: '検索',
+      reset: 'リセット',
+    },
     table: {
       roleName: 'ロール名',
       roleCode: 'ロールコード',
