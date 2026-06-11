@@ -11,6 +11,7 @@ export default {
     accessLogs: 'アクセスログ',
     errorLogs: 'エラーログ',
     operationLogs: '操作ログ',
+    sqlLogs: 'SQL ログ',
   },
   app: {
     logout: 'ログアウト',
@@ -222,6 +223,7 @@ export default {
       access: 'アクセスログ',
       error: 'エラーログ',
       operation: '操作ログ',
+      sql: 'SQL ログ',
       trace: 'トレース詳細',
     },
     // Common
@@ -302,6 +304,24 @@ export default {
         QUERY: 'クエリ',
         UPDATE: '更新',
       },
+    },
+    // SQL Log
+    sql: {
+      title: 'SQL ログ',
+      traceId: 'トレース ID',
+      sqlType: 'SQL タイプ',
+      mapperClass: 'Mapper クラス',
+      mapperMethod: 'メソッド',
+      duration: '所要時間',
+      username: 'ユーザー名',
+      isSlow: 'スロー SQL',
+      timeRange: '時間範囲',
+      sqlText: 'SQL テキスト',
+      sqlParams: 'パラメータ',
+      requestUrl: 'リクエスト URL',
+      requestMethod: 'メソッド',
+      clientIp: 'クライアント IP',
+      rowCount: '行数',
     },
     // Trace
     trace: {

@@ -77,6 +77,11 @@ const router = createRouter({
           name: 'logs-trace',
           component: () => import('@/pages/logs/trace.vue'),
         },
+        {
+          path: 'logs/sql',
+          name: 'logs-sql',
+          component: () => import('@/pages/logs/sql.vue'),
+        },
       ],
     },
   ],

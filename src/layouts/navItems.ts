@@ -28,6 +28,7 @@ export const navItems: NavItem[] = [
       { title: 'nav.accessLogs', icon: 'mdi-web', to: '/logs' },
       { title: 'nav.errorLogs', icon: 'mdi-alert-circle-outline', to: '/logs/error' },
       { title: 'nav.operationLogs', icon: 'mdi-cog-outline', to: '/logs/operation' },
+      { title: 'nav.sqlLogs', icon: 'mdi-database-search-outline', to: '/logs/sql' },
     ],
   },
 ]

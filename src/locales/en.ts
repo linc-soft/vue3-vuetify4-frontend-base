@@ -11,6 +11,7 @@ export default {
     accessLogs: 'Access Logs',
     errorLogs: 'Error Logs',
     operationLogs: 'Operation Logs',
+    sqlLogs: 'SQL Logs',
   },
   app: {
     logout: 'Sign Out',
@@ -221,6 +222,7 @@ export default {
       access: 'Access Logs',
       error: 'Error Logs',
       operation: 'Operation Logs',
+      sql: 'SQL Logs',
       trace: 'Trace Detail',
     },
     // Common
@@ -301,6 +303,24 @@ export default {
         QUERY: 'Query',
         UPDATE: 'Update',
       },
+    },
+    // SQL Log
+    sql: {
+      title: 'SQL Logs',
+      traceId: 'Trace ID',
+      sqlType: 'SQL Type',
+      mapperClass: 'Mapper Class',
+      mapperMethod: 'Method',
+      duration: 'Duration',
+      username: 'Username',
+      isSlow: 'Slow SQL',
+      timeRange: 'Time Range',
+      sqlText: 'SQL Text',
+      sqlParams: 'Parameters',
+      requestUrl: 'Request URL',
+      requestMethod: 'Method',
+      clientIp: 'Client IP',
+      rowCount: 'Row Count',
     },
     // Trace
     trace: {

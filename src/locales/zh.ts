@@ -11,6 +11,7 @@ export default {
     accessLogs: '访问日志',
     errorLogs: '错误日志',
     operationLogs: '操作日志',
+    sqlLogs: 'SQL 日志',
   },
   app: {
     logout: '退出登录',
@@ -216,6 +217,7 @@ export default {
       access: '访问日志',
       error: '错误日志',
       operation: '操作日志',
+      sql: 'SQL 日志',
       trace: '链路追踪',
     },
     // Common
@@ -296,6 +298,24 @@ export default {
         QUERY: '查询',
         UPDATE: '更新',
       },
+    },
+    // SQL Log
+    sql: {
+      title: 'SQL 日志',
+      traceId: 'Trace ID',
+      sqlType: 'SQL 类型',
+      mapperClass: 'Mapper 类',
+      mapperMethod: '方法',
+      duration: '耗时',
+      username: '用户名',
+      isSlow: '慢 SQL',
+      timeRange: '时间范围',
+      sqlText: 'SQL 文本',
+      sqlParams: '参数',
+      requestUrl: '请求 URL',
+      requestMethod: '请求方法',
+      clientIp: '客户端 IP',
+      rowCount: '行数',
     },
     // Trace
     trace: {
