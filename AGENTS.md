@@ -1,113 +1,99 @@
-# Project Rules
+# AGENTS.md — vue3-vuetify4-frontend-base
 
-## General
+An admin SPA scaffolded from Vuetify CLI: master data (users, roles, dept, position), log monitoring (access, error, operation, SQL, trace), auth flows, and file export.
 
-- Follow the existing code style and patterns.
-- Use **pnpm** (not npm/yarn) — `packageManager` is pinned to `pnpm@10.12.1`.
-- Keep code in TypeScript. Use `<script lang="ts" setup>` in `.vue` files.
-- Named imports must be in **natural ascending order** (e.g. `import { alpha, beta, gamma }`).
+## First Reads
 
-## Stack
-
-- **Vue 3** (Composition API) + **Vite 8** + **TypeScript ~5.9**
-- **Vuetify 4** with auto-import enabled (`vite-plugin-vuetify`). Do **not** manually import Vuetify components.
-- **Vue Router 5** with hand-written routes in `src/router/index.ts`.
-- **Pinia 3** with `pinia-plugin-persistedstate`.
-- **Vue I18n 11** (`legacy: false`, Composition API mode).
-- **Zod v4** for runtime API response validation — import from `'zod/v4'` (not `'zod'`).
+- **`opencode.json`** — grants cross-project edit access to `D:/Projects/github/sping-boot4-backend-base/` and loads its `AGENTS.md` as merged instructions.
+- **Backend repo**: `sping-boot4-backend-base` (note typo: `sping`, not `spring`). The path used in opencode.json must match the actual directory name.
 
 ## Commands
 
-| Command             | Purpose                            |
-| ------------------- | ---------------------------------- |
-| `pnpm dev`          | Dev server (port **3000**)         |
-| `pnpm build`        | type-check + production build      |
-| `pnpm type-check`   | `vue-tsc --build --force`          |
-| `pnpm lint`         | ESLint check                       |
-| `pnpm lint:fix`     | ESLint auto-fix                    |
-| `pnpm format`       | Prettier write                     |
-| `pnpm format:check` | Prettier check                     |
-| `pnpm mcp`          | Apply Vuetify MCP config via ruler |
-| `pnpm mcp:revert`   | Revert MCP config                  |
+| Command             | Purpose                                      |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | Dev server on **port 3000**                  |
+| `pnpm build`        | type-check + production build (`vite build`) |
+| `pnpm type-check`   | `vue-tsc --build --force`                    |
+| `pnpm lint`         | ESLint check (flat config, v10)              |
+| `pnpm lint:fix`     | ESLint auto-fix                              |
+| `pnpm format`       | Prettier write (entire project)              |
+| `pnpm format:check` | Prettier check                               |
+| `pnpm mcp`          | Apply Vuetify MCP config via `ruler`         |
+| `pnpm mcp:revert`   | Revert MCP config                            |
 
-Order when validating changes: `pnpm lint:fix && pnpm format && pnpm type-check && pnpm build`
+**Validation order**: `pnpm lint:fix && pnpm format && pnpm type-check && pnpm build`
 
-## Code Style
+## Stack & Quirks
 
-- **Prettier**: no semicolons, single quotes, trailing commas, `printWidth: 100`, `arrowParens: "avoid"`, `vueIndentScriptAndStyle: false`.
-- **lint-staged** runs `eslint --fix` then `prettier --write` on staged `.ts/.vue/.js/.mts` files.
-- **ESLint**: extends `eslint-config-vuetify` with Prettier integration.
+- **Vue 3** (Composition API, `<script lang="ts" setup>`) + **Vite 8** + **TypeScript ~5.9**
+- **Vuetify 4** with `vite-plugin-vuetify` auto-import — never manually import Vuetify components in `.vue` files.
+- **Vue Router 5** — routes hand-written in `src/router/index.ts`. Root path uses `resolveLayout()` to dynamically pick the layout.
+- **Pinia 3** + `pinia-plugin-persistedstate`. Auth store key is `'auth'` in localStorage. On 401, `handleUnauthorized` clears this key directly.
+- **Vue I18n 11** — `legacy: false`, Composition API. 3 locales: `en`, `zh`, `ja`. Vuetify locale map: `zh` → `zhHans`.
+- **Zod v4** — import from `'zod/v4'` (not `'zod'`).
+- **ESLint v10** flat config — extends `eslint-config-vuetify` with Prettier plugin.
+- **Prettier**: no semicolons, single quotes, trailing commas, `printWidth: 100`, `arrowParens: "avoid"`, `singleAttributePerLine: true`.
+- **`@` alias** → `src/` (both vite.config.mts and tsconfig.app.json). Use `@/` in `<script>` imports.
+- **`.ruler/`** excluded from Prettier.
+- **No test framework** (no vitest, no test scripts). Do not add tests unless asked.
+- **VSCode**: recommended extensions `vuetify.vuetify-vscode` + `vue.volar`.
 
 ## Architecture
 
-### Directory Map
-
 ```
 src/
-├── main.ts              # Entry: createApp → registerPlugins → mount
-├── App.vue              # Root: <v-app> with <router-view>
+├── main.ts              # createApp → registerPlugins → mount
+├── App.vue              # <v-app><router-view/></v-app>
 ├── api/
-│   ├── client.ts        # Axios instance (CSRF, JWT interceptors, token refresh)
+│   ├── client.ts        # Axios (CSRF, JWT, token refresh, Accept-Language)
 │   ├── types.ts         # Result<T>, Page<T> — backend envelope types
 │   ├── schemas/         # Zod v4 schemas (one file per module)
-│   └── modules/         # API call functions (one file per module, mirrors schemas/)
-├── plugins/
-│   ├── index.ts         # registerPlugins(app): Vuetify → Pinia → i18n → Router
-│   ├── vuetify.ts       # Vuetify 4 config (theme + locale)
-│   └── i18n.ts          # Vue I18n 11 config
+│   └── modules/         # API call functions (mirrors schemas/)
+├── plugins/             # Vuetify → Pinia → i18n → Router registration
 ├── router/index.ts      # Manual routes + beforeEach auth guard
-├── stores/              # Pinia stores (per-module files)
+├── stores/              # auth.ts (persisted), app.ts (empty skeleton)
 ├── pages/               # Route-level page components
-├── layouts/             # Layout components; selected via VITE_LAYOUT env var
-├── components/          # Shared reusable components
-├── composables/         # Shared composables (useLocale, useEnums, useSelectOptions)
-├── locales/             # i18n locale files (en.ts, zh.ts, ja.ts)
-└── styles/              # Global styles + Vuetify SASS variables
+├── layouts/             # BaselineLayout / SystemBarLayout (select via VITE_LAYOUT)
+├── components/          # AppBar, NavigationDrawer, ChangePasswordDialog,
+│                        # DatetimeRangePicker, leave/*
+├── composables/         # useLocale, useEnums, useSelectOptions, useUserStatus, useCommonStatus
+├── locales/             # en.ts, zh.ts, ja.ts
+├── styles/              # Global SCSS + Vuetify SASS variable overrides
+└── types/               # Manual ambient type declarations (spark-md5.d.ts)
 ```
 
-### Key Design Decisions
+### Key Patterns
 
-- **Vuetify 4 auto-import**: Components (`<v-*>`) are auto-imported by `vite-plugin-vuetify`. Never manually import Vuetify components in `.vue` files.
-- **`@` alias**: `@` → `src/` (configured in both `vite.config.mts` and `tsconfig.app.json`).
-- **Path alias in `.vue` templates**: Use `@/` for imports in `<script>` but never in `<template>` (Vite handles resolution differently).
-- **API layer**: Each module has a matched pair — `src/api/schemas/<module>.ts` (Zod types) and `src/api/modules/<module>.ts` (Axios calls). All API response data is parsed through Zod before returning.
-- **API envelope**: Backend wraps everything in `Result<T>` (`{ code, message, data }`). The Axios interceptor rejects on `code !== 200`.
-- **Result/Page types**: Defined in `src/api/types.ts`, not in Zod schemas.
+- **API layer**: Every module has `schemas/<module>.ts` (Zod schemas) + `modules/<module>.ts` (Axios calls). Response data is parsed through Zod before returning. The Axios interceptor rejects responses where `code !== 200`.
+- **Auth**: JWT access token in-memory only. Refresh via HttpOnly cookie. CSRF uses `csrfToken` cookie + `X-CSRF-Token` header. The `useLocale` composable's `LOCALE_STORAGE_KEY` and `SUPPORTED_LOCALES` are imported by `client.ts` for `Accept-Language`.
+- **Route guard**: Redirects unauthenticated users to `/login?redirect=<path>`. Authenticated users visiting guest routes go home. `INACTIVE` users are redirected to `/force-change-password`.
+- **Enums/SelectOptions**: `useEnums(type)` / `useSelectOptions(type)` are lazy-loaded composables that fetch from backend and cache module-level. `clearSelectOptionsCache()` is called on logout.
+- **Layouts**: Resolved dynamically at route root via `resolveLayout()` reading `VITE_LAYOUT` env var. Available: `baseline` (default) / `system-bar`.
+- **i18n**: `useLocale()` composable syncs vue-i18n, Vuetify locale, `<html lang>`, and `localStorage`. Initial resolution: `localStorage` → `VITE_DEFAULT_LOCALE` → `'en'`.
+- **Dev proxy**: `/api` → `http://localhost:8080` with `Origin` rewritten to backend address.
 
-### Auth Flow
+### Notable Components
 
-- JWT access token is held **in-memory** (`setAccessToken`/`getAccessToken` in `client.ts`), attached via `Authorization: Bearer` header.
-- Refresh token is an **HttpOnly cookie** set by the backend.
-- CSRF: Cookie `csrfToken`, header `X-CSRF-Token` (Axios configured with `xsrfCookieName`/`xsrfHeaderName`).
-- On 401: automatically attempts token refresh (`tryRefreshToken`), retries the original request. On refresh failure: clears auth state and redirects to `/login`.
-- Route guard (`router.beforeEach`): redirects to `/login?redirect=<path>` if not authenticated; redirects to `/` if already authenticated and visiting guest routes.
+- `DatetimeRangePicker` — shared date range picker used across log pages.
+- `ChangePasswordDialog` — reusable password change dialog.
+- `leave/` — leave-management related components.
 
-### Layout System
+## Hooks
 
-- Configure via `VITE_LAYOUT` in `.env.development`: `baseline` (default, `BaselineLayout.vue`) or `system-bar` (`SystemBarLayout.vue`).
-- Layouts wrap `<router-view>` inside `<v-main>` with `<AppBar>` + `<NavigationDrawer>`.
+- **Husky pre-commit**: `pnpm exec lint-staged` — runs `eslint --fix` then `prettier --write` on staged `.ts/.vue/.js/.mts/.json/.scss/.css/.md/.html` files.
 
-### i18n
+## Env
 
-- 3 supported locales: `en`, `zh`, `ja`.
-- `useLocale()` composable keeps vue-i18n, Vuetify locale, `<html lang>`, and `localStorage` in sync.
-- Initial locale resolution: `localStorage` → `VITE_DEFAULT_LOCALE` env → `'en'`.
-- Vuetify locale keys differ from app keys: `zh` maps to `zhHans`.
+File: `.env.development`
 
-### Enums & Select Options
+```env
+VITE_API_BASE_URL=/
+VITE_DEFAULT_LOCALE=en   # en | zh | ja (NOT jp)
+VITE_LAYOUT=baseline     # baseline | system-bar
+```
 
-- `useEnums(type)` and `useSelectOptions(type)` are lazy-loaded, cached composables that fetch data from backend endpoints and expose reactive `items`, `options` (for `v-select`), and `labelOf` helpers.
-- Caches are cleared on logout via `clearSelectOptionsCache()`.
+The comment in `.env.development` says `jp` but the correct value is `ja`. `SUPPORTED_LOCALES` in `useLocale.ts` is the authoritative source.
 
-## Dev Server & Proxy
+## Cross-Project
 
-- Dev server runs on **port 3000**.
-- `/api` requests are proxied to `http://localhost:8080` with `Origin` header rewritten to the backend address.
-
-## Important Constraints
-
-- **No test framework** is configured (no vitest, no test scripts). Do not add tests unless asked.
-- **`.ruler/` directory** is excluded from Prettier formatting.
-- **VSCode**: recommended extensions are `vuetify.vuetify-vscode` and `vue.volar` (not Vetur).
-- **Husky pre-commit** runs `pnpm exec lint-staged` which lints and formats staged files.
-- **Backend reference**: See `.kiro/settings/mcp.json` for the backend MCP server config pointing to the Java project.
+- `opencode.json` gives this agent access to the backend repo at `D:/Projects/github/sping-boot4-backend-base/` and merges its `AGENTS.md` instructions. Use both when working on full-stack features.
