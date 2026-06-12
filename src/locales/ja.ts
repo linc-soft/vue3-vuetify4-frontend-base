@@ -314,7 +314,6 @@ export default {
       mapperMethod: 'メソッド',
       duration: '所要時間',
       username: 'ユーザー名',
-      isSlow: 'スロー SQL',
       timeRange: '時間範囲',
       sqlText: 'SQL テキスト',
       sqlParams: 'パラメータ',

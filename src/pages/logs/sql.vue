@@ -157,19 +157,9 @@
         <span v-else>-</span>
       </template>
       <template #item.duration="{ value }">
-        <span :class="{ 'text-warning': value && value > 1000 }">
+        <span :class="getDurationColorClass(value)">
           {{ value != null ? `${value}ms` : '-' }}
         </span>
-      </template>
-      <template #item.isSlow="{ value }">
-        <v-chip
-          v-if="value"
-          color="error"
-          size="small"
-        >
-          {{ t('log.sql.isSlow') }}
-        </v-chip>
-        <span v-else>-</span>
       </template>
       <template #item.createdAt="{ value }">
         {{ formatDateTime(value) }}
@@ -236,7 +226,6 @@ const allHeaders = computed(() => [
   { title: t('log.sql.mapperMethod'), key: 'mapperMethod' },
   { title: t('log.sql.duration'), key: 'duration' },
   { title: t('log.sql.username'), key: 'username' },
-  { title: t('log.sql.isSlow'), key: 'isSlow' },
   { title: t('log.common.createdAt'), key: 'createdAt' },
 ])
 
@@ -329,5 +318,13 @@ function getSqlTypeColor(sqlType: string): string {
 // Format date time
 function formatDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString()
+}
+
+// Get duration color class based on execution time
+function getDurationColorClass(duration: number | null | undefined): string {
+  if (duration == null) return ''
+  if (duration > 1000) return 'text-error font-weight-bold'
+  if (duration > 500) return 'text-warning'
+  return ''
 }
 </script>

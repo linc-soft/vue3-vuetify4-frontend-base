@@ -11,30 +11,30 @@ import {
   type DepartmentUpdateRequest,
 } from '@/api/schemas/department'
 
-/** GET /api/departments/{id} */
+/** GET /api/master/departments/{id} */
 export async function getDepartment(id: number): Promise<DepartmentInfoResponse> {
-  const { data } = await http.get<Result<DepartmentInfoResponse>>(`/api/departments/${id}`)
+  const { data } = await http.get<Result<DepartmentInfoResponse>>(`/api/master/departments/${id}`)
   return DepartmentInfoResponseSchema.parse(data.data)
 }
 
-/** GET /api/departments/tree */
+/** GET /api/master/departments/tree */
 export async function getDepartmentTree(): Promise<DepartmentTreeResponse[]> {
-  const { data } = await http.get<Result<DepartmentTreeResponse[]>>('/api/departments/tree')
+  const { data } = await http.get<Result<DepartmentTreeResponse[]>>('/api/master/departments/tree')
   return z.array(DepartmentTreeResponseSchema).parse(data.data)
 }
 
-/** POST /api/departments */
+/** POST /api/master/departments */
 export async function createDepartment(params: DepartmentCreateRequest): Promise<number> {
-  const { data } = await http.post<Result<number>>('/api/departments', params)
+  const { data } = await http.post<Result<number>>('/api/master/departments', params)
   return data.data
 }
 
-/** PUT /api/departments */
+/** PUT /api/master/departments */
 export async function updateDepartment(params: DepartmentUpdateRequest): Promise<void> {
-  await http.put('/api/departments', params)
+  await http.put('/api/master/departments', params)
 }
 
-/** DELETE /api/departments */
+/** DELETE /api/master/departments */
 export async function deleteDepartment(params: DepartmentDeleteRequest): Promise<void> {
-  await http.delete('/api/departments', { data: params })
+  await http.delete('/api/master/departments', { data: params })
 }

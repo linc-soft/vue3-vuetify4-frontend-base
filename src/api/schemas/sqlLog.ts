@@ -29,7 +29,6 @@ export const SqlLogPageItemSchema = z.object({
   mapperMethod: z.string().nullish(),
   duration: z.number().int().nullish(),
   username: z.string().nullish(),
-  isSlow: z.boolean().nullish(),
   createdAt: z.string(),
 })
 

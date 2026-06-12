@@ -313,7 +313,6 @@ export default {
       mapperMethod: 'Method',
       duration: 'Duration',
       username: 'Username',
-      isSlow: 'Slow SQL',
       timeRange: 'Time Range',
       sqlText: 'SQL Text',
       sqlParams: 'Parameters',

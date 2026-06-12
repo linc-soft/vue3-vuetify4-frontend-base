@@ -308,7 +308,6 @@ export default {
       mapperMethod: '方法',
       duration: '耗时',
       username: '用户名',
-      isSlow: '慢 SQL',
       timeRange: '时间范围',
       sqlText: 'SQL 文本',
       sqlParams: '参数',
