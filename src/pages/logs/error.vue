@@ -16,7 +16,6 @@
           clearable
           density="compact"
           hide-details
-          item-value="label"
           :items="userOptions"
           :label="t('log.error.username')"
           variant="outlined"
