@@ -234,6 +234,7 @@ export default {
       reset: 'Reset',
       export: 'Export',
       copy: 'Copy',
+      copySuccess: 'Copied to clipboard',
       collapse: 'Collapse',
       expand: 'Expand',
       noData: 'No data',

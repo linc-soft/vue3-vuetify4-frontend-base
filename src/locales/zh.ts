@@ -229,6 +229,7 @@ export default {
       reset: '重置',
       export: '导出',
       copy: '复制',
+      copySuccess: '已复制到剪贴板',
       collapse: '收起',
       expand: '展开',
       noData: '暂无数据',

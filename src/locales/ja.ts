@@ -235,6 +235,7 @@ export default {
       reset: 'リセット',
       export: 'エクスポート',
       copy: 'コピー',
+      copySuccess: 'クリップボードにコピーしました',
       collapse: '折りたたむ',
       expand: '展開',
       noData: 'データなし',

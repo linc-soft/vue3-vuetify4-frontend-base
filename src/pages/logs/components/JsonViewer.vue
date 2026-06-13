@@ -12,8 +12,9 @@
       </v-btn>
       <v-btn
         class="ml-2"
+        :color="copied ? 'success' : undefined"
         density="compact"
-        prepend-icon="mdi-content-copy"
+        :prepend-icon="copied ? 'mdi-check' : 'mdi-content-copy'"
         size="small"
         variant="text"
         @click="copyToClipboard"
@@ -29,6 +30,14 @@
         >{{ formattedJson }}</pre
       >
     </v-expand-transition>
+    <v-snackbar
+      v-model="showSnackbar"
+      color="success"
+      location="top end"
+      :timeout="3000"
+    >
+      {{ t('log.common.copySuccess') }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -48,6 +57,8 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const expanded = ref(true)
+const copied = ref(false)
+const showSnackbar = ref(false)
 
 const formattedJson = computed(() => {
   if (!props.data) return ''
@@ -62,6 +73,11 @@ const formattedJson = computed(() => {
 async function copyToClipboard() {
   try {
     await navigator.clipboard.writeText(formattedJson.value)
+    copied.value = true
+    showSnackbar.value = true
+    setTimeout(() => {
+      copied.value = false
+    }, 3000)
   } catch {
     // Silently fail
   }
