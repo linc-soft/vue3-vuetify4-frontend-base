@@ -321,7 +321,9 @@ export default {
       totalDuration: '总耗时',
       operationCount: '操作数',
       errorCount: '错误数',
+      sqlCount: 'SQL 查询数',
       noAccessLog: '暂无访问日志记录',
+      noSqlLogs: '暂无 SQL 日志记录',
     },
   },
   oa: {

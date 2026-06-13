@@ -58,6 +58,10 @@
                 <span class="ml-2 font-weight-bold">{{ traceDetail.operationLogs.length }}</span>
               </div>
               <div>
+                <span class="text-medium-emphasis">{{ t('log.trace.sqlCount') }}:</span>
+                <span class="ml-2 font-weight-bold">{{ traceDetail.sqlLogs.length }}</span>
+              </div>
+              <div>
                 <span class="text-medium-emphasis">{{ t('log.trace.errorCount') }}:</span>
                 <span
                   class="ml-2 font-weight-bold"
@@ -245,6 +249,123 @@
           </v-card>
         </v-timeline-item>
 
+        <!-- SQL Logs -->
+        <v-timeline-item
+          v-if="traceDetail.sqlLogs.length > 0"
+          dot-color="secondary"
+          icon="mdi-database-search-outline"
+          size="small"
+        >
+          <v-card variant="outlined">
+            <v-card-title class="text-subtitle-1">
+              {{ t('log.sql.title') }} ({{ traceDetail.sqlLogs.length }})
+            </v-card-title>
+            <v-card-text>
+              <v-expansion-panels variant="accordion">
+                <v-expansion-panel
+                  v-for="log in traceDetail.sqlLogs"
+                  :key="log.id"
+                >
+                  <v-expansion-panel-title>
+                    <div class="d-flex align-center ga-2 flex-wrap">
+                      <v-chip
+                        v-if="log.sqlType"
+                        :color="getSqlTypeColor(log.sqlType)"
+                        size="small"
+                      >
+                        {{ log.sqlType }}
+                      </v-chip>
+                      <span :class="getDurationColorClass(log.duration)">
+                        {{ log.duration ?? '-' }}ms
+                      </span>
+                      <span class="text-medium-emphasis text-caption">
+                        {{ formatTime(log.createTime ?? '') }}
+                      </span>
+                    </div>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <v-row dense>
+                      <v-col
+                        cols="12"
+                        md="6"
+                      >
+                        <div class="text-medium-emphasis text-caption">
+                          {{ t('log.sql.mapperClass') }}
+                        </div>
+                        <div class="text-body-2">{{ log.mapperClass || '-' }}</div>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        md="6"
+                      >
+                        <div class="text-medium-emphasis text-caption">
+                          {{ t('log.sql.mapperMethod') }}
+                        </div>
+                        <div class="text-body-2">{{ log.mapperMethod || '-' }}</div>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        md="6"
+                      >
+                        <div class="text-medium-emphasis text-caption">
+                          {{ t('log.sql.rowCount') }}
+                        </div>
+                        <div class="text-body-2">{{ log.rowCount ?? '-' }}</div>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        md="6"
+                      >
+                        <div class="text-medium-emphasis text-caption">
+                          {{ t('log.common.username') }}
+                        </div>
+                        <div class="text-body-2">{{ log.username || '-' }}</div>
+                      </v-col>
+                    </v-row>
+
+                    <div class="mt-4">
+                      <div class="d-flex align-center justify-space-between mb-2">
+                        <div class="text-subtitle-2">{{ t('log.sql.sqlText') }}</div>
+                        <v-btn
+                          density="compact"
+                          icon="mdi-content-copy"
+                          size="small"
+                          variant="text"
+                          @click="copySqlText(log.sqlText ?? '')"
+                        />
+                      </div>
+                      <pre class="sql-text">{{ log.sqlText || '-' }}</pre>
+                    </div>
+
+                    <div
+                      v-if="log.sqlParams"
+                      class="mt-4"
+                    >
+                      <div class="text-subtitle-2 mb-2">{{ t('log.sql.sqlParams') }}</div>
+                      <JsonViewer :data="log.sqlParams" />
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-card-text>
+          </v-card>
+        </v-timeline-item>
+
+        <v-timeline-item
+          v-else
+          dot-color="secondary"
+          icon="mdi-database-search-outline"
+          size="small"
+        >
+          <!-- No SQL Logs -->
+          <v-card variant="outlined">
+            <v-card-text class="text-medium-emphasis">
+              <v-icon class="mr-2">mdi-database-off-outline</v-icon>
+              {{ t('log.trace.noSqlLogs') }}
+            </v-card-text>
+          </v-card>
+        </v-timeline-item>
+
         <!-- Error Log -->
         <v-timeline-item
           v-if="traceDetail.errorLog"
@@ -351,6 +472,14 @@ async function copyTraceId() {
   }
 }
 
+async function copySqlText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    // Silently fail
+  }
+}
+
 function getStatusCodeColor(statusCode: number): string {
   if (statusCode >= 200 && statusCode < 300) return 'success'
   if (statusCode >= 400 && statusCode < 500) return 'warning'
@@ -376,6 +505,33 @@ function getOperationTypeColor(type: OperationType | null): string {
   }
 }
 
+function getSqlTypeColor(sqlType: string | null | undefined): string {
+  switch (sqlType) {
+    case 'SELECT': {
+      return 'info'
+    }
+    case 'INSERT': {
+      return 'success'
+    }
+    case 'UPDATE': {
+      return 'warning'
+    }
+    case 'DELETE': {
+      return 'error'
+    }
+    default: {
+      return 'default'
+    }
+  }
+}
+
+function getDurationColorClass(duration: number | null | undefined): string {
+  if (duration == null) return ''
+  if (duration > 1000) return 'text-error font-weight-bold'
+  if (duration > 500) return 'text-warning'
+  return ''
+}
+
 function formatDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString()
 }
@@ -392,6 +548,18 @@ function formatTime(dateStr: string): string {
   border-radius: 8px;
   overflow: auto;
   max-height: 400px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.75rem;
+}
+
+.sql-text {
+  background-color: rgb(var(--v-theme-surface-variant));
+  padding: 12px;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 300px;
   white-space: pre-wrap;
   word-break: break-all;
   font-family: 'Fira Code', 'Consolas', monospace;

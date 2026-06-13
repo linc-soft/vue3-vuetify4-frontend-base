@@ -23,3 +23,8 @@ export async function getSqlLog(id: number): Promise<SqlLogDetail> {
   const { data } = await http.get<Result<SqlLogDetail>>(`/api/logs/sql/${id}`)
   return SqlLogDetailSchema.parse(data.data)
 }
+
+export async function getSqlLogsByTraceId(traceId: string): Promise<SqlLogDetail[]> {
+  const { data } = await http.get<Result<SqlLogDetail[]>>(`/api/logs/sql/trace/${traceId}`)
+  return z.array(SqlLogDetailSchema).parse(data.data)
+}

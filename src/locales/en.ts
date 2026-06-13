@@ -326,7 +326,9 @@ export default {
       totalDuration: 'Total Duration',
       operationCount: 'Operations',
       errorCount: 'Errors',
+      sqlCount: 'SQL Queries',
       noAccessLog: 'No access log recorded',
+      noSqlLogs: 'No SQL logs recorded',
     },
   },
   oa: {
