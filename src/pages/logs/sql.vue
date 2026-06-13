@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <!-- Search and filter area -->
-    <!-- Row 1: SQL Type + Mapper Class + Mapper Method -->
+    <!-- Row 1: SQL Type + API Path -->
     <v-row
       align="center"
       density="compact"
@@ -27,25 +27,11 @@
         sm="8"
       >
         <v-text-field
-          v-model="filters.mapperClass"
+          v-model="filters.requestUrl"
           clearable
           density="compact"
           hide-details
-          :label="t('log.sql.mapperClass')"
-          variant="outlined"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        sm="8"
-      >
-        <v-text-field
-          v-model="filters.mapperMethod"
-          clearable
-          density="compact"
-          hide-details
-          :label="t('log.sql.mapperMethod')"
+          :label="t('log.sql.apiPath')"
           variant="outlined"
         />
       </v-col>
@@ -190,8 +176,7 @@ const filters = reactive({
   traceId: '',
   username: null as string | null,
   sqlType: null as 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE' | null,
-  mapperClass: '',
-  mapperMethod: '',
+  requestUrl: '',
 })
 
 // Time range for datetime picker
@@ -216,14 +201,14 @@ const sqlTypeOptions = ['SELECT', 'INSERT', 'UPDATE', 'DELETE']
 const sortFieldMap: Record<string, string> = {
   createdAt: 'createTime',
   sqlType: 'sql_type',
-  mapperMethod: 'mapper_method',
+  requestUrl: 'request_url',
 }
 
 // Table column definitions
 const allHeaders = computed(() => [
   { title: t('log.sql.traceId'), key: 'traceId' },
   { title: t('log.sql.sqlType'), key: 'sqlType' },
-  { title: t('log.sql.mapperMethod'), key: 'mapperMethod' },
+  { title: t('log.sql.apiPath'), key: 'requestUrl' },
   { title: t('log.sql.duration'), key: 'duration' },
   { title: t('log.sql.username'), key: 'username' },
   { title: t('log.common.createdAt'), key: 'createdAt' },
@@ -239,8 +224,7 @@ async function fetchLogs() {
       traceId: filters.traceId || undefined,
       username: filters.username || undefined,
       sqlType: filters.sqlType ?? undefined,
-      mapperClass: filters.mapperClass || undefined,
-      mapperMethod: filters.mapperMethod || undefined,
+      requestUrl: filters.requestUrl || undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
       sortBy:
@@ -281,8 +265,7 @@ function handleReset() {
   filters.traceId = ''
   filters.username = null
   filters.sqlType = null
-  filters.mapperClass = ''
-  filters.mapperMethod = ''
+  filters.requestUrl = ''
   timeRange.value = null
   sortBy.value = []
   handleSearch()
