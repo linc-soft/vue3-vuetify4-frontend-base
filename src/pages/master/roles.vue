@@ -27,19 +27,12 @@
           clearable
           density="compact"
           hide-details
-          item-title="roleCode"
-          item-value="roleCode"
-          :items="baseRoleOptions"
+          item-title="name"
+          item-value="code"
+          :items="roleCodeItems"
           :label="t('role.search.roleCode')"
           variant="outlined"
-        >
-          <template #item="{ props: itemProps, item }">
-            <v-list-item
-              v-bind="itemProps"
-              :subtitle="item.roleName"
-            />
-          </template>
-        </v-autocomplete>
+        />
       </v-col>
       <v-col
         cols="12"
@@ -194,6 +187,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
+import { useEnums } from '@/composables/useEnums'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
@@ -212,8 +206,8 @@ const items = ref<RoleListResponseItem[]>([])
 const loading = ref(false)
 const itemsPerPage = ref(10)
 
-// Base role options for the roleCode dropdown (roles with a non-null roleCode)
-const baseRoleOptions = ref<RoleListResponseItem[]>([])
+// Role code enum options for the roleCode filter dropdown
+const { items: roleCodeItems } = useEnums('role-code')
 
 // Dialog Control
 const detailDialog = ref(false)
@@ -265,16 +259,6 @@ async function fetchRoles() {
     console.error('Failed to fetch roles:', error)
   } finally {
     loading.value = false
-  }
-}
-
-// Load base role options (independent of search filters)
-async function fetchBaseRoleOptions() {
-  try {
-    const roles = await getRoleList()
-    baseRoleOptions.value = roles.filter(r => !!r.roleCode)
-  } catch (error: unknown) {
-    console.error('Failed to fetch base role options:', error)
   }
 }
 
@@ -330,5 +314,4 @@ async function handleDelete() {
 
 // Initial Load
 fetchRoles()
-fetchBaseRoleOptions()
 </script>

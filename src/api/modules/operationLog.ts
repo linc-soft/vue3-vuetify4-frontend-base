@@ -33,9 +33,3 @@ export async function getOperationLogsByTraceId(traceId: string): Promise<Operat
   )
   return z.array(OperationLogDetailSchema).parse(data.data)
 }
-
-/** GET /api/logs/operation/modules - Get Operation Module List */
-export async function getOperationModules(): Promise<string[]> {
-  const { data } = await http.get<Result<string[]>>('/api/logs/operation/modules')
-  return data.data
-}

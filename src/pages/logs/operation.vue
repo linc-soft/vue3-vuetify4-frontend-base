@@ -167,16 +167,23 @@
 <script lang="ts" setup>
 import type { OperationLogPageItem, OperationType } from '@/api/schemas/operationLog'
 import type { DatetimeRange } from '@/components/DatetimeRangePicker.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { getOperationLogPage, getOperationModules } from '@/api/modules/operationLog'
+import { getOperationLogPage } from '@/api/modules/operationLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+
+// Module options (loaded from backend enums)
+const { options: moduleOptions } = useEnums('module')
+
+// Operation type options (loaded from backend enums)
+const { options: operationTypeOptions } = useEnums('operation-type')
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')
@@ -204,22 +211,6 @@ const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
 const items = ref<OperationLogPageItem[]>([])
 const loading = ref(false)
 
-// Module options (loaded from backend)
-const moduleOptions = ref<string[]>([])
-
-// Operation type options
-const operationTypeOptions = computed(() => [
-  { title: t('log.operation.types.CREATE'), value: 'CREATE' },
-  { title: t('log.operation.types.DELETE'), value: 'DELETE' },
-  { title: t('log.operation.types.EXPORT'), value: 'EXPORT' },
-  { title: t('log.operation.types.IMPORT'), value: 'IMPORT' },
-  { title: t('log.operation.types.LOGIN'), value: 'LOGIN' },
-  { title: t('log.operation.types.LOGOUT'), value: 'LOGOUT' },
-  { title: t('log.operation.types.OTHER'), value: 'OTHER' },
-  { title: t('log.operation.types.QUERY'), value: 'QUERY' },
-  { title: t('log.operation.types.UPDATE'), value: 'UPDATE' },
-])
-
 // Sort field mapping (frontend key → backend entity field name)
 const sortFieldMap: Record<string, string> = {
   createdAt: 'createTime',
@@ -236,15 +227,6 @@ const headers = computed(() => [
   { title: t('log.operation.username'), key: 'username' },
   { title: t('log.common.createdAt'), key: 'createdAt' },
 ])
-
-// Load modules on mount
-onMounted(async () => {
-  try {
-    moduleOptions.value = await getOperationModules()
-  } catch {
-    // Silently fail
-  }
-})
 
 // Fetch paginated data
 async function fetchLogs() {
