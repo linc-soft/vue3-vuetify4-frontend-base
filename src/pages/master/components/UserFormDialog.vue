@@ -147,9 +147,8 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createUser, getUser, updateUser } from '@/api/modules/user'
-import { useGender } from '@/composables/useCommonStatus'
+import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
-import { useUserStatus } from '@/composables/useUserStatus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -164,7 +163,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: genderOptions } = useGender()
+const { options: genderOptions } = useEnums('gender')
 
 const form = reactive<{
   username: string
@@ -197,7 +196,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
 
-const { options: statusOptions } = useUserStatus()
+const { options: statusOptions } = useEnums('user-status')
 const { items: roleItems, descriptionOf: roleDescriptionOf } = useSelectOptions('role')
 const { options: deptOptions } = useSelectOptions('department')
 const { options: positionOptions } = useSelectOptions('position')

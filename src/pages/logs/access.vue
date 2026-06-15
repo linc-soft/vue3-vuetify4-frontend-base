@@ -45,7 +45,7 @@
           clearable
           density="compact"
           hide-details
-          :items="statusCodeOptions"
+          :items="resultCodeOptions"
           :label="t('log.access.statusCode')"
           variant="outlined"
         />
@@ -181,6 +181,7 @@ import { useDisplay } from 'vuetify'
 
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
@@ -188,6 +189,9 @@ const { mobile } = useDisplay()
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')
+
+// Status code group options (loaded from backend enums)
+const { options: resultCodeOptions } = useEnums('result-code')
 
 // Filter Conditions
 const filters = reactive({
@@ -216,13 +220,6 @@ const exportLoading = ref(false)
 
 // Method options
 const methodOptions = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-
-// Status code options
-const statusCodeOptions = [
-  { title: '2xx', value: '200' },
-  { title: '4xx', value: '4XX' },
-  { title: '5xx', value: '5XX' },
-]
 
 // Sort field mapping (frontend key → backend entity field name)
 const sortFieldMap: Record<string, string> = {

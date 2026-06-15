@@ -104,7 +104,7 @@ import {
   getDepartmentTree,
   updateDepartment,
 } from '@/api/modules/department'
-import { useCommonStatus } from '@/composables/useCommonStatus'
+import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
@@ -122,7 +122,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: statusOptions } = useCommonStatus()
+const { options: statusOptions } = useEnums('common-status')
 const { options: userOptions } = useSelectOptions('user')
 
 const form = reactive<{

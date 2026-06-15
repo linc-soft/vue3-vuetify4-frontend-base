@@ -240,8 +240,7 @@ import { useDisplay } from 'vuetify'
 import { getDepartmentTree } from '@/api/modules/department'
 import { getPositionList } from '@/api/modules/position'
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
-import { useGender } from '@/composables/useCommonStatus'
-import { useUserStatus } from '@/composables/useUserStatus'
+import { useEnums } from '@/composables/useEnums'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
@@ -280,8 +279,8 @@ const reportGroupByOptions = computed(() => [
 ])
 
 // Status options (client-side i18n mapping)
-const { options: statusOptions, labelOf: statusLabelOf } = useUserStatus()
-const { labelOf: genderLabelOf } = useGender()
+const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
+const { labelOf: genderLabelOf } = useEnums('gender')
 
 // Reference data for resolving dept / position display names.
 const departments = ref<DepartmentTreeResponse[]>([])

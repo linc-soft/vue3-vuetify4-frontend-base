@@ -18,6 +18,82 @@ export default {
     language: '语言',
     changePassword: '修改密码',
   },
+  common: {
+    enums: {
+      'module-type': {
+        master: '主数据',
+        auth: '认证',
+        system: '系统',
+      },
+      'sub-module-type': {
+        session: '会话管理',
+        role: '角色管理',
+        user: '用户管理',
+        file: '文件管理',
+        permission: '权限管理',
+        department: '部门管理',
+        position: '职位管理',
+      },
+      'operation-type': {
+        query: '查询',
+        create: '新增',
+        update: '修改',
+        delete: '删除',
+        login: '登录',
+        logout: '登出',
+        import: '导入',
+        export: '导出',
+        other: '其他',
+      },
+      'user-status': {
+        enabled: '启用',
+        disabled: '禁用',
+        inactive: '未激活',
+      },
+      'role-code': {
+        admin: '管理员',
+        'role-read': '角色只读',
+        'role-write': '角色可写',
+        'role-delete': '角色可删',
+        'role-export': '角色可导出',
+        'user-read': '用户只读',
+        'user-write': '用户可写',
+        'user-delete': '用户可删',
+        'user-export': '用户可导出',
+        'log-read': '日志只读',
+        'log-export': '日志可导出',
+        'file-read': '文件只读',
+        'file-write': '文件可写',
+        'file-delete': '文件可删',
+        'dept-read': '部门只读',
+        'dept-write': '部门可写',
+        'dept-delete': '部门可删',
+        'position-read': '职位只读',
+        'position-write': '职位可写',
+        'position-delete': '职位可删',
+      },
+      'status-type': {
+        enabled: '启用',
+        disabled: '禁用',
+      },
+      'gender-type': {
+        unknown: '未知',
+        male: '男',
+        female: '女',
+      },
+      'sql-type': {
+        select: 'SELECT',
+        insert: 'INSERT',
+        update: 'UPDATE',
+        delete: 'DELETE',
+      },
+      'status-code': {
+        success: '成功',
+        'client-error': '客户端错误',
+        'server-error': '服务端错误',
+      },
+    },
+  },
   login: {
     title: '用户登录',
     username: '用户名',
@@ -159,7 +235,6 @@ export default {
       title: '生成用户列表报表',
       downloading: '报表生成中...',
     },
-    status: { enabled: '启用', disabled: '禁用', inactive: '未激活' },
     detail: {
       title: '用户详情',
       close: '关闭',
@@ -328,12 +403,8 @@ export default {
     },
   },
   oa: {
-    common: {
-      status: { enabled: '启用', disabled: '禁用' },
-    },
     employee: {
       status: { active: '在职', left: '离职', onLeave: '休假中' },
-      gender: { unknown: '未知', male: '男', female: '女' },
     },
   },
   department: {

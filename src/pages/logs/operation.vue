@@ -27,6 +27,21 @@
         sm="4"
       >
         <v-select
+          v-model="filters.subModule"
+          clearable
+          density="compact"
+          hide-details
+          :items="subModuleOptions"
+          :label="t('log.operation.subModule')"
+          variant="outlined"
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        md="2"
+        sm="4"
+      >
+        <v-select
           v-model="filters.operationType"
           clearable
           density="compact"
@@ -137,15 +152,15 @@
           :color="getOperationTypeColor(value)"
           size="small"
         >
-          {{ t(`log.operation.types.${value}`) }}
+          {{ operationTypeLabelOf(value) }}
         </v-chip>
         <span v-else>-</span>
       </template>
       <template #item.module="{ value }">
-        <span>{{ value || '-' }}</span>
+        <span>{{ moduleLabelOf(value) }}</span>
       </template>
       <template #item.subModule="{ value }">
-        <span>{{ value || '-' }}</span>
+        <span>{{ subModuleLabelOf(value) }}</span>
       </template>
       <template #item.description="{ value }">
         <span>{{ value || '-' }}</span>
@@ -180,10 +195,13 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 
 // Module options (loaded from backend enums)
-const { options: moduleOptions } = useEnums('module')
+const { options: moduleOptions, labelOf: moduleLabelOf } = useEnums('module')
+
+// Sub-module options (loaded from backend enums)
+const { options: subModuleOptions, labelOf: subModuleLabelOf } = useEnums('sub-module')
 
 // Operation type options (loaded from backend enums)
-const { options: operationTypeOptions } = useEnums('operation-type')
+const { options: operationTypeOptions, labelOf: operationTypeLabelOf } = useEnums('operation')
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')
@@ -193,6 +211,7 @@ const filters = reactive({
   traceId: '',
   operationType: null as OperationType | null,
   module: null as string | null,
+  subModule: null as string | null,
   username: null as string | null,
 })
 
@@ -238,6 +257,7 @@ async function fetchLogs() {
       traceId: filters.traceId || undefined,
       operationType: filters.operationType || undefined,
       module: filters.module || undefined,
+      subModule: filters.subModule || undefined,
       username: filters.username || undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
@@ -279,6 +299,7 @@ function handleReset() {
   filters.traceId = ''
   filters.operationType = null
   filters.module = null
+  filters.subModule = null
   filters.username = null
   timeRange.value = null
   sortBy.value = []

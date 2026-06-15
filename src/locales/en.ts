@@ -18,6 +18,82 @@ export default {
     language: 'Language',
     changePassword: 'Change Password',
   },
+  common: {
+    enums: {
+      'module-type': {
+        master: 'Master',
+        auth: 'Auth',
+        system: 'System',
+      },
+      'sub-module-type': {
+        session: 'Session management',
+        role: 'Role management',
+        user: 'User management',
+        file: 'File management',
+        permission: 'Permission',
+        department: 'Department management',
+        position: 'Position management',
+      },
+      'operation-type': {
+        query: 'Query',
+        create: 'Create',
+        update: 'Update',
+        delete: 'Delete',
+        login: 'Login',
+        logout: 'Logout',
+        import: 'Import',
+        export: 'Export',
+        other: 'Other',
+      },
+      'user-status': {
+        enabled: 'Enabled',
+        disabled: 'Disabled',
+        inactive: 'Inactive',
+      },
+      'role-code': {
+        admin: 'Administrator',
+        'role-read': 'Role Reader',
+        'role-write': 'Role Writer',
+        'role-delete': 'Role Deleter',
+        'role-export': 'Role Exporter',
+        'user-read': 'User Reader',
+        'user-write': 'User Writer',
+        'user-delete': 'User Deleter',
+        'user-export': 'User Exporter',
+        'log-read': 'Log Reader',
+        'log-export': 'Log Exporter',
+        'file-read': 'File Reader',
+        'file-write': 'File Uploader',
+        'file-delete': 'File Deleter',
+        'dept-read': 'Department Reader',
+        'dept-write': 'Department Writer',
+        'dept-delete': 'Department Deleter',
+        'position-read': 'Position Reader',
+        'position-write': 'Position Writer',
+        'position-delete': 'Position Deleter',
+      },
+      'status-type': {
+        enabled: 'Enabled',
+        disabled: 'Disabled',
+      },
+      'gender-type': {
+        unknown: 'Unknown',
+        male: 'Male',
+        female: 'Female',
+      },
+      'sql-type': {
+        select: 'SELECT',
+        insert: 'INSERT',
+        update: 'UPDATE',
+        delete: 'DELETE',
+      },
+      'status-code': {
+        success: 'Success',
+        'client-error': 'Client Error',
+        'server-error': 'Server Error',
+      },
+    },
+  },
   login: {
     title: 'Sign In',
     username: 'Username',
@@ -160,7 +236,6 @@ export default {
       title: 'Generate User List Report',
       downloading: 'Generating report...',
     },
-    status: { enabled: 'Enabled', disabled: 'Disabled', inactive: 'Inactive' },
     detail: {
       title: 'User Detail',
       close: 'Close',
@@ -333,12 +408,8 @@ export default {
     },
   },
   oa: {
-    common: {
-      status: { enabled: 'Enabled', disabled: 'Disabled' },
-    },
     employee: {
       status: { active: 'Active', left: 'Left', onLeave: 'On Leave' },
-      gender: { unknown: 'Unknown', male: 'Male', female: 'Female' },
     },
   },
   department: {

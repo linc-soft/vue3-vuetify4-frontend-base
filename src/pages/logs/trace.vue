@@ -206,13 +206,13 @@
                         :color="getOperationTypeColor(log.operationType)"
                         size="small"
                       >
-                        {{ t(`log.operation.types.${log.operationType}`) }}
+                        {{ operationTypeLabelOf(log.operationType) }}
                       </v-chip>
-                      <span>{{ log.module || '-' }}</span>
+                      <span>{{ log.module ? moduleLabelOf(log.module) : '-' }}</span>
                       <span
                         v-if="log.subModule"
                         class="text-medium-emphasis"
-                        >/ {{ log.subModule }}</span
+                        >/ {{ subModuleLabelOf(log.subModule) }}</span
                       >
                       <span class="text-medium-emphasis text-caption ml-2">
                         {{ formatTime(log.createdAt) }}
@@ -455,10 +455,15 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { getTraceDetail } from '@/api/modules/trace'
+import { useEnums } from '@/composables/useEnums'
 import JsonViewer from './components/JsonViewer.vue'
 
 const { t } = useI18n()
 const route = useRoute()
+
+const { labelOf: moduleLabelOf } = useEnums('module')
+const { labelOf: subModuleLabelOf } = useEnums('sub-module')
+const { labelOf: operationTypeLabelOf } = useEnums('operation')
 
 const traceId = route.params.traceId as string
 const traceDetail = ref<TraceDetail | null>(null)

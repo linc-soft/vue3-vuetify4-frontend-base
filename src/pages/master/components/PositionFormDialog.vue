@@ -38,7 +38,7 @@
           />
           <v-select
             v-model="form.status"
-            :items="statusOptions"
+            :items="commonStatusOptions"
             :label="t('position.form.status')"
           />
         </v-form>
@@ -84,7 +84,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createPosition, getPosition, updatePosition } from '@/api/modules/position'
-import { useCommonStatus } from '@/composables/useCommonStatus'
+import { useEnums } from '@/composables/useEnums'
 
 const props = defineProps<{
   modelValue: boolean
@@ -99,7 +99,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: statusOptions } = useCommonStatus()
+const { options: commonStatusOptions } = useEnums('common-status')
 
 const form = reactive<{
   positionName: string

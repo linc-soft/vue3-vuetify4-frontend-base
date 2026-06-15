@@ -27,7 +27,7 @@
           clearable
           density="compact"
           hide-details
-          :items="statusOptions"
+          :items="commonStatusOptions"
           :label="t('position.search.status')"
           variant="outlined"
         />
@@ -72,7 +72,7 @@
       multi-sort
     >
       <template #item.status="{ value }">
-        {{ statusLabelOf(value) }}
+        {{ commonStatusLabelOf(value) }}
       </template>
       <template #item.actions="{ item }">
         <v-btn
@@ -155,7 +155,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPositionList } from '@/api/modules/position'
-import { useCommonStatus } from '@/composables/useCommonStatus'
+import { useEnums } from '@/composables/useEnums'
 import PositionFormDialog from './components/PositionFormDialog.vue'
 
 const { t } = useI18n()
@@ -175,7 +175,7 @@ const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
-const { options: statusOptions, labelOf: statusLabelOf } = useCommonStatus()
+const { options: commonStatusOptions, labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const allHeaders = computed(() => [
   { title: t('position.table.positionName'), key: 'positionName' },

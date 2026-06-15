@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getAccessToken, setAccessToken, tryRefreshToken } from '@/api/client'
 import { login as apiLogin, logout as apiLogout } from '@/api/modules/auth'
+import { clearEnumsCache } from '@/composables/useEnums'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
 export const useAuthStore = defineStore(
@@ -33,6 +34,7 @@ export const useAuthStore = defineStore(
       isAuthenticated.value = false
       requirePasswordChange.value = false
       clearSelectOptionsCache()
+      clearEnumsCache()
     }
 
     function checkAuth() {

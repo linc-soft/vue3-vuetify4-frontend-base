@@ -18,6 +18,82 @@ export default {
     language: '言語',
     changePassword: 'パスワード変更',
   },
+  common: {
+    enums: {
+      'module-type': {
+        master: 'マスター',
+        auth: '認証',
+        system: 'システム',
+      },
+      'sub-module-type': {
+        session: 'セッション管理',
+        role: 'ロール管理',
+        user: 'ユーザー管理',
+        file: 'ファイル管理',
+        permission: '権限',
+        department: '部門管理',
+        position: '職位管理',
+      },
+      'operation-type': {
+        query: '検索',
+        create: '作成',
+        update: '更新',
+        delete: '削除',
+        login: 'ログイン',
+        logout: 'ログアウト',
+        import: 'インポート',
+        export: 'エクスポート',
+        other: 'その他',
+      },
+      'user-status': {
+        enabled: '有効',
+        disabled: '無効',
+        inactive: '未アクティブ',
+      },
+      'role-code': {
+        admin: '管理者',
+        'role-read': 'ロール読取',
+        'role-write': 'ロール書込',
+        'role-delete': 'ロール削除',
+        'role-export': 'ロールエクスポート',
+        'user-read': 'ユーザー読取',
+        'user-write': 'ユーザー書込',
+        'user-delete': 'ユーザー削除',
+        'user-export': 'ユーザーエクスポート',
+        'log-read': 'ログ読取',
+        'log-export': 'ログエクスポート',
+        'file-read': 'ファイル読取',
+        'file-write': 'ファイル書込',
+        'file-delete': 'ファイル削除',
+        'dept-read': '部門読取',
+        'dept-write': '部門書込',
+        'dept-delete': '部門削除',
+        'position-read': '職位読取',
+        'position-write': '職位書込',
+        'position-delete': '職位削除',
+      },
+      'status-type': {
+        enabled: '有効',
+        disabled: '無効',
+      },
+      'gender-type': {
+        unknown: '不明',
+        male: '男性',
+        female: '女性',
+      },
+      'sql-type': {
+        select: 'SELECT',
+        insert: 'INSERT',
+        update: 'UPDATE',
+        delete: 'DELETE',
+      },
+      'status-code': {
+        success: '成功',
+        'client-error': 'クライアントエラー',
+        'server-error': 'サーバーエラー',
+      },
+    },
+  },
   login: {
     title: 'ログイン',
     username: 'ユーザー名',
@@ -161,7 +237,6 @@ export default {
       title: 'ユーザー一覧レポート生成',
       downloading: 'レポート生成中...',
     },
-    status: { enabled: '有効', disabled: '無効', inactive: '未激活' },
     detail: {
       title: 'ユーザー詳細',
       close: '閉じる',
@@ -334,12 +409,8 @@ export default {
     },
   },
   oa: {
-    common: {
-      status: { enabled: '有効', disabled: '無効' },
-    },
     employee: {
       status: { active: '在籍', left: '退職', onLeave: '休暇中' },
-      gender: { unknown: '不明', male: '男性', female: '女性' },
     },
   },
   department: {

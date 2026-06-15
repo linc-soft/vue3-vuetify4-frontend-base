@@ -1,6 +1,7 @@
 import type { Result } from './types'
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import { clearEnumsCache } from '@/composables/useEnums'
 import { LOCALE_STORAGE_KEY, SUPPORTED_LOCALES } from '@/composables/useLocale'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 
@@ -185,8 +186,9 @@ export async function tryRefreshToken(): Promise<boolean> {
 
 function handleUnauthorized() {
   setAccessToken(null)
-  // Clear select options cache
+  // Clear select options cache and enums cache
   clearSelectOptionsCache()
+  clearEnumsCache()
   // Clear persisted auth store so the router guard sees isAuthenticated = false after reload
   localStorage.removeItem('auth')
   // Redirect to the login page, preserving the current path for post-login redirect

@@ -1,11 +1,19 @@
 import type { EnumItem } from '@/api/schemas/common'
 import { computed, ref, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import { getEnums } from '@/api/modules/common'
 
 /** Per-type cache of loaded enum lists (module-level, shared across all callers) */
 const cache = new Map<string, Ref<EnumItem[]>>()
 /** Tracks in-flight requests to avoid duplicate fetches */
 const pending = new Set<string>()
+
+/** Clear all cached enum lists (call on logout) */
+export function clearEnumsCache() {
+  cache.clear()
+  pending.clear()
+}
 
 /**
  * Fetch enum list from the backend and write the result into the
@@ -37,8 +45,12 @@ async function loadEnums(type: string) {
  *   `code` is coerced to string to prevent type mismatches when the
  *   backend returns numeric codes.
  * - `labelOf` resolves a code back to its display name.
+ * - Enum `name` values are treated as i18n keys and translated when a
+ *   matching key exists; otherwise the raw name is returned.
  */
 export function useEnums(type: string) {
+  const { t, te } = useI18n()
+
   if (!cache.has(type)) {
     cache.set(type, ref([]))
     loadEnums(type)
@@ -53,14 +65,20 @@ export function useEnums(type: string) {
    */
   const itemsRef = cache.get(type)!
 
-  const items = computed<EnumItem[]>(() => itemsRef.value)
+  const translate = (name: string) => (te(name) ? t(name) : name)
 
-  const options = computed(() =>
-    items.value.map(item => ({ title: item.name, value: String(item.code) })),
+  const items = computed<EnumItem[]>(() =>
+    itemsRef.value.map(item => ({ ...item, name: translate(item.name) })),
   )
 
-  const labelOf = (code: string | number) =>
-    items.value.find(i => String(i.code) === String(code))?.name ?? String(code)
+  const options = computed(() =>
+    itemsRef.value.map(item => ({ title: translate(item.name), value: String(item.code) })),
+  )
+
+  const labelOf = (code: string | number) => {
+    const found = itemsRef.value.find(i => String(i.code) === String(code))
+    return found ? translate(found.name) : String(code)
+  }
 
   return { items, options, labelOf }
 }

@@ -164,8 +164,7 @@ import { getDepartmentTree } from '@/api/modules/department'
 import { getPositionList } from '@/api/modules/position'
 import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
-import { useGender } from '@/composables/useCommonStatus'
-import { useUserStatus } from '@/composables/useUserStatus'
+import { useEnums } from '@/composables/useEnums'
 
 const props = defineProps<{
   modelValue: boolean
@@ -179,8 +178,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: statusLabelOf } = useUserStatus()
-const { labelOf: genderLabelOf } = useGender()
+const { labelOf: statusLabelOf } = useEnums('user-status')
+const { labelOf: genderLabelOf } = useEnums('gender-type')
 
 const user = ref<UserInfoResponse | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])

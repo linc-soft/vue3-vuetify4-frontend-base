@@ -68,7 +68,7 @@
             size="x-small"
             variant="tonal"
           >
-            {{ statusLabelOf(item.status) }}
+            {{ commonStatusLabelOf(item.status) }}
           </v-chip>
           <v-btn
             density="compact"
@@ -160,12 +160,12 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteDepartment, getDepartmentTree } from '@/api/modules/department'
-import { useCommonStatus } from '@/composables/useCommonStatus'
+import { useEnums } from '@/composables/useEnums'
 import DepartmentFormDialog from './components/DepartmentFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { labelOf: statusLabelOf } = useCommonStatus()
+const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const tree = ref<DepartmentTreeResponse[]>([])
 const loading = ref(false)

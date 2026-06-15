@@ -24,6 +24,7 @@ export const OperationLogPageRequestSchema = z.object({
   traceId: z.string().optional(),
   operationType: OperationTypeSchema.optional(),
   module: z.string().optional(),
+  subModule: z.string().optional(),
   username: z.string().optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),

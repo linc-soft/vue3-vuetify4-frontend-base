@@ -138,7 +138,7 @@
           :color="getSqlTypeColor(value)"
           size="small"
         >
-          {{ value }}
+          {{ sqlTypeLabelOf(value) }}
         </v-chip>
         <span v-else>-</span>
       </template>
@@ -163,6 +163,7 @@ import { useDisplay } from 'vuetify'
 
 import { getSqlLogPage } from '@/api/modules/sqlLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
@@ -170,6 +171,9 @@ const { mobile } = useDisplay()
 
 // User select options
 const { options: userOptions } = useSelectOptions('user')
+
+// SQL type options (loaded from backend enums)
+const { options: sqlTypeOptions, labelOf: sqlTypeLabelOf } = useEnums('sql-type')
 
 // Filter Conditions
 const filters = reactive({
@@ -193,9 +197,6 @@ const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
 // Table data and loading state
 const items = ref<SqlLogPageItem[]>([])
 const loading = ref(false)
-
-// SQL type options
-const sqlTypeOptions = ['SELECT', 'INSERT', 'UPDATE', 'DELETE']
 
 // Sort field mapping (frontend key → backend entity field name)
 const sortFieldMap: Record<string, string> = {
