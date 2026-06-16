@@ -46,13 +46,13 @@
         md="2"
         sm="4"
       >
-        <v-autocomplete
+        <UserAutocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
-          :items="userOptions"
           :label="t('log.sql.username')"
+          value-key="username"
           variant="outlined"
         />
       </v-col>
@@ -163,14 +163,11 @@ import { useDisplay } from 'vuetify'
 
 import { getSqlLogPage } from '@/api/modules/sqlLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-
-// User select options
-const { options: userOptions } = useSelectOptions('user')
 
 // SQL type options (loaded from backend enums)
 const { options: sqlTypeOptions, labelOf: sqlTypeLabelOf } = useEnums('sql-type')

@@ -11,13 +11,13 @@
         md="2"
         sm="4"
       >
-        <v-autocomplete
+        <UserAutocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
-          :items="userOptions"
           :label="t('log.error.username')"
+          value-key="username"
           variant="outlined"
         />
       </v-col>
@@ -128,13 +128,10 @@ import { useDisplay } from 'vuetify'
 
 import { getErrorLogPage } from '@/api/modules/errorLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
-import { useSelectOptions } from '@/composables/useSelectOptions'
+import UserAutocomplete from '@/components/UserAutocomplete.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-
-// User select options
-const { options: userOptions } = useSelectOptions('user')
 
 // Filter Conditions
 const filters = reactive({

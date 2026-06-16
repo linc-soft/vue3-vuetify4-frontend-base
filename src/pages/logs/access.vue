@@ -61,13 +61,13 @@
         md="2"
         sm="4"
       >
-        <v-autocomplete
+        <UserAutocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
-          :items="userOptions"
           :label="t('log.access.username')"
+          value-key="username"
           variant="outlined"
         />
       </v-col>
@@ -181,14 +181,11 @@ import { useDisplay } from 'vuetify'
 
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-
-// User select options
-const { options: userOptions } = useSelectOptions('user')
 
 // Status code group options (loaded from backend enums)
 const { options: resultCodeOptions } = useEnums('result-code')

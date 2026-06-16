@@ -49,11 +49,11 @@
             :items="statusOptions"
             :label="t('department.form.status')"
           />
-          <v-select
+          <UserAutocomplete
             v-model="form.leaderUserId"
             clearable
-            :items="userOptions"
             :label="t('department.form.leader')"
+            value-key="id"
           />
         </v-form>
         <v-alert
@@ -104,8 +104,8 @@ import {
   getDepartmentTree,
   updateDepartment,
 } from '@/api/modules/department'
+import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
   modelValue: boolean
@@ -123,7 +123,6 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { options: statusOptions } = useEnums('common-status')
-const { options: userOptions } = useSelectOptions('user')
 
 const form = reactive<{
   deptName: string

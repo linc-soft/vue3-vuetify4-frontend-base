@@ -62,13 +62,13 @@
         md="2"
         sm="4"
       >
-        <v-autocomplete
+        <UserAutocomplete
           v-model="filters.username"
           clearable
           density="compact"
           hide-details
-          :items="userOptions"
           :label="t('log.operation.username')"
+          value-key="username"
           variant="outlined"
         />
       </v-col>
@@ -188,8 +188,8 @@ import { useDisplay } from 'vuetify'
 
 import { getOperationLogPage } from '@/api/modules/operationLog'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
@@ -202,9 +202,6 @@ const { options: subModuleOptions, labelOf: subModuleLabelOf } = useEnums('sub-m
 
 // Operation type options (loaded from backend enums)
 const { options: operationTypeOptions, labelOf: operationTypeLabelOf } = useEnums('operation')
-
-// User select options
-const { options: userOptions } = useSelectOptions('user')
 
 // Filter Conditions
 const filters = reactive({
