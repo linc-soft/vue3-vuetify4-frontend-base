@@ -93,6 +93,8 @@ export default {
         'server-error': 'Server Error',
       },
     },
+    copy: 'Copy',
+    copySuccess: 'Copied to clipboard',
   },
   login: {
     title: 'Sign In',
@@ -307,8 +309,6 @@ export default {
       search: 'Search',
       reset: 'Reset',
       export: 'Export',
-      copy: 'Copy',
-      copySuccess: 'Copied to clipboard',
       collapse: 'Collapse',
       expand: 'Expand',
       noData: 'No data',
@@ -393,6 +393,8 @@ export default {
       requestUrl: 'Request URL',
       requestMethod: 'Method',
       clientIp: 'Client IP',
+      mapperClass: 'Mapper Class',
+      mapperMethod: 'Mapper Method',
       rowCount: 'Row Count',
     },
     // Trace

@@ -93,6 +93,8 @@ export default {
         'server-error': 'サーバーエラー',
       },
     },
+    copy: 'コピー',
+    copySuccess: 'クリップボードにコピーしました',
   },
   login: {
     title: 'ログイン',
@@ -308,8 +310,6 @@ export default {
       search: '検索',
       reset: 'リセット',
       export: 'エクスポート',
-      copy: 'コピー',
-      copySuccess: 'クリップボードにコピーしました',
       collapse: '折りたたむ',
       expand: '展開',
       noData: 'データなし',
@@ -394,6 +394,8 @@ export default {
       requestUrl: 'リクエスト URL',
       requestMethod: 'メソッド',
       clientIp: 'クライアント IP',
+      mapperClass: 'Mapper クラス',
+      mapperMethod: 'Mapper メソッド',
       rowCount: '行数',
     },
     // Trace

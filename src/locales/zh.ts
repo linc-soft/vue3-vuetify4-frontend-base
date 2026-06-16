@@ -93,6 +93,8 @@ export default {
         'server-error': '服务端错误',
       },
     },
+    copy: '复制',
+    copySuccess: '已复制到剪贴板',
   },
   login: {
     title: '用户登录',
@@ -302,8 +304,6 @@ export default {
       search: '搜索',
       reset: '重置',
       export: '导出',
-      copy: '复制',
-      copySuccess: '已复制到剪贴板',
       collapse: '收起',
       expand: '展开',
       noData: '暂无数据',
@@ -388,6 +388,8 @@ export default {
       requestUrl: '请求 URL',
       requestMethod: '请求方法',
       clientIp: '客户端 IP',
+      mapperClass: 'Mapper 类',
+      mapperMethod: 'Mapper 方法',
       rowCount: '行数',
     },
     // Trace

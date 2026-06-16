@@ -10,14 +10,10 @@
             </div>
             <div class="text-body-2 text-medium-emphasis">
               Trace ID: {{ traceId }}
-              <v-btn
+              <CopyButton
                 class="ml-2"
-                :color="copiedTraceId ? 'success' : undefined"
-                density="compact"
-                :icon="copiedTraceId ? 'mdi-check' : 'mdi-content-copy'"
-                size="small"
-                variant="text"
-                @click="copyTraceId"
+                :label="t('common.copy')"
+                :text="traceId"
               />
             </div>
           </div>
@@ -325,18 +321,13 @@
                     </v-row>
 
                     <div class="mt-4">
-                      <div class="d-flex align-center justify-space-between mb-2">
+                      <!-- <div class="d-flex align-center justify-space-between mb-2">
                         <div class="text-subtitle-2">{{ t('log.sql.sqlText') }}</div>
-                        <v-btn
-                          :color="copiedSqlIds.has(log.id) ? 'success' : undefined"
-                          density="compact"
-                          :icon="copiedSqlIds.has(log.id) ? 'mdi-check' : 'mdi-content-copy'"
-                          size="small"
-                          variant="text"
-                          @click="copySqlText(log.id, log.sqlText ?? '')"
-                        />
+                        <CopyButton :text="log.sqlText ?? ''" />
                       </div>
-                      <pre class="sql-text">{{ log.sqlText || '-' }}</pre>
+                      <pre class="sql-text">{{ log.sqlText || '-' }}</pre> -->
+                      <div class="text-subtitle-2 mb-2">{{ t('log.sql.sqlText') }}</div>
+                      <JsonViewer :data="log.sqlText" />
                     </div>
 
                     <div
@@ -435,15 +426,6 @@
         </v-timeline-item>
       </v-timeline>
     </template>
-
-    <v-snackbar
-      v-model="showSnackbar"
-      color="success"
-      location="top end"
-      :timeout="3000"
-    >
-      {{ t('log.common.copySuccess') }}
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -455,6 +437,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { getTraceDetail } from '@/api/modules/trace'
+import CopyButton from '@/components/CopyButton.vue'
 import { useEnums } from '@/composables/useEnums'
 import JsonViewer from './components/JsonViewer.vue'
 
@@ -469,9 +452,6 @@ const traceId = route.params.traceId as string
 const traceDetail = ref<TraceDetail | null>(null)
 const loading = ref(true)
 const error = ref('')
-const copiedTraceId = ref(false)
-const copiedSqlIds = ref(new Set<number>())
-const showSnackbar = ref(false)
 
 onMounted(async () => {
   try {
@@ -482,32 +462,6 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-async function copyTraceId() {
-  try {
-    await navigator.clipboard.writeText(traceId)
-    copiedTraceId.value = true
-    showSnackbar.value = true
-    setTimeout(() => {
-      copiedTraceId.value = false
-    }, 3000)
-  } catch {
-    // Silently fail
-  }
-}
-
-async function copySqlText(id: number, text: string) {
-  try {
-    await navigator.clipboard.writeText(text)
-    copiedSqlIds.value.add(id)
-    showSnackbar.value = true
-    setTimeout(() => {
-      copiedSqlIds.value.delete(id)
-    }, 3000)
-  } catch {
-    // Silently fail
-  }
-}
 
 function getStatusCodeColor(statusCode: number): string {
   if (statusCode >= 200 && statusCode < 300) return 'success'
