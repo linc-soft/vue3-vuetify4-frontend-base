@@ -167,6 +167,10 @@
         >
           {{ truncateTraceId(value) }}
         </a>
+        <CopyButton
+          class="ml-1"
+          :text="value"
+        />
       </template>
       <template #item.statusCode="{ value }">
         <v-chip
@@ -194,6 +198,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
+import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'

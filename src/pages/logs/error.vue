@@ -108,6 +108,10 @@
         >
           {{ truncateTraceId(value) }}
         </a>
+        <CopyButton
+          class="ml-1"
+          :text="value"
+        />
       </template>
       <template #item.message="{ value }">
         <span :title="value">{{ truncateMessage(value) }}</span>
@@ -127,6 +131,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getErrorLogPage } from '@/api/modules/errorLog'
+import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
 
