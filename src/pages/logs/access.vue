@@ -48,7 +48,21 @@
           :items="resultCodeOptions"
           :label="t('log.access.statusCode')"
           variant="outlined"
-        />
+        >
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props">
+              <template #title>
+                <span class="text-body-2 font-weight-medium">{{ item.value }}</span>
+              </template>
+              <template #subtitle>
+                <span class="text-caption text-medium-emphasis">{{ item.title }}</span>
+              </template>
+            </v-list-item>
+          </template>
+          <template #selection="{ item }">
+            {{ item.value }}
+          </template>
+        </v-select>
       </v-col>
     </v-row>
     <!-- Row 2: Username + Time Range -->
