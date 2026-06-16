@@ -27,12 +27,22 @@
           clearable
           density="compact"
           hide-details
-          item-title="name"
           item-value="code"
           :items="roleCodeItems"
           :label="t('role.search.roleCode')"
           variant="outlined"
-        />
+        >
+          <template #selection="{ item }">
+            {{ item.code }}
+          </template>
+          <template #item="{ props: itemProps, item }">
+            <v-list-item
+              v-bind="itemProps"
+              :subtitle="item.name"
+              :title="item.code"
+            />
+          </template>
+        </v-autocomplete>
       </v-col>
       <v-col
         cols="12"
