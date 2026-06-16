@@ -17,7 +17,7 @@
         <template v-else-if="role">
           <v-list>
             <v-list-item :title="t('role.table.roleName')">
-              <template #subtitle>{{ role.roleName }}</template>
+              <template #subtitle>{{ displayName(role) }}</template>
             </v-list-item>
             <v-list-item :title="t('role.table.roleCode')">
               <template #subtitle>{{ role.roleCode ?? '-' }}</template>
@@ -44,7 +44,7 @@
                     size="small"
                     variant="tonal"
                   >
-                    {{ p.roleName }}
+                    {{ displayName(p) }}
                     <span
                       v-if="p.roleCode"
                       class="text-disabled ml-1"
@@ -74,7 +74,7 @@
                     size="small"
                     variant="tonal"
                   >
-                    {{ r.roleName }}
+                    {{ displayName(r) }}
                     <span class="text-disabled ml-1">· {{ r.roleCode }}</span>
                   </v-chip>
                 </v-chip-group>
@@ -166,6 +166,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRole, getRoleList } from '@/api/modules/role'
+import { useRoleDisplay } from '@/composables/useRoleDisplay'
 
 const props = defineProps<{
   modelValue: boolean
@@ -179,6 +180,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { displayName } = useRoleDisplay()
 
 const role = ref<Awaited<ReturnType<typeof getRole>> | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])

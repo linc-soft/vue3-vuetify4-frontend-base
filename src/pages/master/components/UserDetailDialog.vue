@@ -63,7 +63,7 @@
                     size="small"
                     variant="tonal"
                   >
-                    {{ r.roleName }}
+                    {{ displayName(r) }}
                     <span
                       v-if="r.roleCode"
                       class="text-disabled ml-1"
@@ -165,6 +165,7 @@ import { getPositionList } from '@/api/modules/position'
 import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
+import { useRoleDisplay } from '@/composables/useRoleDisplay'
 
 const props = defineProps<{
   modelValue: boolean
@@ -178,6 +179,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { displayName } = useRoleDisplay()
 const { labelOf: statusLabelOf } = useEnums('user-status')
 const { labelOf: genderLabelOf } = useEnums('gender-type')
 

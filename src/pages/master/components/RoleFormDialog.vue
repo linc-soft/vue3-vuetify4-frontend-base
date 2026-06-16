@@ -37,10 +37,11 @@
               clearable
               closable-chips
               :hint="t('role.form.parentRolesHint')"
-              item-title="roleName"
+              :item-title="itemTitle"
               item-value="id"
               :items="parentCandidates"
               :label="t('role.form.parentRoles')"
+              :menu-props="{ maxWidth: '100%' }"
               multiple
               persistent-hint
               variant="outlined"
@@ -52,7 +53,7 @@
                   size="small"
                   variant="tonal"
                 >
-                  {{ item.roleName }}
+                  {{ displayName(item) }}
                 </v-chip>
               </template>
               <template #item="{ props: itemProps, item }">
@@ -107,7 +108,7 @@
                   size="small"
                   variant="tonal"
                 >
-                  {{ r.roleName }}
+                  {{ displayName(r) }}
                   <span class="text-disabled ml-1">· {{ r.roleCode }}</span>
                 </v-chip>
               </v-chip-group>
@@ -123,7 +124,7 @@
                 >
                   <v-expansion-panel-title>
                     <span class="text-body-2">
-                      {{ roleMap.get(id)?.roleName ?? `#${id}` }}
+                      {{ displayName(roleMap.get(id)) }}
                     </span>
                     <template #actions>
                       <v-icon>mdi-chevron-down</v-icon>
@@ -151,7 +152,7 @@
                       >
                         {{ badgeLabel(node.role.id) }}
                       </v-chip>
-                      <span class="text-body-2">{{ node.role.roleName }}</span>
+                      <span class="text-body-2">{{ displayName(node.role) }}</span>
                       <span
                         v-if="node.role.roleCode"
                         class="text-caption text-medium-emphasis ml-2"
@@ -209,6 +210,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createRole, getRole, getRoleList, updateRole } from '@/api/modules/role'
+import { useRoleDisplay } from '@/composables/useRoleDisplay'
 
 const props = defineProps<{
   modelValue: boolean
@@ -223,6 +225,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { displayName } = useRoleDisplay()
 
 const form = reactive<{
   roleName: string
@@ -252,7 +255,12 @@ const rules = {
   roleNameRequired: (v: string) => !!v || t('role.validation.roleNameRequired'),
 }
 
-// Subtitle description for candidate items
+// Title renderer for autocomplete items (uses i18n for base role names).
+function itemTitle(role: RoleListResponseItem): string {
+  return displayName(role)
+}
+
+// Subtitle description for candidate items. Truncates long inheritance lists for mobile/desktop dropdowns.
 function describeRole(r: RoleListResponseItem): string {
   if (r.roleCode) {
     return `${t('role.form.roleCode')}: ${r.roleCode}`
@@ -260,15 +268,37 @@ function describeRole(r: RoleListResponseItem): string {
   if (r.parentRoleIds.length === 0) {
     return t('role.form.noParents')
   }
-  const names = r.parentRoleIds.map(pid => roleMap.value.get(pid)?.roleName ?? `#${pid}`).join(', ')
-  return `${t('role.form.inheritsFrom')}: ${names}`
+
+  const prefix = `${t('role.form.inheritsFrom')}: `
+  const names = r.parentRoleIds.map(pid => {
+    const parent = roleMap.value.get(pid)
+    return parent ? displayName(parent) : `#${pid}`
+  })
+  const maxItems = 4
+  const maxContentLength = 60
+
+  let content = names[0]
+  let displayed = 1
+
+  for (let i = 1; i < names.length && i < maxItems; i++) {
+    const next = `${content}, ${names[i]}`
+    if (next.length > maxContentLength) break
+    content = next
+    displayed++
+  }
+
+  if (displayed < names.length) {
+    content += `, ...(${names.length - displayed})`
+  }
+
+  return prefix + content
 }
 
-function isBaseRoleId(id: number): boolean {
-  return !!roleMap.value.get(id)?.roleCode
+function isBaseRoleId(id: number | undefined): boolean {
+  return id != null && !!roleMap.value.get(id)?.roleCode
 }
 
-function badgeLabel(id: number): string {
+function badgeLabel(id: number | undefined): string {
   return isBaseRoleId(id) ? t('role.form.badgeBase') : t('role.form.badgeComposite')
 }
 // Transitive closure BFS: returns all ancestors (including self) recursively expanded from the selected parent roles; visited prevents cycles

@@ -95,6 +95,9 @@
       :mobile="mobile"
       @update:items-per-page="itemsPerPage = $event"
     >
+      <template #item.roleName="{ item }">
+        {{ displayName(item) }}
+      </template>
       <template #item.description="{ value }">
         {{ value ?? '-' }}
       </template>
@@ -198,11 +201,13 @@ import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
 import { useEnums } from '@/composables/useEnums'
+import { useRoleDisplay } from '@/composables/useRoleDisplay'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { displayName } = useRoleDisplay()
 
 // Filter Conditions
 const filters = reactive({

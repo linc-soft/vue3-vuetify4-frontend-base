@@ -98,10 +98,12 @@
             <template #chip="{ props: chipProps, item }">
               <v-chip
                 v-bind="chipProps"
-                :color="roleDescriptionOf(item.value) ? 'success' : 'info'"
+                :color="item.props?.subtitle === t('user.form.compositeRole') ? 'info' : 'success'"
                 size="small"
                 variant="tonal"
-              />
+              >
+                {{ roleTitleOf(item.value) }}
+              </v-chip>
             </template>
           </v-autocomplete>
         </v-form>
@@ -141,6 +143,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { SelectOption } from '@/api/schemas/common'
 import type { VForm } from 'vuetify/components'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -197,18 +200,33 @@ const submitting = ref(false)
 const errorMessage = ref('')
 
 const { options: statusOptions } = useEnums('user-status')
-const { items: roleItems, descriptionOf: roleDescriptionOf } = useSelectOptions('role')
+const { items: roleItems } = useSelectOptions('role')
 const { options: deptOptions } = useSelectOptions('department')
 const { options: positionOptions } = useSelectOptions('position')
 
+function resolveRoleDisplay(item: SelectOption) {
+  const key = `common.enums.role-code.${String(item.value).toLowerCase().replace(/_/g, '-')}`
+  const translated = t(key)
+  const isBase = translated !== key
+  return { title: isBase ? translated : item.label, isBase }
+}
+
 // Map role items to options with composite role label for empty description
 const roleOptions = computed(() =>
-  roleItems.value.map(item => ({
-    title: item.label,
-    value: item.value,
-    props: { subtitle: item.description || t('user.form.compositeRole') },
-  })),
+  roleItems.value.map(item => {
+    const { title, isBase } = resolveRoleDisplay(item)
+    return {
+      title,
+      value: item.value,
+      props: { subtitle: isBase ? (item.description ?? undefined) : t('user.form.compositeRole') },
+    }
+  }),
 )
+
+function roleTitleOf(value: string | number) {
+  const item = roleItems.value.find(i => String(i.value) === String(value))
+  return item ? resolveRoleDisplay(item).title : String(value)
+}
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
