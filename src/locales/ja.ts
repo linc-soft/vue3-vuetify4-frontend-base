@@ -266,7 +266,6 @@ export default {
       status: 'ステータス',
       roles: 'ロール',
       rolesHint: '複数選択可。選択したロールの権限がこのユーザーに付与されます',
-      compositeRole: '集約ロール',
       cancel: 'キャンセル',
       submit: '送信',
       passwordHint: '空欄の場合、パスワードは変更されません',

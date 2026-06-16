@@ -31,49 +31,13 @@
               v-model="form.description"
               :label="t('role.form.description')"
             />
-            <v-autocomplete
+            <RoleAutocomplete
               v-model="form.parentRoleIds"
-              chips
-              clearable
-              closable-chips
+              :exclude-id="props.roleId ?? null"
               :hint="t('role.form.parentRolesHint')"
-              :item-title="itemTitle"
-              item-value="id"
-              :items="parentCandidates"
+              :items="allRoles"
               :label="t('role.form.parentRoles')"
-              :menu-props="{ maxWidth: '100%' }"
-              multiple
-              persistent-hint
-              variant="outlined"
-            >
-              <template #chip="{ props: chipProps, item }">
-                <v-chip
-                  v-bind="chipProps"
-                  :color="item.roleCode ? 'success' : 'info'"
-                  size="small"
-                  variant="tonal"
-                >
-                  {{ displayName(item) }}
-                </v-chip>
-              </template>
-              <template #item="{ props: itemProps, item }">
-                <v-list-item
-                  v-bind="itemProps"
-                  :subtitle="describeRole(item)"
-                >
-                  <template #prepend>
-                    <v-chip
-                      class="mr-2"
-                      :color="item.roleCode ? 'success' : 'info'"
-                      size="x-small"
-                      variant="tonal"
-                    >
-                      {{ badgeLabel(item.id) }}
-                    </v-chip>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-autocomplete>
+            />
           </v-form>
 
           <!-- Inheritance preview (responsive, no hover dependency) -->
@@ -210,6 +174,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createRole, getRole, getRoleList, updateRole } from '@/api/modules/role'
+import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
 
 const props = defineProps<{
@@ -248,50 +213,8 @@ const roleMap = computed(
   () => new Map<number, RoleListResponseItem>(allRoles.value.map(r => [r.id, r])),
 )
 
-// Parent role candidates: exclude self in edit mode to prevent direct self-inheritance (cycles are finally validated by the backend)
-const parentCandidates = computed(() => allRoles.value.filter(r => r.id !== props.roleId))
-
 const rules = {
   roleNameRequired: (v: string) => !!v || t('role.validation.roleNameRequired'),
-}
-
-// Title renderer for autocomplete items (uses i18n for base role names).
-function itemTitle(role: RoleListResponseItem): string {
-  return displayName(role)
-}
-
-// Subtitle description for candidate items. Truncates long inheritance lists for mobile/desktop dropdowns.
-function describeRole(r: RoleListResponseItem): string {
-  if (r.roleCode) {
-    return `${t('role.form.roleCode')}: ${r.roleCode}`
-  }
-  if (r.parentRoleIds.length === 0) {
-    return t('role.form.noParents')
-  }
-
-  const prefix = `${t('role.form.inheritsFrom')}: `
-  const names = r.parentRoleIds.map(pid => {
-    const parent = roleMap.value.get(pid)
-    return parent ? displayName(parent) : `#${pid}`
-  })
-  const maxItems = 4
-  const maxContentLength = 60
-
-  let content = names[0]
-  let displayed = 1
-
-  for (let i = 1; i < names.length && i < maxItems; i++) {
-    const next = `${content}, ${names[i]}`
-    if (next.length > maxContentLength) break
-    content = next
-    displayed++
-  }
-
-  if (displayed < names.length) {
-    content += `, ...(${names.length - displayed})`
-  }
-
-  return prefix + content
 }
 
 function isBaseRoleId(id: number | undefined): boolean {

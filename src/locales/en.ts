@@ -265,7 +265,6 @@ export default {
       status: 'Status',
       roles: 'Roles',
       rolesHint: 'Multi-select; permissions of selected roles will be granted to this user',
-      compositeRole: 'Composite role',
       cancel: 'Cancel',
       submit: 'Submit',
       passwordHint: 'Leave blank to keep current password',

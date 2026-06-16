@@ -83,29 +83,12 @@
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
           />
-          <v-autocomplete
+          <RoleAutocomplete
             v-model="form.roleIds"
-            chips
-            clearable
-            closable-chips
             :hint="t('user.form.rolesHint')"
-            :items="roleOptions"
+            :items="roleItems"
             :label="t('user.form.roles')"
-            multiple
-            persistent-hint
-            variant="outlined"
-          >
-            <template #chip="{ props: chipProps, item }">
-              <v-chip
-                v-bind="chipProps"
-                :color="item.props?.subtitle === t('user.form.compositeRole') ? 'info' : 'success'"
-                size="small"
-                variant="tonal"
-              >
-                {{ roleTitleOf(item.value) }}
-              </v-chip>
-            </template>
-          </v-autocomplete>
+          />
         </v-form>
         <v-alert
           v-if="errorMessage"
@@ -143,13 +126,15 @@
 </template>
 
 <script lang="ts" setup>
-import type { SelectOption } from '@/api/schemas/common'
+import type { RoleListResponseItem } from '@/api/schemas/role'
 import type { VForm } from 'vuetify/components'
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
+import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
+import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
@@ -200,33 +185,9 @@ const submitting = ref(false)
 const errorMessage = ref('')
 
 const { options: statusOptions } = useEnums('user-status')
-const { items: roleItems } = useSelectOptions('role')
+const roleItems = ref<RoleListResponseItem[]>([])
 const { options: deptOptions } = useSelectOptions('department')
 const { options: positionOptions } = useSelectOptions('position')
-
-function resolveRoleDisplay(item: SelectOption) {
-  const key = `common.enums.role-code.${String(item.value).toLowerCase().replace(/_/g, '-')}`
-  const translated = t(key)
-  const isBase = translated !== key
-  return { title: isBase ? translated : item.label, isBase }
-}
-
-// Map role items to options with composite role label for empty description
-const roleOptions = computed(() =>
-  roleItems.value.map(item => {
-    const { title, isBase } = resolveRoleDisplay(item)
-    return {
-      title,
-      value: item.value,
-      props: { subtitle: isBase ? (item.description ?? undefined) : t('user.form.compositeRole') },
-    }
-  }),
-)
-
-function roleTitleOf(value: string | number) {
-  const item = roleItems.value.find(i => String(i.value) === String(value))
-  return item ? resolveRoleDisplay(item).title : String(value)
-}
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
@@ -244,9 +205,11 @@ watch(
     errorMessage.value = ''
     loading.value = true
     try {
-      // In edit mode, fetch current user detail
-      const user =
-        props.mode === 'edit' && props.userId != null ? await getUser(props.userId) : null
+      const [user, roles] = await Promise.all([
+        props.mode === 'edit' && props.userId != null ? getUser(props.userId) : null,
+        getRoleList(),
+      ])
+      roleItems.value = roles
 
       if (props.mode === 'create') {
         form.username = ''
