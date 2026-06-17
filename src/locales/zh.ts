@@ -230,7 +230,7 @@ export default {
       button: '生成报表',
       groupBy: '分组方式',
       groupByNone: '无分组',
-      groupByRole: '按角色分组',
+      groupByAggregateRole: '按聚合角色分组',
       groupByBaseRole: '按基础角色分组',
       generate: '生成',
       cancel: '取消',

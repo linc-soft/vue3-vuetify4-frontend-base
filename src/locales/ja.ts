@@ -232,7 +232,7 @@ export default {
       button: 'レポート生成',
       groupBy: 'グループ化',
       groupByNone: 'グループ化なし',
-      groupByRole: 'ロール別',
+      groupByAggregateRole: '集約ロール別',
       groupByBaseRole: '基底ロール別',
       generate: '生成',
       cancel: 'キャンセル',

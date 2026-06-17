@@ -274,7 +274,7 @@ const reportError = ref('')
 
 const reportGroupByOptions = computed(() => [
   { title: t('user.report.groupByNone'), value: '' },
-  { title: t('user.report.groupByRole'), value: 'role' },
+  { title: t('user.report.groupByAggregateRole'), value: 'aggregateRole' },
   { title: t('user.report.groupByBaseRole'), value: 'baseRole' },
 ])
 

@@ -231,7 +231,7 @@ export default {
       button: 'Generate Report',
       groupBy: 'Group By',
       groupByNone: 'No Grouping',
-      groupByRole: 'By Role',
+      groupByAggregateRole: 'By Aggregate Role',
       groupByBaseRole: 'By Base Role',
       generate: 'Generate',
       cancel: 'Cancel',
