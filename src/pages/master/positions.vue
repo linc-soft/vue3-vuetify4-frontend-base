@@ -52,6 +52,7 @@
           {{ t('position.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'position:create'"
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -76,6 +77,7 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'position:update'"
           density="compact"
           icon="mdi-pencil-outline"
           size="small"
@@ -84,6 +86,7 @@
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'position:delete'"
           color="error"
           density="compact"
           icon="mdi-delete-outline"

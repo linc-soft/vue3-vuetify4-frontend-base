@@ -14,6 +14,7 @@
           {{ t('department.actions.refresh') }}
         </v-btn>
         <v-btn
+          v-perm="'dept:create'"
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -71,6 +72,7 @@
             {{ commonStatusLabelOf(item.status) }}
           </v-chip>
           <v-btn
+            v-perm="'dept:create'"
             density="compact"
             icon="mdi-plus"
             size="small"
@@ -79,6 +81,7 @@
             @click.stop="openChild(item.id)"
           />
           <v-btn
+            v-perm="'dept:update'"
             density="compact"
             icon="mdi-pencil-outline"
             size="small"
@@ -87,6 +90,7 @@
             @click.stop="openForm('edit', item.id)"
           />
           <v-btn
+            v-perm="'dept:delete'"
             color="error"
             density="compact"
             icon="mdi-delete-outline"

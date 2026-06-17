@@ -12,6 +12,7 @@ export default {
     errorLogs: 'エラーログ',
     operationLogs: '操作ログ',
     sqlLogs: 'SQL ログ',
+    trace: 'トレース詳細',
   },
   app: {
     logout: 'ログアウト',
@@ -71,6 +72,8 @@ export default {
         'position-read': '職位読取',
         'position-write': '職位書込',
         'position-delete': '職位削除',
+        'resource-read': 'リソース読取',
+        'resource-write': 'リソース書込',
       },
       'status-type': {
         enabled: '有効',
@@ -95,6 +98,39 @@ export default {
     },
     copy: 'コピー',
     copySuccess: 'クリップボードにコピーしました',
+  },
+  resource: {
+    user: {
+      create: 'ユーザー作成',
+      update: 'ユーザー編集',
+      delete: 'ユーザー削除',
+      export: 'ユーザーエクスポート',
+    },
+    role: {
+      create: 'ロール作成',
+      update: 'ロール編集',
+      delete: 'ロール削除',
+      export: 'ロールエクスポート',
+    },
+    dept: {
+      create: '部門作成',
+      update: '部門編集',
+      delete: '部門削除',
+    },
+    position: {
+      create: '職位作成',
+      update: '職位編集',
+      delete: '職位削除',
+    },
+    log: {
+      export: 'ログエクスポート',
+    },
+  },
+  forbidden: {
+    title: 'アクセス拒否',
+    description: 'このページへのアクセス権限がありません。',
+    home: 'ホームへ戻る',
+    back: '戻る',
   },
   login: {
     title: 'ログイン',

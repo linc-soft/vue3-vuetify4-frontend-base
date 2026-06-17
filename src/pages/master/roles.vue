@@ -75,6 +75,7 @@
           {{ t('role.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'role:create'"
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -114,6 +115,7 @@
           @click="openDetail(item.id)"
         />
         <v-btn
+          v-perm="'role:update'"
           density="compact"
           icon="mdi-pencil-outline"
           size="small"
@@ -122,6 +124,7 @@
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'role:delete'"
           color="error"
           density="compact"
           icon="mdi-delete-outline"

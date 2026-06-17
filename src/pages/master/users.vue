@@ -52,6 +52,7 @@
           {{ t('user.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'user:create'"
           color="primary"
           prepend-icon="mdi-plus"
           variant="tonal"
@@ -60,6 +61,7 @@
           {{ t('user.actions.create') }}
         </v-btn>
         <v-btn
+          v-perm="'user:export'"
           prepend-icon="mdi-file-pdf-box"
           variant="tonal"
           @click="reportDialog = true"
@@ -103,6 +105,7 @@
           @click="openDetail(item.id)"
         />
         <v-btn
+          v-perm="'user:update'"
           density="compact"
           icon="mdi-pencil-outline"
           size="small"
@@ -111,6 +114,7 @@
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'user:delete'"
           color="error"
           density="compact"
           icon="mdi-delete-outline"

@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import AppBar from '@/components/AppBar.vue'
 import NavigationDrawer from '@/components/NavigationDrawer.vue'
-import { navItems } from '@/layouts/navItems'
 
 const { mobile } = useDisplay()
 const drawer = ref(!mobile.value)
@@ -18,10 +17,7 @@ function toggleDrawer() {
 
   <AppBar @toggle-drawer="toggleDrawer" />
 
-  <NavigationDrawer
-    v-model="drawer"
-    :items="navItems"
-  />
+  <NavigationDrawer v-model="drawer" />
 
   <v-main>
     <router-view />

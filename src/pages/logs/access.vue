@@ -135,6 +135,7 @@
           {{ t('log.common.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'log:access:export'"
           class="ml-2"
           :loading="exportLoading"
           prepend-icon="mdi-download"

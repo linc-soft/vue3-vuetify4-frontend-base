@@ -12,6 +12,7 @@ export default {
     errorLogs: '错误日志',
     operationLogs: '操作日志',
     sqlLogs: 'SQL 日志',
+    trace: '链路详情',
   },
   app: {
     logout: '退出登录',
@@ -71,6 +72,8 @@ export default {
         'position-read': '职位只读',
         'position-write': '职位可写',
         'position-delete': '职位可删',
+        'resource-read': '资源只读',
+        'resource-write': '资源可写',
       },
       'status-type': {
         enabled: '启用',
@@ -95,6 +98,39 @@ export default {
     },
     copy: '复制',
     copySuccess: '已复制到剪贴板',
+  },
+  resource: {
+    user: {
+      create: '新增用户',
+      update: '编辑用户',
+      delete: '删除用户',
+      export: '导出用户',
+    },
+    role: {
+      create: '新建角色',
+      update: '编辑角色',
+      delete: '删除角色',
+      export: '导出角色',
+    },
+    dept: {
+      create: '新增部门',
+      update: '编辑部门',
+      delete: '删除部门',
+    },
+    position: {
+      create: '新增职位',
+      update: '编辑职位',
+      delete: '删除职位',
+    },
+    log: {
+      export: '导出日志',
+    },
+  },
+  forbidden: {
+    title: '无访问权限',
+    description: '您没有权限访问该页面。',
+    home: '返回首页',
+    back: '返回上一页',
   },
   login: {
     title: '用户登录',

@@ -5,6 +5,7 @@ import { getAccessToken, setAccessToken, tryRefreshToken } from '@/api/client'
 import { login as apiLogin, logout as apiLogout } from '@/api/modules/auth'
 import { clearEnumsCache } from '@/composables/useEnums'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
+import { usePermissionStore } from '@/stores/permission'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -35,6 +36,7 @@ export const useAuthStore = defineStore(
       requirePasswordChange.value = false
       clearSelectOptionsCache()
       clearEnumsCache()
+      usePermissionStore().clear()
     }
 
     function checkAuth() {
@@ -62,6 +64,7 @@ export const useAuthStore = defineStore(
         isAuthenticated.value = false
         requirePasswordChange.value = false
         username.value = null
+        usePermissionStore().clear()
       }
     }
 

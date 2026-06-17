@@ -12,6 +12,7 @@ export default {
     errorLogs: 'Error Logs',
     operationLogs: 'Operation Logs',
     sqlLogs: 'SQL Logs',
+    trace: 'Trace Detail',
   },
   app: {
     logout: 'Sign Out',
@@ -71,6 +72,8 @@ export default {
         'position-read': 'Position Reader',
         'position-write': 'Position Writer',
         'position-delete': 'Position Deleter',
+        'resource-read': 'Resource Reader',
+        'resource-write': 'Resource Writer',
       },
       'status-type': {
         enabled: 'Enabled',
@@ -95,6 +98,39 @@ export default {
     },
     copy: 'Copy',
     copySuccess: 'Copied to clipboard',
+  },
+  resource: {
+    user: {
+      create: 'Create User',
+      update: 'Edit User',
+      delete: 'Delete User',
+      export: 'Export Users',
+    },
+    role: {
+      create: 'Create Role',
+      update: 'Edit Role',
+      delete: 'Delete Role',
+      export: 'Export Roles',
+    },
+    dept: {
+      create: 'Create Department',
+      update: 'Edit Department',
+      delete: 'Delete Department',
+    },
+    position: {
+      create: 'Create Position',
+      update: 'Edit Position',
+      delete: 'Delete Position',
+    },
+    log: {
+      export: 'Export Logs',
+    },
+  },
+  forbidden: {
+    title: 'Access Denied',
+    description: 'You do not have permission to access this page.',
+    home: 'Go Home',
+    back: 'Go Back',
   },
   login: {
     title: 'Sign In',
