@@ -181,7 +181,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { displayName } = useRoleDisplay()
 const { labelOf: statusLabelOf } = useEnums('user-status')
-const { labelOf: genderLabelOf } = useEnums('gender-type')
+const { labelOf: genderLabelOf } = useEnums('gender')
 
 const user = ref<UserInfoResponse | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])
