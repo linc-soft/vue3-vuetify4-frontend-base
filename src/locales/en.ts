@@ -7,6 +7,7 @@ export default {
     roles: 'Roles',
     departments: 'Departments',
     positions: 'Positions',
+    resources: 'Resources',
     logs: 'Logs',
     accessLogs: 'Access Logs',
     errorLogs: 'Error Logs',
@@ -83,6 +84,11 @@ export default {
         unknown: 'Unknown',
         male: 'Male',
         female: 'Female',
+      },
+      'resource-type': {
+        directory: 'Directory',
+        page: 'Page',
+        button: 'Button',
       },
       'sql-type': {
         select: 'SELECT',
@@ -517,6 +523,43 @@ export default {
       loadFailed: 'Failed to load position data',
       saveFailed: 'Failed to save',
       deleteFailed: 'Failed to delete',
+    },
+  },
+  resourceManagement: {
+    title: 'Resource Management',
+    search: {
+      keyword: 'Keyword',
+      type: 'Type',
+      status: 'Status',
+      search: 'Search',
+      reset: 'Reset',
+    },
+    empty: 'No resources yet',
+    actions: { refresh: 'Refresh', edit: 'Edit' },
+    form: {
+      editTitle: 'Edit Resource',
+      resourceCode: 'Resource Code',
+      resourceName: 'Resource Name',
+      icon: 'Icon',
+      sortOrder: 'Sort Order',
+      roleCode: 'Role',
+      status: 'Status',
+      cancel: 'Cancel',
+      submit: 'Submit',
+    },
+    translationPreview: {
+      title: 'Translation Preview',
+      zh: 'Chinese',
+      en: 'English',
+      ja: 'Japanese',
+    },
+    validation: {
+      resourceCodeRequired: 'Please enter a resource code',
+      resourceNameRequired: 'Please enter a resource name',
+    },
+    error: {
+      loadFailed: 'Failed to load resource data',
+      saveFailed: 'Failed to save',
     },
   },
   employee: {

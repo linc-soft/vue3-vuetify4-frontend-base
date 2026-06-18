@@ -36,6 +36,28 @@ export const ResourceNodeSchema: z.ZodType<ResourceNode> = z.lazy(() =>
 
 export const ResourceTreeSchema = z.array(ResourceNodeSchema)
 
+export const ResourceInfoResponseSchema = z.object({
+  id: z.number(),
+  resourceCode: z.string(),
+  resourceName: z.string(),
+  type: ResourceTypeSchema,
+  parentId: z
+    .number()
+    .nullable()
+    .transform(value => value ?? 0),
+  routePath: z.string().nullable(),
+  icon: z.string().nullable(),
+  sortOrder: z.number().nullable(),
+  roleCode: z.string().nullable(),
+  status: z
+    .string()
+    .nullable()
+    .transform(value => value ?? '1'),
+  version: z.number(),
+})
+
+export type ResourceInfoResponse = z.infer<typeof ResourceInfoResponseSchema>
+
 export const ResourceCreateRequestSchema = z.object({
   resourceCode: z.string().min(1).max(128),
   resourceName: z.string().min(1).max(128),

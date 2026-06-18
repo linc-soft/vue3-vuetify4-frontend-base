@@ -7,6 +7,7 @@ export default {
     roles: 'ロール管理',
     departments: '部門管理',
     positions: '職位管理',
+    resources: 'リソース管理',
     logs: 'ログ',
     accessLogs: 'アクセスログ',
     errorLogs: 'エラーログ',
@@ -83,6 +84,11 @@ export default {
         unknown: '不明',
         male: '男性',
         female: '女性',
+      },
+      'resource-type': {
+        directory: 'ディレクトリ',
+        page: 'ページ',
+        button: 'ボタン',
       },
       'sql-type': {
         select: 'SELECT',
@@ -518,6 +524,43 @@ export default {
       loadFailed: '職位データの読み込みに失敗しました',
       saveFailed: '保存に失敗しました',
       deleteFailed: '削除に失敗しました',
+    },
+  },
+  resourceManagement: {
+    title: 'リソース管理',
+    search: {
+      keyword: 'キーワード',
+      type: 'タイプ',
+      status: 'ステータス',
+      search: '検索',
+      reset: 'リセット',
+    },
+    empty: 'リソースがありません',
+    actions: { refresh: '更新', edit: '編集' },
+    form: {
+      editTitle: 'リソースを編集',
+      resourceCode: 'リソースコード',
+      resourceName: 'リソース名',
+      icon: 'アイコン',
+      sortOrder: '並び順',
+      roleCode: 'ロール',
+      status: 'ステータス',
+      cancel: 'キャンセル',
+      submit: '送信',
+    },
+    translationPreview: {
+      title: '翻訳プレビュー',
+      zh: '中国語',
+      en: '英語',
+      ja: '日本語',
+    },
+    validation: {
+      resourceCodeRequired: 'リソースコードを入力してください',
+      resourceNameRequired: 'リソース名を入力してください',
+    },
+    error: {
+      loadFailed: 'リソースデータの読み込みに失敗しました',
+      saveFailed: '保存に失敗しました',
     },
   },
   employee: {

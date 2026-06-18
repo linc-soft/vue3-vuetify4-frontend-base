@@ -7,6 +7,7 @@ export default {
     roles: '角色管理',
     departments: '部门管理',
     positions: '职位管理',
+    resources: '资源管理',
     logs: '日志中心',
     accessLogs: '访问日志',
     errorLogs: '错误日志',
@@ -83,6 +84,11 @@ export default {
         unknown: '未知',
         male: '男',
         female: '女',
+      },
+      'resource-type': {
+        directory: '目录',
+        page: '页面',
+        button: '按钮',
       },
       'sql-type': {
         select: 'SELECT',
@@ -512,6 +518,37 @@ export default {
       loadFailed: '加载职位数据失败',
       saveFailed: '保存失败',
       deleteFailed: '删除失败',
+    },
+  },
+  resourceManagement: {
+    title: '资源管理',
+    search: { keyword: '关键字', type: '资源类型', status: '状态', search: '搜索', reset: '重置' },
+    empty: '暂无资源',
+    actions: { refresh: '刷新', edit: '编辑' },
+    form: {
+      editTitle: '编辑资源',
+      resourceCode: '资源编码',
+      resourceName: '资源名称',
+      icon: '图标',
+      sortOrder: '排序',
+      roleCode: '角色',
+      status: '状态',
+      cancel: '取消',
+      submit: '提交',
+    },
+    translationPreview: {
+      title: '多语言预览',
+      zh: '中文',
+      en: 'English',
+      ja: '日本語',
+    },
+    validation: {
+      resourceCodeRequired: '请输入资源编码',
+      resourceNameRequired: '请输入资源名称',
+    },
+    error: {
+      loadFailed: '加载资源数据失败',
+      saveFailed: '保存失败',
     },
   },
   employee: {

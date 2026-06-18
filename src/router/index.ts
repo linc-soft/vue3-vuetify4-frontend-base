@@ -64,6 +64,12 @@ const router = createRouter({
           component: () => import('@/pages/master/positions.vue'),
           meta: { resourceCode: 'position:read' },
         },
+        {
+          path: 'master/resources',
+          name: 'resources',
+          component: () => import('@/pages/master/resources.vue'),
+          meta: { resourceCode: 'resource:read' },
+        },
         // Logs
         {
           path: 'logs',

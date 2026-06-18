@@ -3,6 +3,8 @@ import http from '@/api/client'
 import {
   type ResourceCreateRequest,
   type ResourceDeleteRequest,
+  type ResourceInfoResponse,
+  ResourceInfoResponseSchema,
   type ResourceNode,
   ResourceTreeSchema,
   type ResourceUpdateRequest,
@@ -16,6 +18,11 @@ export async function getMyResources(): Promise<ResourceNode[]> {
 export async function getResourceTree(): Promise<ResourceNode[]> {
   const { data } = await http.get<Result<ResourceNode[]>>('/api/system/resources')
   return ResourceTreeSchema.parse(data.data)
+}
+
+export async function getResource(id: number): Promise<ResourceInfoResponse> {
+  const { data } = await http.get<Result<ResourceInfoResponse>>(`/api/system/resources/${id}`)
+  return ResourceInfoResponseSchema.parse(data.data)
 }
 
 export async function createResource(params: ResourceCreateRequest): Promise<number> {
