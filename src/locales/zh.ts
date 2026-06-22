@@ -121,22 +121,26 @@ export default {
       update: '编辑用户',
       delete: '删除用户',
       export: '导出用户',
+      view: '查看用户',
     },
     role: {
       create: '新建角色',
       update: '编辑角色',
       delete: '删除角色',
       export: '导出角色',
+      view: '查看角色',
     },
     dept: {
       create: '新增部门',
       update: '编辑部门',
       delete: '删除部门',
+      view: '查看部门',
     },
     position: {
       create: '新增职位',
       update: '编辑职位',
       delete: '删除职位',
+      view: '查看职位',
     },
     log: {
       export: '导出日志',
@@ -469,6 +473,7 @@ export default {
       addChild: '添加子部门',
       edit: '编辑',
       delete: '删除',
+      detail: '详情',
     },
     form: {
       createTitle: '新建部门',
@@ -489,6 +494,10 @@ export default {
       confirm: '删除',
       cancel: '取消',
     },
+    detail: {
+      title: '部门详情',
+      close: '关闭',
+    },
     validation: { deptNameRequired: '请输入部门名称' },
     error: {
       loadFailed: '加载部门数据失败',
@@ -506,7 +515,7 @@ export default {
       status: '状态',
       actions: '操作',
     },
-    actions: { edit: '编辑', delete: '删除', create: '新建职位' },
+    actions: { edit: '编辑', delete: '删除', create: '新建职位', detail: '详情' },
     form: {
       createTitle: '新建职位',
       editTitle: '编辑职位',
@@ -522,6 +531,10 @@ export default {
       message: '确定要删除该职位吗？此操作不可撤销。',
       confirm: '删除',
       cancel: '取消',
+    },
+    detail: {
+      title: '职位详情',
+      close: '关闭',
     },
     validation: { positionNameRequired: '请输入职位名称' },
     error: {

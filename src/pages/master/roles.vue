@@ -107,6 +107,7 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'role:view'"
           density="compact"
           icon="mdi-eye-outline"
           size="small"

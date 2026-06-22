@@ -121,22 +121,26 @@ export default {
       update: 'ユーザー編集',
       delete: 'ユーザー削除',
       export: 'ユーザーエクスポート',
+      view: 'ユーザー閲覧',
     },
     role: {
       create: 'ロール作成',
       update: 'ロール編集',
       delete: 'ロール削除',
       export: 'ロールエクスポート',
+      view: 'ロール閲覧',
     },
     dept: {
       create: '部門作成',
       update: '部門編集',
       delete: '部門削除',
+      view: '部門閲覧',
     },
     position: {
       create: '職位作成',
       update: '職位編集',
       delete: '職位削除',
+      view: '職位閲覧',
     },
     log: {
       export: 'ログエクスポート',
@@ -475,6 +479,7 @@ export default {
       addChild: '子部門を追加',
       edit: '編集',
       delete: '削除',
+      detail: '詳細',
     },
     form: {
       createTitle: '部門を作成',
@@ -495,6 +500,10 @@ export default {
       confirm: '削除',
       cancel: 'キャンセル',
     },
+    detail: {
+      title: '部門詳細',
+      close: '閉じる',
+    },
     validation: { deptNameRequired: '部門名を入力してください' },
     error: {
       loadFailed: '部門データの読み込みに失敗しました',
@@ -512,7 +521,7 @@ export default {
       status: 'ステータス',
       actions: '操作',
     },
-    actions: { edit: '編集', delete: '削除', create: '職位を作成' },
+    actions: { edit: '編集', delete: '削除', create: '職位を作成', detail: '詳細' },
     form: {
       createTitle: '職位を作成',
       editTitle: '職位を編集',
@@ -528,6 +537,10 @@ export default {
       message: 'この職位を削除してもよろしいですか？この操作は取り消せません。',
       confirm: '削除',
       cancel: 'キャンセル',
+    },
+    detail: {
+      title: '職位詳細',
+      close: '閉じる',
     },
     validation: { positionNameRequired: '職位名を入力してください' },
     error: {

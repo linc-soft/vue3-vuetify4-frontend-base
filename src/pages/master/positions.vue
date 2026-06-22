@@ -77,6 +77,15 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'position:view'"
+          density="compact"
+          icon="mdi-eye-outline"
+          size="small"
+          :title="t('position.actions.detail')"
+          variant="text"
+          @click="openDetail(item.id)"
+        />
+        <v-btn
           v-perm="'position:update'"
           density="compact"
           icon="mdi-pencil-outline"
@@ -104,6 +113,13 @@
       :mode="formMode"
       :position-id="selectedId"
       @saved="fetchPositions"
+    />
+
+    <!-- Position Detail Dialog -->
+    <PositionDetailDialog
+      v-model="detailDialog"
+      :position-id="selectedDetailId"
+      @deleted="fetchPositions"
     />
 
     <!-- Delete Confirmation Dialog -->
@@ -159,6 +175,7 @@ import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPositionList } from '@/api/modules/position'
 import { useEnums } from '@/composables/useEnums'
+import PositionDetailDialog from './components/PositionDetailDialog.vue'
 import PositionFormDialog from './components/PositionFormDialog.vue'
 
 const { t } = useI18n()
@@ -172,6 +189,9 @@ const loading = ref(false)
 const formDialog = ref(false)
 const selectedId = ref<number | null>(null)
 const formMode = ref<'create' | 'edit'>('create')
+
+const detailDialog = ref(false)
+const selectedDetailId = ref<number | null>(null)
 
 const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
@@ -225,6 +245,11 @@ function openForm(mode: 'create' | 'edit', id?: number) {
   formMode.value = mode
   selectedId.value = id ?? null
   formDialog.value = true
+}
+
+function openDetail(id: number) {
+  selectedDetailId.value = id
+  detailDialog.value = true
 }
 
 function openDeleteConfirm(item: PositionInfoResponse) {

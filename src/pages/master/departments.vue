@@ -81,6 +81,15 @@
             @click.stop="openChild(item.id)"
           />
           <v-btn
+            v-perm="'dept:view'"
+            density="compact"
+            icon="mdi-eye-outline"
+            size="small"
+            :title="t('department.actions.detail')"
+            variant="text"
+            @click.stop="openDetail(item.id)"
+          />
+          <v-btn
             v-perm="'dept:update'"
             density="compact"
             icon="mdi-pencil-outline"
@@ -110,6 +119,13 @@
       :mode="formMode"
       :preset-parent-id="presetParentId"
       @saved="fetchTree"
+    />
+
+    <!-- Department Detail Dialog -->
+    <DepartmentDetailDialog
+      v-model="detailDialog"
+      :department-id="selectedDetailId"
+      @deleted="fetchTree"
     />
 
     <!-- Delete Confirmation Dialog -->
@@ -165,6 +181,7 @@ import { useDisplay } from 'vuetify'
 
 import { deleteDepartment, getDepartmentTree } from '@/api/modules/department'
 import { useEnums } from '@/composables/useEnums'
+import DepartmentDetailDialog from './components/DepartmentDetailDialog.vue'
 import DepartmentFormDialog from './components/DepartmentFormDialog.vue'
 
 const { t } = useI18n()
@@ -178,6 +195,9 @@ const formDialog = ref(false)
 const selectedId = ref<number | null>(null)
 const formMode = ref<'create' | 'edit'>('create')
 const presetParentId = ref<number | null>(null)
+
+const detailDialog = ref(false)
+const selectedDetailId = ref<number | null>(null)
 
 const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
@@ -204,6 +224,11 @@ function openForm(mode: 'create' | 'edit', id?: number) {
   selectedId.value = id ?? null
   presetParentId.value = null
   formDialog.value = true
+}
+
+function openDetail(id: number) {
+  selectedDetailId.value = id
+  detailDialog.value = true
 }
 
 function openChild(parentId: number) {

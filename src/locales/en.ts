@@ -121,22 +121,26 @@ export default {
       update: 'Edit User',
       delete: 'Delete User',
       export: 'Export Users',
+      view: 'View User',
     },
     role: {
       create: 'Create Role',
       update: 'Edit Role',
       delete: 'Delete Role',
       export: 'Export Roles',
+      view: 'View Role',
     },
     dept: {
       create: 'Create Department',
       update: 'Edit Department',
       delete: 'Delete Department',
+      view: 'View Department',
     },
     position: {
       create: 'Create Position',
       update: 'Edit Position',
       delete: 'Delete Position',
+      view: 'View Position',
     },
     log: {
       export: 'Export Logs',
@@ -474,6 +478,7 @@ export default {
       addChild: 'Add Sub-department',
       edit: 'Edit',
       delete: 'Delete',
+      detail: 'Detail',
     },
     form: {
       createTitle: 'Create Department',
@@ -494,6 +499,10 @@ export default {
       confirm: 'Delete',
       cancel: 'Cancel',
     },
+    detail: {
+      title: 'Department Detail',
+      close: 'Close',
+    },
     validation: { deptNameRequired: 'Please enter a department name' },
     error: {
       loadFailed: 'Failed to load department data',
@@ -511,7 +520,7 @@ export default {
       status: 'Status',
       actions: 'Actions',
     },
-    actions: { edit: 'Edit', delete: 'Delete', create: 'Create Position' },
+    actions: { edit: 'Edit', delete: 'Delete', create: 'Create Position', detail: 'Detail' },
     form: {
       createTitle: 'Create Position',
       editTitle: 'Edit Position',
@@ -527,6 +536,10 @@ export default {
       message: 'Are you sure you want to delete this position? This action cannot be undone.',
       confirm: 'Delete',
       cancel: 'Cancel',
+    },
+    detail: {
+      title: 'Position Detail',
+      close: 'Close',
     },
     validation: { positionNameRequired: 'Please enter a position name' },
     error: {
