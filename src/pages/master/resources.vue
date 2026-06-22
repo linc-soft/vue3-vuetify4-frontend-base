@@ -127,7 +127,7 @@
           <v-btn
             v-perm="'resource:update'"
             density="compact"
-            icon="mdi-pencil-outline"
+            :icon="iconOf('resource:update', 'mdi-pencil-outline')"
             size="small"
             :title="t('resourceManagement.actions.edit')"
             variant="text"
@@ -152,13 +152,14 @@ import { useI18n } from 'vue-i18n'
 
 import { getResourceTree } from '@/api/modules/resource'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import ResourceFormDialog from './components/ResourceFormDialog.vue'
 
 const { t } = useI18n()
 const { labelOf: resourceTypeLabelOf } = useEnums('resource-type')
 const { options: typeOptions } = useEnums('resource-type')
-const { labelOf: commonStatusLabelOf } = useEnums('common-status')
-const { options: statusOptions } = useEnums('common-status')
+const { options: statusOptions, labelOf: commonStatusLabelOf } = useEnums('common-status')
+const { iconOf } = useResourceIcon()
 
 const tree = ref<ResourceNode[]>([])
 const loading = ref(false)

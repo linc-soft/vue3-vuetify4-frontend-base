@@ -5,11 +5,14 @@ import { getMyResources } from '@/api/modules/resource'
 
 const ADMIN_CODE = 'ADMIN'
 
-function collectCodes(nodes: ResourceNode[], out: Set<string>) {
+function collectCodes(nodes: ResourceNode[], out: Set<string>, iconOut: Map<string, string>) {
   for (const node of nodes) {
     out.add(node.resourceCode)
+    if (node.icon != null && node.icon !== '') {
+      iconOut.set(node.resourceCode, node.icon)
+    }
     if (node.children?.length) {
-      collectCodes(node.children, out)
+      collectCodes(node.children, out, iconOut)
     }
   }
 }
@@ -28,6 +31,7 @@ function findRoutePaths(nodes: ResourceNode[], out: Set<string>) {
 export const usePermissionStore = defineStore('permission', () => {
   const resourceTree = ref<ResourceNode[]>([])
   const resourceCodes = ref<Set<string>>(new Set())
+  const resourceIcons = ref<Map<string, string>>(new Map())
   const visibleRoutePaths = ref<Set<string>>(new Set())
   const roleCodes = ref<Set<string>>(new Set())
   const loaded = ref(false)
@@ -48,8 +52,10 @@ export const usePermissionStore = defineStore('permission', () => {
         const tree = await getMyResources()
         resourceTree.value = tree
         const codes = new Set<string>()
-        collectCodes(tree, codes)
+        const icons = new Map<string, string>()
+        collectCodes(tree, codes, icons)
         resourceCodes.value = codes
+        resourceIcons.value = icons
         const paths = new Set<string>()
         findRoutePaths(tree, paths)
         visibleRoutePaths.value = paths
@@ -65,6 +71,7 @@ export const usePermissionStore = defineStore('permission', () => {
   function clear() {
     resourceTree.value = []
     resourceCodes.value = new Set()
+    resourceIcons.value = new Map()
     visibleRoutePaths.value = new Set()
     roleCodes.value = new Set()
     loaded.value = false
@@ -91,9 +98,14 @@ export const usePermissionStore = defineStore('permission', () => {
     return has(resourceCode)
   }
 
+  function iconOf(code: string): string | null {
+    return resourceIcons.value.get(code) ?? null
+  }
+
   return {
     resourceTree,
     resourceCodes,
+    resourceIcons,
     visibleRoutePaths,
     roleCodes,
     loaded,
@@ -104,6 +116,7 @@ export const usePermissionStore = defineStore('permission', () => {
     hasAny,
     hasAll,
     isRouteAllowed,
+    iconOf,
     setRoleCodes,
   }
 })

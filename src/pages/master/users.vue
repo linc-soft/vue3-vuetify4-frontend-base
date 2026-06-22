@@ -54,7 +54,7 @@
         <v-btn
           v-perm="'user:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('user:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -62,7 +62,7 @@
         </v-btn>
         <v-btn
           v-perm="'user:export'"
-          prepend-icon="mdi-file-pdf-box"
+          :prepend-icon="iconOf('user:export', 'mdi-file-pdf-box')"
           variant="tonal"
           @click="reportDialog = true"
         >
@@ -99,7 +99,7 @@
         <v-btn
           v-perm="'user:view'"
           density="compact"
-          icon="mdi-eye-outline"
+          :icon="iconOf('user:view', 'mdi-eye-outline')"
           size="small"
           :title="t('user.actions.detail')"
           variant="text"
@@ -108,7 +108,7 @@
         <v-btn
           v-perm="'user:update'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('user:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('user.actions.edit')"
           variant="text"
@@ -118,7 +118,7 @@
           v-perm="'user:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('user:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('user.actions.delete')"
           variant="text"
@@ -246,11 +246,13 @@ import { getDepartmentTree } from '@/api/modules/department'
 import { getPositionList } from '@/api/modules/position'
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 
 // Filter Conditions
 const filters = reactive({ username: '', status: '1' })

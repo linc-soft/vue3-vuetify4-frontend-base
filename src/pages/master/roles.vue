@@ -77,7 +77,7 @@
         <v-btn
           v-perm="'role:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('role:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -109,7 +109,7 @@
         <v-btn
           v-perm="'role:view'"
           density="compact"
-          icon="mdi-eye-outline"
+          :icon="iconOf('role:view', 'mdi-eye-outline')"
           size="small"
           :title="t('role.actions.detail')"
           variant="text"
@@ -118,7 +118,7 @@
         <v-btn
           v-perm="'role:update'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('role:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('role.actions.edit')"
           variant="text"
@@ -128,7 +128,7 @@
           v-perm="'role:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('role:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('role.actions.delete')"
           variant="text"
@@ -205,12 +205,14 @@ import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { displayName } = useRoleDisplay()
 
 // Filter Conditions

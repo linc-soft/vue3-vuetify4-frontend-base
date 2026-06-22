@@ -53,6 +53,7 @@
           v-perm="'dept:delete'"
           color="error"
           :disabled="loading || !department"
+          :prepend-icon="iconOf('dept:delete', '')"
           variant="tonal"
           @click="deleteDialog = true"
         >
@@ -121,6 +122,7 @@ import { useDisplay } from 'vuetify'
 import { deleteDepartment, getDepartment, getDepartmentTree } from '@/api/modules/department'
 import { getUserList } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 
 const props = defineProps<{
   modelValue: boolean
@@ -134,6 +136,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const department = ref<DepartmentInfoResponse | null>(null)

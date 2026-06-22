@@ -138,7 +138,7 @@
           v-perm="'log:access:export'"
           class="ml-2"
           :loading="exportLoading"
-          prepend-icon="mdi-download"
+          :prepend-icon="iconOf('log:access:export', 'mdi-download')"
           variant="tonal"
           @click="handleExport"
         >
@@ -203,9 +203,11 @@ import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 
 // Status code group options (loaded from backend enums)
 const { options: resultCodeOptions } = useEnums('result-code')

@@ -16,7 +16,7 @@
         <v-btn
           v-perm="'dept:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('dept:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -74,7 +74,7 @@
           <v-btn
             v-perm="'dept:create'"
             density="compact"
-            icon="mdi-plus"
+            :icon="iconOf('dept:create', 'mdi-plus')"
             size="small"
             :title="t('department.actions.addChild')"
             variant="text"
@@ -83,7 +83,7 @@
           <v-btn
             v-perm="'dept:view'"
             density="compact"
-            icon="mdi-eye-outline"
+            :icon="iconOf('dept:view', 'mdi-eye-outline')"
             size="small"
             :title="t('department.actions.detail')"
             variant="text"
@@ -92,7 +92,7 @@
           <v-btn
             v-perm="'dept:update'"
             density="compact"
-            icon="mdi-pencil-outline"
+            :icon="iconOf('dept:update', 'mdi-pencil-outline')"
             size="small"
             :title="t('department.actions.edit')"
             variant="text"
@@ -102,7 +102,7 @@
             v-perm="'dept:delete'"
             color="error"
             density="compact"
-            icon="mdi-delete-outline"
+            :icon="iconOf('dept:delete', 'mdi-delete-outline')"
             size="small"
             :title="t('department.actions.delete')"
             variant="text"
@@ -181,11 +181,13 @@ import { useDisplay } from 'vuetify'
 
 import { deleteDepartment, getDepartmentTree } from '@/api/modules/department'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import DepartmentDetailDialog from './components/DepartmentDetailDialog.vue'
 import DepartmentFormDialog from './components/DepartmentFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const tree = ref<DepartmentTreeResponse[]>([])

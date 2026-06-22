@@ -47,6 +47,7 @@
           v-perm="'position:delete'"
           color="error"
           :disabled="loading || !position"
+          :prepend-icon="iconOf('position:delete', '')"
           variant="tonal"
           @click="deleteDialog = true"
         >
@@ -113,6 +114,7 @@ import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPosition } from '@/api/modules/position'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 
 const props = defineProps<{
   modelValue: boolean
@@ -126,6 +128,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const position = ref<PositionInfoResponse | null>(null)

@@ -54,7 +54,7 @@
         <v-btn
           v-perm="'position:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('position:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -79,7 +79,7 @@
         <v-btn
           v-perm="'position:view'"
           density="compact"
-          icon="mdi-eye-outline"
+          :icon="iconOf('position:view', 'mdi-eye-outline')"
           size="small"
           :title="t('position.actions.detail')"
           variant="text"
@@ -88,7 +88,7 @@
         <v-btn
           v-perm="'position:update'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('position:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('position.actions.edit')"
           variant="text"
@@ -98,7 +98,7 @@
           v-perm="'position:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('position:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('position.actions.delete')"
           variant="text"
@@ -175,11 +175,13 @@ import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPositionList } from '@/api/modules/position'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import PositionDetailDialog from './components/PositionDetailDialog.vue'
 import PositionFormDialog from './components/PositionFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 
 const filters = reactive({ positionName: '', status: '' })
 
