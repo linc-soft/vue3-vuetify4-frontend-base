@@ -554,7 +554,7 @@ export default {
       resourceName: '资源名称',
       icon: '图标',
       sortOrder: '排序',
-      roleCode: '角色',
+      roleCode: '角色代码',
       status: '状态',
       cancel: '取消',
       submit: '提交',

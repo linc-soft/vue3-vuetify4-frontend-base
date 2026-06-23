@@ -22,27 +22,10 @@
         cols="12"
         md="3"
       >
-        <v-autocomplete
+        <RoleCodeAutocomplete
           v-model="filters.roleCode"
-          clearable
-          density="compact"
-          hide-details
-          item-value="code"
-          :items="roleCodeItems"
           :label="t('role.search.roleCode')"
-          variant="outlined"
-        >
-          <template #selection="{ item }">
-            {{ item.code }}
-          </template>
-          <template #item="{ props: itemProps, item }">
-            <v-list-item
-              v-bind="itemProps"
-              :subtitle="item.name"
-              :title="item.code"
-            />
-          </template>
-        </v-autocomplete>
+        />
       </v-col>
       <v-col
         cols="12"
@@ -204,7 +187,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
-import { useEnums } from '@/composables/useEnums'
+import RoleCodeAutocomplete from '@/components/RoleCodeAutocomplete.vue'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
@@ -226,9 +209,6 @@ const filters = reactive({
 const items = ref<RoleListResponseItem[]>([])
 const loading = ref(false)
 const itemsPerPage = ref(10)
-
-// Role code enum options for the roleCode filter dropdown
-const { items: roleCodeItems } = useEnums('role-code')
 
 // Dialog Control
 const detailDialog = ref(false)

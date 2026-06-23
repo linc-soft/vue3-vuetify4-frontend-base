@@ -566,7 +566,7 @@ export default {
       resourceName: 'リソース名',
       icon: 'アイコン',
       sortOrder: '並び順',
-      roleCode: 'ロール',
+      roleCode: 'ロールコード',
       status: 'ステータス',
       cancel: 'キャンセル',
       submit: '送信',

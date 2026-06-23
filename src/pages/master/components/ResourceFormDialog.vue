@@ -59,11 +59,9 @@
             :label="t('resourceManagement.form.sortOrder')"
             type="number"
           />
-          <v-select
+          <RoleCodeAutocomplete
             v-if="detail?.type !== 0"
             v-model="form.roleCode"
-            clearable
-            :items="roleOptions"
             :label="t('resourceManagement.form.roleCode')"
           />
           <v-select
@@ -115,6 +113,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getResource, updateResource } from '@/api/modules/resource'
+import RoleCodeAutocomplete from '@/components/RoleCodeAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
 import enMessages from '@/locales/en'
 import jaMessages from '@/locales/ja'
@@ -132,7 +131,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: roleOptions } = useEnums('role-code')
 const { options: statusOptions } = useEnums('common-status')
 
 const form = reactive<{

@@ -565,7 +565,7 @@ export default {
       resourceName: 'Resource Name',
       icon: 'Icon',
       sortOrder: 'Sort Order',
-      roleCode: 'Role',
+      roleCode: 'Role Code',
       status: 'Status',
       cancel: 'Cancel',
       submit: 'Submit',
