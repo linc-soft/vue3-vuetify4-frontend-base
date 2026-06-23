@@ -35,6 +35,12 @@
             :label="t('department.form.deptCode')"
             variant="outlined"
           />
+          <!-- <OptionSelect
+            v-model="form.parentId"
+            clearable
+            :label="t('department.form.parent')"
+            type="department"
+          /> -->
           <v-select
             v-model="form.parentId"
             clearable
@@ -57,13 +63,11 @@
             :label="t('department.form.status')"
             type="common-status"
           />
-          <UserAutocomplete
+          <OptionSelect
             v-model="form.leaderUserId"
             clearable
-            density="compact"
             :label="t('department.form.leader')"
-            value-key="id"
-            variant="outlined"
+            type="user"
           />
         </v-form>
         <v-alert
@@ -115,7 +119,7 @@ import {
   updateDepartment,
 } from '@/api/modules/department'
 import EnumSelect from '@/components/EnumSelect.vue'
-import UserAutocomplete from '@/components/UserAutocomplete.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 
 const props = defineProps<{
   modelValue: boolean

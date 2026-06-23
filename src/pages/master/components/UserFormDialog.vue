@@ -37,21 +37,17 @@
             :rules="mode === 'create' ? [rules.realNameRequired] : undefined"
             variant="outlined"
           />
-          <v-select
+          <OptionSelect
             v-model="form.deptId"
             clearable
-            density="compact"
-            :items="deptOptions"
             :label="t('user.form.dept')"
-            variant="outlined"
+            type="department"
           />
-          <v-select
+          <OptionSelect
             v-model="form.positionId"
             clearable
-            density="compact"
-            :items="positionOptions"
             :label="t('user.form.position')"
-            variant="outlined"
+            type="position"
           />
           <v-text-field
             v-model="form.mobile"
@@ -151,8 +147,8 @@ import { useDisplay } from 'vuetify'
 import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
 import EnumSelect from '@/components/EnumSelect.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
-import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
   modelValue: boolean
@@ -200,8 +196,6 @@ const submitting = ref(false)
 const errorMessage = ref('')
 
 const roleItems = ref<RoleListResponseItem[]>([])
-const { options: deptOptions } = useSelectOptions('department')
-const { options: positionOptions } = useSelectOptions('position')
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),

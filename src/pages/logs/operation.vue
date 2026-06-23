@@ -56,14 +56,12 @@
         md="2"
         sm="4"
       >
-        <UserAutocomplete
+        <OptionSelect
           v-model="filters.username"
           clearable
-          density="compact"
           hide-details
           :label="t('log.operation.username')"
-          value-key="username"
-          variant="outlined"
+          type="username"
         />
       </v-col>
       <v-col
@@ -188,7 +186,7 @@ import { getOperationLogPage } from '@/api/modules/operationLog'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import EnumSelect from '@/components/EnumSelect.vue'
-import UserAutocomplete from '@/components/UserAutocomplete.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 
 const { t } = useI18n()

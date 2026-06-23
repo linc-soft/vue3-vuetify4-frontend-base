@@ -11,14 +11,12 @@
         md="2"
         sm="4"
       >
-        <UserAutocomplete
+        <OptionSelect
           v-model="filters.username"
           clearable
-          density="compact"
           hide-details
           :label="t('log.error.username')"
-          value-key="username"
-          variant="outlined"
+          type="username"
         />
       </v-col>
       <v-col
@@ -133,7 +131,7 @@ import { useDisplay } from 'vuetify'
 import { getErrorLogPage } from '@/api/modules/errorLog'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
-import UserAutocomplete from '@/components/UserAutocomplete.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
