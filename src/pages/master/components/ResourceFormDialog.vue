@@ -67,18 +67,18 @@
             type="number"
             variant="outlined"
           />
-          <RoleCodeAutocomplete
+          <EnumSelect
             v-if="detail?.type !== 0"
             v-model="form.roleCode"
-            :hide-details="false"
+            display-field="code"
             :label="t('resourceManagement.form.roleCode')"
+            show-subtitle
+            type="role-code"
           />
-          <v-select
+          <EnumSelect
             v-model="form.status"
-            density="compact"
-            :items="statusOptions"
             :label="t('resourceManagement.form.status')"
-            variant="outlined"
+            type="common-status"
           />
         </v-form>
         <v-alert
@@ -124,8 +124,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getResource, updateResource } from '@/api/modules/resource'
-import RoleCodeAutocomplete from '@/components/RoleCodeAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
+import EnumSelect from '@/components/EnumSelect.vue'
 import enMessages from '@/locales/en'
 import jaMessages from '@/locales/ja'
 import zhMessages from '@/locales/zh'
@@ -142,7 +141,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: statusOptions } = useEnums('common-status')
 
 const form = reactive<{
   resourceCode: string

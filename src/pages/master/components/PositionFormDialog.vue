@@ -42,12 +42,10 @@
             type="number"
             variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.status"
-            density="compact"
-            :items="commonStatusOptions"
             :label="t('position.form.status')"
-            variant="outlined"
+            type="common-status"
           />
         </v-form>
         <v-alert
@@ -92,7 +90,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createPosition, getPosition, updatePosition } from '@/api/modules/position'
-import { useEnums } from '@/composables/useEnums'
+import EnumSelect from '@/components/EnumSelect.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -107,7 +105,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: commonStatusOptions } = useEnums('common-status')
 
 const form = reactive<{
   positionName: string

@@ -52,12 +52,10 @@
             type="number"
             variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.status"
-            density="compact"
-            :items="statusOptions"
             :label="t('department.form.status')"
-            variant="outlined"
+            type="common-status"
           />
           <UserAutocomplete
             v-model="form.leaderUserId"
@@ -116,8 +114,8 @@ import {
   getDepartmentTree,
   updateDepartment,
 } from '@/api/modules/department'
+import EnumSelect from '@/components/EnumSelect.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
 
 const props = defineProps<{
   modelValue: boolean
@@ -134,7 +132,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: statusOptions } = useEnums('common-status')
 
 const form = reactive<{
   deptName: string

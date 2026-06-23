@@ -22,14 +22,12 @@
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.status"
           clearable
-          density="compact"
           hide-details
-          :items="statusOptions"
           :label="t('user.search.status')"
-          variant="outlined"
+          type="user-status"
         />
       </v-col>
       <v-col
@@ -245,6 +243,7 @@ import { useDisplay } from 'vuetify'
 import { getDepartmentTree } from '@/api/modules/department'
 import { getPositionList } from '@/api/modules/position'
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import UserDetailDialog from './components/UserDetailDialog.vue'
@@ -286,7 +285,7 @@ const reportGroupByOptions = computed(() => [
 ])
 
 // Status options (client-side i18n mapping)
-const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
+const { labelOf: statusLabelOf } = useEnums('user-status')
 const { labelOf: genderLabelOf } = useEnums('gender')
 
 // Reference data for resolving dept / position display names.
@@ -327,7 +326,7 @@ async function fetchUsers() {
   try {
     items.value = await getUserList({
       username: filters.username || undefined,
-      status: filters.status || undefined,
+      status: filters.status ?? undefined,
     })
   } catch (error: unknown) {
     console.error('Failed to fetch users:', error)

@@ -21,28 +21,24 @@
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="typeFilter"
           clearable
-          density="compact"
           hide-details
-          :items="typeOptions"
           :label="t('resourceManagement.search.type')"
-          variant="outlined"
+          type="resource-type"
         />
       </v-col>
       <v-col
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="statusFilter"
           clearable
-          density="compact"
           hide-details
-          :items="statusOptions"
           :label="t('resourceManagement.search.status')"
-          variant="outlined"
+          type="common-status"
         />
       </v-col>
       <v-col
@@ -153,21 +149,21 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { getResourceTree } from '@/api/modules/resource'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import ResourceFormDialog from './components/ResourceFormDialog.vue'
 
 const { t } = useI18n()
 const { labelOf: resourceTypeLabelOf } = useEnums('resource-type')
-const { options: typeOptions } = useEnums('resource-type')
-const { options: statusOptions, labelOf: commonStatusLabelOf } = useEnums('common-status')
+const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 const { iconOf } = useResourceIcon()
 
 const tree = ref<ResourceNode[]>([])
 const loading = ref(false)
 const keyword = ref('')
-const typeFilter = ref<string | null>(null)
-const statusFilter = ref<string | null>(null)
+const typeFilter = ref<string | number | null>(null)
+const statusFilter = ref<string | number | null>(null)
 
 const formDialog = ref(false)
 const selectedId = ref<number | null>(null)
@@ -177,10 +173,10 @@ function itemTitle(item: Record<string, unknown>): string {
 }
 
 function matchesFilters(node: ResourceNode): boolean {
-  if (typeFilter.value && String(node.type) !== typeFilter.value) {
+  if (typeFilter.value != null && String(node.type) !== String(typeFilter.value)) {
     return false
   }
-  if (statusFilter.value && node.status !== statusFilter.value) {
+  if (statusFilter.value != null && String(node.status ?? '') !== String(statusFilter.value)) {
     return false
   }
   if (keyword.value) {

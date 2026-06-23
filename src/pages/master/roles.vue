@@ -22,9 +22,14 @@
         cols="12"
         md="3"
       >
-        <RoleCodeAutocomplete
+        <EnumSelect
           v-model="filters.roleCode"
+          clearable
+          display-field="code"
+          hide-details
           :label="t('role.search.roleCode')"
+          show-subtitle
+          type="role-code"
         />
       </v-col>
       <v-col
@@ -187,7 +192,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
-import RoleCodeAutocomplete from '@/components/RoleCodeAutocomplete.vue'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
@@ -252,7 +257,7 @@ async function fetchRoles() {
   try {
     items.value = await getRoleList({
       roleName: filters.roleName || undefined,
-      roleCode: filters.roleCode || undefined,
+      roleCode: filters.roleCode ?? undefined,
       aggregatedOnly: filters.aggregatedOnly,
     })
     lastSearchAggregatedOnly.value = filters.aggregatedOnly

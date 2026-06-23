@@ -22,14 +22,12 @@
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.status"
           clearable
-          density="compact"
           hide-details
-          :items="commonStatusOptions"
           :label="t('position.search.status')"
-          variant="outlined"
+          type="common-status"
         />
       </v-col>
       <v-col
@@ -174,6 +172,7 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPositionList } from '@/api/modules/position'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import PositionDetailDialog from './components/PositionDetailDialog.vue'
@@ -200,7 +199,7 @@ const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
-const { options: commonStatusOptions, labelOf: commonStatusLabelOf } = useEnums('common-status')
+const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const allHeaders = computed(() => [
   { title: t('position.table.positionName'), key: 'positionName' },
@@ -220,7 +219,7 @@ async function fetchPositions() {
   try {
     items.value = await getPositionList({
       positionName: filters.positionName || undefined,
-      status: filters.status || undefined,
+      status: filters.status ?? undefined,
     })
   } catch (error: unknown) {
     console.error('Failed to fetch positions:', error)

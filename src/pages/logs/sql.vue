@@ -11,14 +11,12 @@
         md="2"
         sm="4"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.sqlType"
           clearable
-          density="compact"
           hide-details
-          :items="sqlTypeOptions"
           :label="t('log.sql.sqlType')"
-          variant="outlined"
+          type="sql-type"
         />
       </v-col>
       <v-col
@@ -167,6 +165,7 @@ import { useDisplay } from 'vuetify'
 import { getSqlLogPage } from '@/api/modules/sqlLog'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import EnumSelect from '@/components/EnumSelect.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
 import { useEnums } from '@/composables/useEnums'
 
@@ -174,7 +173,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 
 // SQL type options (loaded from backend enums)
-const { options: sqlTypeOptions, labelOf: sqlTypeLabelOf } = useEnums('sql-type')
+const { labelOf: sqlTypeLabelOf } = useEnums('sql-type')
 
 // Filter Conditions
 const filters = reactive({

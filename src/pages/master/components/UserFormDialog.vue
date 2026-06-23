@@ -59,13 +59,11 @@
             :label="t('user.form.mobile')"
             variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.gender"
             clearable
-            density="compact"
-            :items="genderOptions"
             :label="t('user.form.gender')"
-            variant="outlined"
+            type="gender"
           />
           <v-text-field
             v-model="form.birthday"
@@ -94,14 +92,12 @@
             type="email"
             variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-if="mode === 'edit'"
             v-model="form.status"
-            density="compact"
-            :items="statusOptions"
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
-            variant="outlined"
+            type="user-status"
           />
           <RoleAutocomplete
             v-model="form.roleIds"
@@ -154,8 +150,8 @@ import { useDisplay } from 'vuetify'
 
 import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
+import EnumSelect from '@/components/EnumSelect.vue'
 import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
 import { useSelectOptions } from '@/composables/useSelectOptions'
 
 const props = defineProps<{
@@ -171,7 +167,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: genderOptions } = useEnums('gender')
 
 const form = reactive<{
   username: string
@@ -204,7 +199,6 @@ const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
 
-const { options: statusOptions } = useEnums('user-status')
 const roleItems = ref<RoleListResponseItem[]>([])
 const { options: deptOptions } = useSelectOptions('department')
 const { options: positionOptions } = useSelectOptions('position')

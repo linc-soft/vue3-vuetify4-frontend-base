@@ -40,29 +40,15 @@
         md="2"
         sm="4"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.statusCode"
           clearable
-          density="compact"
+          display-field="code"
           hide-details
-          :items="resultCodeOptions"
           :label="t('log.access.statusCode')"
-          variant="outlined"
-        >
-          <template #item="{ item, props }">
-            <v-list-item v-bind="props">
-              <template #title>
-                <span class="text-body-2 font-weight-medium">{{ item.value }}</span>
-              </template>
-              <template #subtitle>
-                <span class="text-caption text-medium-emphasis">{{ item.title }}</span>
-              </template>
-            </v-list-item>
-          </template>
-          <template #selection="{ item }">
-            {{ item.value }}
-          </template>
-        </v-select>
+          show-subtitle
+          type="result-code"
+        />
       </v-col>
     </v-row>
     <!-- Row 2: Username + Time Range -->
@@ -201,8 +187,8 @@ import { useDisplay } from 'vuetify'
 import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
+import EnumSelect from '@/components/EnumSelect.vue'
 import UserAutocomplete from '@/components/UserAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 
 const { t } = useI18n()
@@ -210,7 +196,6 @@ const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
 
 // Status code group options (loaded from backend enums)
-const { options: resultCodeOptions } = useEnums('result-code')
 
 // Filter Conditions
 const filters = reactive({
@@ -271,7 +256,7 @@ async function fetchLogs() {
       username: filters.username || undefined,
       method: filters.method ?? undefined,
       path: filters.path || undefined,
-      statusCode: filters.statusCode || undefined,
+      statusCode: filters.statusCode ?? undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
       sortBy:
@@ -328,7 +313,7 @@ async function handleExport() {
       username: filters.username || undefined,
       method: filters.method ?? undefined,
       path: filters.path || undefined,
-      statusCode: filters.statusCode || undefined,
+      statusCode: filters.statusCode ?? undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
     })
