@@ -16,15 +16,12 @@
     <template #append-inner>
       <v-icon icon="mdi-chevron-down" />
     </template>
-    <v-menu
+    <v-dialog
       v-model="menuOpen"
-      activator="parent"
-      :close-on-content-click="false"
-      location="bottom start"
-      max-height="420"
-      offset="4"
+      :max-width="420"
+      scrollable
     >
-      <v-card width="360">
+      <v-card width="420">
         <v-card-text class="pa-3">
           <v-text-field
             v-model="keyword"
@@ -32,38 +29,40 @@
             clearable
             density="compact"
             hide-details
+            persistent-clear
             :placeholder="t('iconSelect.search')"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
+            @click:clear="keyword = ''"
           />
           <v-virtual-scroll
             v-if="filteredRows.length > 0"
             class="mt-3"
-            :height="320"
-            :item-height="48"
+            :height="360"
+            :item-height="104"
             :items="filteredRows"
           >
             <template #default="{ item: row }">
-              <div class="d-flex justify-space-between">
+              <div class="icon-select__row">
                 <v-btn
                   v-for="name in row"
                   :key="name"
-                  class="flex-grow-1 mx-1"
-                  size="small"
+                  class="icon-select__cell"
+                  height="96"
                   :title="`mdi-${name}`"
                   variant="text"
                   @click="handleSelect(name)"
                 >
-                  <v-icon
-                    :icon="`mdi-${name}`"
-                    size="large"
-                  />
+                  <div class="icon-select__inner d-flex flex-column align-center justify-center">
+                    <v-icon
+                      :icon="`mdi-${name}`"
+                      size="36"
+                    />
+                    <span class="icon-select__name mt-1 text-caption text-medium-emphasis">
+                      {{ name }}
+                    </span>
+                  </div>
                 </v-btn>
-                <span
-                  v-for="i in columnsPerRow - row.length"
-                  :key="`placeholder-${row[0]}-${i}`"
-                  class="flex-grow-1 mx-1"
-                />
               </div>
             </template>
           </v-virtual-scroll>
@@ -93,7 +92,7 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-menu>
+    </v-dialog>
   </v-text-field>
 </template>
 
@@ -137,7 +136,7 @@ const { t } = useI18n()
 
 const menuOpen = ref(false)
 const keyword = ref('')
-const columnsPerRow = 6
+const columnsPerRow = 4
 
 const iconNames = iconsJson.icons
 
@@ -184,3 +183,45 @@ watch(menuOpen, open => {
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.icon-select__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.icon-select__cell {
+  width: 100%;
+  min-width: 0;
+  height: 96px;
+  padding-right: 2px;
+  padding-left: 2px;
+
+  :deep(.v-btn__content) {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    white-space: normal;
+  }
+}
+
+.icon-select__inner {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+.icon-select__name {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+</style>
