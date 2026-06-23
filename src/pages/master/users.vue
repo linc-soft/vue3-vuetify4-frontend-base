@@ -51,6 +51,7 @@
         </v-btn>
         <v-btn
           v-perm="'user:create'"
+          class="mr-2"
           color="primary"
           :prepend-icon="iconOf('user:create', 'mdi-plus')"
           variant="tonal"

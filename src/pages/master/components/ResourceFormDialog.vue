@@ -54,11 +54,10 @@
               </v-list-item>
             </v-list>
           </v-card>
-          <v-text-field
+          <IconSelect
             v-model="form.icon"
             density="compact"
             :label="t('resourceManagement.form.icon')"
-            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
@@ -125,6 +124,7 @@ import { useDisplay } from 'vuetify'
 
 import { getResource, updateResource } from '@/api/modules/resource'
 import EnumSelect from '@/components/EnumSelect.vue'
+import IconSelect from '@/components/IconSelect.vue'
 import enMessages from '@/locales/en'
 import jaMessages from '@/locales/ja'
 import zhMessages from '@/locales/zh'

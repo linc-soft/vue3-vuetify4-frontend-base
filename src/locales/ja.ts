@@ -585,6 +585,12 @@ export default {
       loadFailed: 'リソースデータの読み込みに失敗しました',
       saveFailed: '保存に失敗しました',
     },
+    iconSelect: {
+      search: 'アイコンを検索',
+      empty: '該当するアイコンがありません',
+      browse: 'すべてを表示',
+      clear: 'クリア',
+    },
   },
   employee: {
     title: '従業員管理',
