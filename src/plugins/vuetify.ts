@@ -26,4 +26,25 @@ export default createVuetify({
     fallback: 'en',
     messages: { en, zhHans, ja },
   },
+  defaults: {
+    VSelect: {
+      density: 'compact',
+      menuProps: { density: 'compact' },
+    },
+    VAutocomplete: {
+      density: 'compact',
+      menuProps: { density: 'compact' },
+    },
+    VCombobox: {
+      density: 'compact',
+      menuProps: { density: 'compact' },
+    },
+    VList: {
+      density: 'compact',
+    },
+    VListItem: {
+      density: 'compact',
+      minHeight: 32,
+    },
+  },
 })
