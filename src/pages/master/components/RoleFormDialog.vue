@@ -37,6 +37,7 @@
             />
             <RoleAutocomplete
               v-model="form.parentRoleIds"
+              density="compact"
               :exclude-id="props.roleId ?? null"
               :hint="t('role.form.parentRolesHint')"
               :items="allRoles"
