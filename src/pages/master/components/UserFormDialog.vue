@@ -24,64 +24,84 @@
         >
           <v-text-field
             v-model="form.username"
+            density="compact"
             :disabled="mode === 'edit'"
             :label="t('user.form.loginId')"
             :rules="[rules.usernameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.realName"
+            density="compact"
             :label="t('user.form.realName')"
             :rules="mode === 'create' ? [rules.realNameRequired] : undefined"
+            variant="outlined"
           />
           <v-select
             v-model="form.deptId"
             clearable
+            density="compact"
             :items="deptOptions"
             :label="t('user.form.dept')"
+            variant="outlined"
           />
           <v-select
             v-model="form.positionId"
             clearable
+            density="compact"
             :items="positionOptions"
             :label="t('user.form.position')"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.mobile"
+            density="compact"
             :label="t('user.form.mobile')"
+            variant="outlined"
           />
           <v-select
             v-model="form.gender"
             clearable
+            density="compact"
             :items="genderOptions"
             :label="t('user.form.gender')"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.birthday"
+            density="compact"
             :label="t('user.form.birthday')"
             type="date"
+            variant="outlined"
           />
           <v-text-field
             v-if="mode === 'edit'"
             v-model="form.password"
+            density="compact"
             :hint="t('user.form.passwordHint')"
             :label="t('user.form.password')"
             persistent-hint
             type="password"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.email"
+            density="compact"
             :label="t('user.form.email')"
             :rules="
               mode === 'create' ? [rules.emailRequired, rules.emailPattern] : [rules.emailPattern]
             "
             type="email"
+            variant="outlined"
           />
           <v-select
             v-if="mode === 'edit'"
             v-model="form.status"
+            density="compact"
             :items="statusOptions"
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
+            variant="outlined"
           />
           <RoleAutocomplete
             v-model="form.roleIds"

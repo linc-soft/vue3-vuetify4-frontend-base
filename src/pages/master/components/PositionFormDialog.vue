@@ -24,22 +24,30 @@
         >
           <v-text-field
             v-model="form.positionName"
+            density="compact"
             :label="t('position.form.positionName')"
             :rules="[rules.positionNameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.positionCode"
+            density="compact"
             :label="t('position.form.positionCode')"
+            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
+            density="compact"
             :label="t('position.form.sortOrder')"
             type="number"
+            variant="outlined"
           />
           <v-select
             v-model="form.status"
+            density="compact"
             :items="commonStatusOptions"
             :label="t('position.form.status')"
+            variant="outlined"
           />
         </v-form>
         <v-alert

@@ -6,7 +6,7 @@
     >
       <v-col
         cols="12"
-        sm="4"
+        md="3"
       >
         <v-text-field
           v-model="keyword"
@@ -14,11 +14,12 @@
           density="compact"
           hide-details
           :label="t('resourceManagement.search.keyword')"
+          variant="outlined"
         />
       </v-col>
       <v-col
-        cols="6"
-        sm="3"
+        cols="12"
+        md="3"
       >
         <v-select
           v-model="typeFilter"
@@ -27,11 +28,12 @@
           hide-details
           :items="typeOptions"
           :label="t('resourceManagement.search.type')"
+          variant="outlined"
         />
       </v-col>
       <v-col
-        cols="6"
-        sm="3"
+        cols="12"
+        md="3"
       >
         <v-select
           v-model="statusFilter"
@@ -40,12 +42,12 @@
           hide-details
           :items="statusOptions"
           :label="t('resourceManagement.search.status')"
+          variant="outlined"
         />
       </v-col>
       <v-col
-        class="text-sm-right"
         cols="12"
-        sm="2"
+        md="auto"
       >
         <v-btn
           variant="outlined"

@@ -24,36 +24,48 @@
         >
           <v-text-field
             v-model="form.deptName"
+            density="compact"
             :label="t('department.form.deptName')"
             :rules="[rules.deptNameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.deptCode"
+            density="compact"
             :label="t('department.form.deptCode')"
+            variant="outlined"
           />
           <v-select
             v-model="form.parentId"
             clearable
+            density="compact"
             :hint="t('department.form.parentHint')"
             :items="parentOptions"
             :label="t('department.form.parent')"
             persistent-hint
+            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
+            density="compact"
             :label="t('department.form.sortOrder')"
             type="number"
+            variant="outlined"
           />
           <v-select
             v-model="form.status"
+            density="compact"
             :items="statusOptions"
             :label="t('department.form.status')"
+            variant="outlined"
           />
           <UserAutocomplete
             v-model="form.leaderUserId"
             clearable
+            density="compact"
             :label="t('department.form.leader')"
             value-key="id"
+            variant="outlined"
           />
         </v-form>
         <v-alert

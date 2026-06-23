@@ -22,13 +22,17 @@
         >
           <v-text-field
             v-model="form.resourceCode"
+            density="compact"
             :label="t('resourceManagement.form.resourceCode')"
             :rules="[rules.resourceCodeRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.resourceName"
+            density="compact"
             :label="t('resourceManagement.form.resourceName')"
             :rules="[rules.resourceNameRequired]"
+            variant="outlined"
           />
           <v-card
             v-if="form.resourceName"
@@ -52,22 +56,29 @@
           </v-card>
           <v-text-field
             v-model="form.icon"
+            density="compact"
             :label="t('resourceManagement.form.icon')"
+            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
+            density="compact"
             :label="t('resourceManagement.form.sortOrder')"
             type="number"
+            variant="outlined"
           />
           <RoleCodeAutocomplete
             v-if="detail?.type !== 0"
             v-model="form.roleCode"
+            :hide-details="false"
             :label="t('resourceManagement.form.roleCode')"
           />
           <v-select
             v-model="form.status"
+            density="compact"
             :items="statusOptions"
             :label="t('resourceManagement.form.status')"
+            variant="outlined"
           />
         </v-form>
         <v-alert

@@ -24,12 +24,16 @@
           >
             <v-text-field
               v-model="form.roleName"
+              density="compact"
               :label="t('role.form.roleName')"
               :rules="[rules.roleNameRequired]"
+              variant="outlined"
             />
             <v-text-field
               v-model="form.description"
+              density="compact"
               :label="t('role.form.description')"
+              variant="outlined"
             />
             <RoleAutocomplete
               v-model="form.parentRoleIds"
