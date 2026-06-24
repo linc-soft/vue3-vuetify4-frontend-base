@@ -166,6 +166,7 @@ import { getRoleList } from '@/api/modules/role'
 import { deleteUser, getUser } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -179,6 +180,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const snackbar = useSnackbarStore()
 const { displayName } = useRoleDisplay()
 const { labelOf: statusLabelOf } = useEnums('user-status')
 const { labelOf: genderLabelOf } = useEnums('gender')
@@ -267,6 +269,7 @@ async function handleDelete() {
   try {
     await deleteUser({ id: user.value.id, version: user.value.version })
     deleteDialog.value = false
+    snackbar.success(t('common.deleteSuccess'))
     emit('deleted')
     emit('update:modelValue', false)
   } catch (error: unknown) {

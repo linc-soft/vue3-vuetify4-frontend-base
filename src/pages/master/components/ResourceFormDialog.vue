@@ -160,6 +160,7 @@ import { ENABLED_LOCALES, type SupportedLocale } from '@/composables/useLocale'
 import enMessages from '@/locales/en'
 import jaMessages from '@/locales/ja'
 import zhMessages from '@/locales/zh'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -173,6 +174,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   resourceCode: string
@@ -281,6 +283,7 @@ async function confirmSubmit() {
       version: detail.value.version,
     })
     confirmDialog.value = false
+    snackbar.success(t('common.updateSuccess'))
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {

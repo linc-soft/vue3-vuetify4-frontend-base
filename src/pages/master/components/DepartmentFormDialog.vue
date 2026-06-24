@@ -155,6 +155,7 @@ import {
 } from '@/api/modules/department'
 import EnumSelect from '@/components/EnumSelect.vue'
 import OptionSelect from '@/components/OptionSelect.vue'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -171,6 +172,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   deptName: string
@@ -296,6 +298,9 @@ async function confirmSubmit() {
           version: version.value,
         }))
     confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {

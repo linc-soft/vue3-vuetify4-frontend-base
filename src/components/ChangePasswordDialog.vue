@@ -3,11 +3,13 @@ import type { VForm } from 'vuetify/components'
 import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { changePassword } from '@/api/modules/auth'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
 const { t } = useI18n()
+const snackbar = useSnackbarStore()
 const dialog = ref(false)
 const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const formValid = ref(false)
@@ -62,6 +64,7 @@ async function handleSubmit() {
       newPassword: form.newPassword,
     })
     successMessage.value = t('changePassword.successMessage')
+    snackbar.success(t('changePassword.successMessage'))
     setTimeout(() => {
       dialog.value = false
     }, 2000)

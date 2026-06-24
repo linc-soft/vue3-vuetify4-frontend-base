@@ -115,6 +115,7 @@ import { useDisplay } from 'vuetify'
 import { deletePosition, getPosition } from '@/api/modules/position'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -130,6 +131,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const position = ref<PositionInfoResponse | null>(null)
 const loading = ref(false)
@@ -164,6 +166,7 @@ async function handleDelete() {
   try {
     await deletePosition({ id: position.value.id, version: position.value.version })
     deleteDialog.value = false
+    snackbar.success(t('common.deleteSuccess'))
     emit('deleted')
     emit('update:modelValue', false)
   } catch (error: unknown) {

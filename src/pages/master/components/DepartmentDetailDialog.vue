@@ -123,6 +123,7 @@ import { deleteDepartment, getDepartment, getDepartmentTree } from '@/api/module
 import { getUserList } from '@/api/modules/user'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -138,6 +139,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const department = ref<DepartmentInfoResponse | null>(null)
 const departments = ref<DepartmentTreeResponse[]>([])
@@ -205,6 +207,7 @@ async function handleDelete() {
   try {
     await deleteDepartment({ id: department.value.id, version: department.value.version })
     deleteDialog.value = false
+    snackbar.success(t('common.deleteSuccess'))
     emit('deleted')
     emit('update:modelValue', false)
   } catch (error: unknown) {

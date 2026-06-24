@@ -216,6 +216,7 @@ import { useDisplay } from 'vuetify'
 import { createRole, getRole, getRoleList, updateRole } from '@/api/modules/role'
 import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -231,6 +232,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { displayName } = useRoleDisplay()
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   roleName: string
@@ -368,6 +370,9 @@ async function confirmSubmit() {
         }))
 
     confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {

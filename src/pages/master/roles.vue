@@ -195,6 +195,7 @@ import { deleteRole, getRoleList } from '@/api/modules/role'
 import EnumSelect from '@/components/EnumSelect.vue'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
@@ -202,6 +203,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
 const { displayName } = useRoleDisplay()
+const snackbar = useSnackbarStore()
 
 // Filter Conditions
 const filters = reactive({
@@ -310,6 +312,7 @@ async function handleDelete() {
     await deleteRole(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchRoles()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('role.error.deleteFailed')

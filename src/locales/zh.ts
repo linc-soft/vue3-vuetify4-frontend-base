@@ -114,6 +114,9 @@ export default {
     },
     copy: '复制',
     copySuccess: '已复制到剪贴板',
+    createSuccess: '新建成功',
+    updateSuccess: '更新成功',
+    deleteSuccess: '删除成功',
   },
   resource: {
     user: {

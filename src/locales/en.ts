@@ -114,6 +114,9 @@ export default {
     },
     copy: 'Copy',
     copySuccess: 'Copied to clipboard',
+    createSuccess: 'Created successfully',
+    updateSuccess: 'Updated successfully',
+    deleteSuccess: 'Deleted successfully',
   },
   resource: {
     user: {

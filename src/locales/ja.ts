@@ -114,6 +114,9 @@ export default {
     },
     copy: 'コピー',
     copySuccess: 'クリップボードにコピーしました',
+    createSuccess: '作成しました',
+    updateSuccess: '更新しました',
+    deleteSuccess: '削除しました',
   },
   resource: {
     user: {

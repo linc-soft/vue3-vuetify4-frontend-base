@@ -182,6 +182,7 @@ import { useDisplay } from 'vuetify'
 import { deleteDepartment, getDepartmentTree } from '@/api/modules/department'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 import DepartmentDetailDialog from './components/DepartmentDetailDialog.vue'
 import DepartmentFormDialog from './components/DepartmentFormDialog.vue'
 
@@ -189,6 +190,7 @@ const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const tree = ref<DepartmentTreeResponse[]>([])
 const loading = ref(false)
@@ -254,6 +256,7 @@ async function handleDelete() {
     await deleteDepartment(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchTree()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('department.error.deleteFailed')

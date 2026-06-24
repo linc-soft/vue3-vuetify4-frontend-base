@@ -247,12 +247,14 @@ import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
 import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
+const snackbar = useSnackbarStore()
 
 // Filter Conditions
 const filters = reactive({ username: '', status: '1' })
@@ -388,6 +390,7 @@ async function handleDelete() {
     await deleteUser(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchUsers()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('user.error.deleteFailed')

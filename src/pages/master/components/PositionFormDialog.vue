@@ -126,6 +126,7 @@ import { useDisplay } from 'vuetify'
 
 import { createPosition, getPosition, updatePosition } from '@/api/modules/position'
 import EnumSelect from '@/components/EnumSelect.vue'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -140,6 +141,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   positionName: string
@@ -227,6 +229,9 @@ async function confirmSubmit() {
           version: version.value,
         }))
     confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {

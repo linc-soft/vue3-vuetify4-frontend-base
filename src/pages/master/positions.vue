@@ -175,12 +175,14 @@ import { deletePosition, getPositionList } from '@/api/modules/position'
 import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 import PositionDetailDialog from './components/PositionDetailDialog.vue'
 import PositionFormDialog from './components/PositionFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { iconOf } = useResourceIcon()
+const snackbar = useSnackbarStore()
 
 const filters = reactive({ positionName: '', status: '' })
 
@@ -267,6 +269,7 @@ async function handleDelete() {
     await deletePosition(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchPositions()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('position.error.deleteFailed')

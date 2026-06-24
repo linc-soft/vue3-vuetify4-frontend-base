@@ -159,8 +159,10 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { resetPassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const { t } = useI18n()
+const snackbar = useSnackbarStore()
 const {
   current: currentLocale,
   enabled: enabledLocales,
@@ -212,6 +214,7 @@ async function handleSubmit() {
   try {
     await resetPassword({ token, newPassword: form.newPassword })
     successMessage.value = t('resetPassword.successMessage')
+    snackbar.success(t('resetPassword.successMessage'))
     setTimeout(() => {
       router.replace({ name: 'login' })
     }, 3000)
