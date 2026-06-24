@@ -573,12 +573,6 @@ export default {
       loadFailed: '加载资源数据失败',
       saveFailed: '保存失败',
     },
-    iconSelect: {
-      search: '搜索图标',
-      empty: '无匹配图标',
-      browse: '浏览全部',
-      clear: '清除',
-    },
   },
   employee: {
     title: '员工管理',
@@ -644,5 +638,10 @@ export default {
       saveFailed: '保存失败',
       deleteFailed: '删除失败',
     },
+  },
+  iconSelect: {
+    search: '搜索图标',
+    empty: '无匹配图标',
+    clear: '清除',
   },
 }

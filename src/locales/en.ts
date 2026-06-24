@@ -584,12 +584,6 @@ export default {
       loadFailed: 'Failed to load resource data',
       saveFailed: 'Failed to save',
     },
-    iconSelect: {
-      search: 'Search icons',
-      empty: 'No icons match',
-      browse: 'Browse all icons',
-      clear: 'Clear',
-    },
   },
   employee: {
     title: 'Employee Management',
@@ -655,5 +649,10 @@ export default {
       saveFailed: 'Failed to save',
       deleteFailed: 'Failed to delete',
     },
+  },
+  iconSelect: {
+    search: 'Search icons',
+    empty: 'No icons match',
+    clear: 'Clear',
   },
 }

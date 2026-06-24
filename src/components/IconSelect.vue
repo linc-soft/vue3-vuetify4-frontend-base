@@ -13,9 +13,6 @@
         :icon="modelValue"
       />
     </template>
-    <template #append-inner>
-      <v-icon icon="mdi-chevron-down" />
-    </template>
     <v-dialog
       v-model="menuOpen"
       :max-width="420"
@@ -75,13 +72,6 @@
         </v-card-text>
         <v-divider />
         <v-card-actions class="px-3 py-2">
-          <a
-            href="https://pictogrammers.com/library/mdi/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {{ t('iconSelect.browse') }}
-          </a>
           <v-spacer />
           <v-btn
             size="small"
