@@ -18,6 +18,7 @@
         <v-form
           v-else
           ref="formRef"
+          autocomplete="off"
           @submit.prevent="handleSubmit"
         >
           <v-text-field

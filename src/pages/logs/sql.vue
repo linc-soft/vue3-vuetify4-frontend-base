@@ -26,6 +26,7 @@
       >
         <v-text-field
           v-model="filters.requestUrl"
+          autocomplete="off"
           clearable
           density="compact"
           hide-details
@@ -75,6 +76,7 @@
       >
         <v-text-field
           v-model="filters.traceId"
+          autocomplete="off"
           clearable
           density="compact"
           hide-details

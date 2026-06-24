@@ -20,6 +20,7 @@
         <template v-else>
           <v-form
             ref="formRef"
+            autocomplete="off"
             @submit.prevent="handleSubmit"
           >
             <v-text-field

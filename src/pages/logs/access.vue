@@ -28,6 +28,7 @@
       >
         <v-text-field
           v-model="filters.path"
+          autocomplete="off"
           clearable
           density="compact"
           hide-details
@@ -92,6 +93,7 @@
       >
         <v-text-field
           v-model="filters.traceId"
+          autocomplete="off"
           clearable
           density="compact"
           hide-details
