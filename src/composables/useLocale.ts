@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLocale as useVuetifyLocale } from 'vuetify'
 
@@ -26,20 +27,43 @@ function isSupported(value: unknown): value is SupportedLocale {
   return typeof value === 'string' && (SUPPORTED_LOCALES as readonly string[]).includes(value)
 }
 
+function parseEnabledLocales(): readonly SupportedLocale[] {
+  const raw = import.meta.env.VITE_ENABLED_LOCALES
+  if (typeof raw !== 'string' || !raw.trim()) {
+    return SUPPORTED_LOCALES
+  }
+  const seen = new Set<SupportedLocale>()
+  for (const part of raw.split(',')) {
+    const value = part.trim()
+    if (isSupported(value)) seen.add(value)
+  }
+  if (seen.size === 0) return SUPPORTED_LOCALES
+  return SUPPORTED_LOCALES.filter(code => seen.has(code))
+}
+
+// Locales actually exposed to end users; subset of SUPPORTED_LOCALES.
+export const ENABLED_LOCALES: readonly SupportedLocale[] = parseEnabledLocales()
+
+export function isEnabledLocale(value: unknown): value is SupportedLocale {
+  return isSupported(value) && ENABLED_LOCALES.includes(value)
+}
+
 /**
- * Resolve the initial locale: stored value > VITE_DEFAULT_LOCALE > 'en'.
+ * Resolve the initial locale: stored value > VITE_DEFAULT_LOCALE > first enabled.
+ * Values not present in ENABLED_LOCALES are silently rejected.
  * Safe to call before the Vue app is mounted (pure localStorage read).
  */
 export function resolveInitialLocale(): SupportedLocale {
   try {
     const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
-    if (isSupported(stored)) return stored
+    if (isEnabledLocale(stored)) return stored
   } catch {
     // localStorage may be unavailable (e.g. SSR, privacy mode); fall through.
   }
   const envLocale = import.meta.env.VITE_DEFAULT_LOCALE
-  if (isSupported(envLocale)) return envLocale
-  return 'en'
+  if (isEnabledLocale(envLocale)) return envLocale
+  if (isEnabledLocale('en')) return 'en'
+  return ENABLED_LOCALES[0] ?? 'en'
 }
 
 export function resolveInitialVuetifyLocale(): string {
@@ -55,7 +79,7 @@ export function useLocale() {
   const vuetifyLocale = useVuetifyLocale()
 
   function setLocale(value: SupportedLocale) {
-    if (!isSupported(value)) return
+    if (!isEnabledLocale(value)) return
     locale.value = value
     vuetifyLocale.current.value = VUETIFY_LOCALE_MAP[value]
     try {
@@ -68,9 +92,13 @@ export function useLocale() {
     }
   }
 
+  const canSwitch = computed(() => ENABLED_LOCALES.length > 1)
+
   return {
     current: locale,
     supported: SUPPORTED_LOCALES,
+    enabled: ENABLED_LOCALES,
+    canSwitch,
     labels: LOCALE_LABELS,
     setLocale,
   }

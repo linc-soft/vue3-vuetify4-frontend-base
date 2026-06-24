@@ -35,7 +35,7 @@
             variant="outlined"
           />
           <v-card
-            v-if="form.resourceName"
+            v-if="form.resourceName && translations.length > 0"
             class="mb-4"
             variant="outlined"
           >
@@ -125,6 +125,7 @@ import { useDisplay } from 'vuetify'
 import { getResource, updateResource } from '@/api/modules/resource'
 import EnumSelect from '@/components/EnumSelect.vue'
 import IconSelect from '@/components/IconSelect.vue'
+import { ENABLED_LOCALES, type SupportedLocale } from '@/composables/useLocale'
 import enMessages from '@/locales/en'
 import jaMessages from '@/locales/ja'
 import zhMessages from '@/locales/zh'
@@ -164,7 +165,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
 
-function getTranslation(locale: 'en' | 'ja' | 'zh', key: string): string {
+function getTranslation(locale: SupportedLocale, key: string): string {
   const messages = { en: enMessages, ja: jaMessages, zh: zhMessages }[locale]
   const parts = key.split('.')
   let current: unknown = messages
@@ -178,23 +179,13 @@ function getTranslation(locale: 'en' | 'ja' | 'zh', key: string): string {
   return typeof current === 'string' ? current : key
 }
 
-const translations = computed(() => [
-  {
-    locale: 'zh',
-    label: t('resourceManagement.translationPreview.zh'),
-    value: getTranslation('zh', form.resourceName),
-  },
-  {
-    locale: 'en',
-    label: t('resourceManagement.translationPreview.en'),
-    value: getTranslation('en', form.resourceName),
-  },
-  {
-    locale: 'ja',
-    label: t('resourceManagement.translationPreview.ja'),
-    value: getTranslation('ja', form.resourceName),
-  },
-])
+const translations = computed(() =>
+  ENABLED_LOCALES.map(code => ({
+    locale: code,
+    label: t(`resourceManagement.translationPreview.${code}`),
+    value: getTranslation(code, form.resourceName),
+  })),
+)
 
 const rules = {
   resourceCodeRequired: (v: string) =>

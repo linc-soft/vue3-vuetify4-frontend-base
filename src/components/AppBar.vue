@@ -13,7 +13,7 @@ defineEmits<{
 const authStore = useAuthStore()
 const router = useRouter()
 const { t } = useI18n()
-const { current: currentLocale, supported, labels, setLocale } = useLocale()
+const { current: currentLocale, enabled, canSwitch, labels, setLocale } = useLocale()
 
 const showChangePasswordDialog = ref(false)
 
@@ -32,7 +32,10 @@ async function handleLogout() {
 
     <v-spacer />
 
-    <v-menu offset="8">
+    <v-menu
+      v-if="canSwitch"
+      offset="8"
+    >
       <template #activator="{ props }">
         <v-btn
           :aria-label="t('app.language')"
@@ -56,7 +59,7 @@ async function handleLogout() {
         :selected="[currentLocale]"
       >
         <v-list-item
-          v-for="code in supported"
+          v-for="code in enabled"
           :key="code"
           :active="currentLocale === code"
           :title="labels[code]"

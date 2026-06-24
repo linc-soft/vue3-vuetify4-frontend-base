@@ -68,7 +68,7 @@ styles/settings.scss Vuetify SASS config file referenced in vite.config.mts
 - **Route guard**: unauthenticated → `/login?redirect=<path>`; authenticated on guest routes → home; `requirePasswordChange` → `/force-change-password`; route `resourceCode` checked against permission store.
 - **Permissions**: `usePermissionStore` fetches resource tree; `ADMIN` role bypasses all checks; `v-perm="'code'"` removes elements without permission.
 - **Layouts**: `resolveLayout()` reads `VITE_LAYOUT` env (`baseline` default, `system-bar` alternative).
-- **i18n**: `useLocale()` syncs vue-i18n, Vuetify locale, `<html lang>`, and `localStorage`. Initial locale: `localStorage` → `VITE_DEFAULT_LOCALE` → `'en'`.
+- **i18n**: `useLocale()` syncs vue-i18n, Vuetify locale, `<html lang>`, and `localStorage`. Initial locale: `localStorage` → `VITE_DEFAULT_LOCALE` → first of `ENABLED_LOCALES`. `ENABLED_LOCALES` is parsed once from `VITE_ENABLED_LOCALES` (comma-separated subset of `en,zh,ja`; empty/invalid → all). Stored or default locales not in `ENABLED_LOCALES` are silently rejected. Language switcher dropdowns (`AppBar`, `login`, `forgot-password`, `reset-password`, `force-change-password`) and the resource-edit translation preview both consume `ENABLED_LOCALES`; `canSwitch` hides the dropdown when only one locale is enabled.
 - **Enums/SelectOptions**: `useEnums(type)` / `useSelectOptions(type)` are lazy-loaded, module-level cached; `clearEnumsCache()` / `clearSelectOptionsCache()` called on logout.
 - **Dev proxy**: `/api` → `http://localhost:8080`, `Origin` rewritten to backend to avoid CORS.
 
@@ -79,6 +79,7 @@ styles/settings.scss Vuetify SASS config file referenced in vite.config.mts
 ```env
 VITE_API_BASE_URL=/
 VITE_DEFAULT_LOCALE=en   # en | zh | ja
+VITE_ENABLED_LOCALES=en,zh,ja  # comma-separated subset of en,zh,ja; empty = all
 VITE_LAYOUT=baseline     # baseline | system-bar
 ```
 

@@ -3,7 +3,10 @@
     class="fill-height position-relative"
     fluid
   >
-    <div class="login-locale-switcher">
+    <div
+      v-if="canSwitch"
+      class="login-locale-switcher"
+    >
       <v-menu offset="8">
         <template #activator="{ props }">
           <v-btn
@@ -20,7 +23,7 @@
           :selected="[currentLocale]"
         >
           <v-list-item
-            v-for="code in supportedLocales"
+            v-for="code in enabledLocales"
             :key="code"
             :active="currentLocale === code"
             :title="localeLabels[code]"
@@ -160,7 +163,8 @@ import { useLocale } from '@/composables/useLocale'
 const { t } = useI18n()
 const {
   current: currentLocale,
-  supported: supportedLocales,
+  enabled: enabledLocales,
+  canSwitch,
   labels: localeLabels,
   setLocale,
 } = useLocale()
