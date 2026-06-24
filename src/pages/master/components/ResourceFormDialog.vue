@@ -104,8 +104,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -113,6 +112,37 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('resourceManagement.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{ t('resourceManagement.form.confirmEditMessage') }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('resourceManagement.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('resourceManagement.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -165,6 +195,7 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
 function getTranslation(locale: SupportedLocale, key: string): string {
   const messages = { en: enMessages, ja: jaMessages, zh: zhMessages }[locale]
@@ -198,7 +229,11 @@ const rules = {
 watch(
   () => props.modelValue,
   async open => {
-    if (!open || props.resourceId == null) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
+    if (props.resourceId == null) return
     errorMessage.value = ''
     loading.value = true
     try {
@@ -224,7 +259,11 @@ async function handleSubmit() {
   if (!formRef.value || props.resourceId == null || detail.value == null) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
+  if (props.resourceId == null || detail.value == null) return
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -241,9 +280,11 @@ async function handleSubmit() {
       status: form.status || null,
       version: detail.value.version,
     })
+    confirmDialog.value = false
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value =
       error instanceof Error ? error.message : t('resourceManagement.error.saveFailed')
   } finally {

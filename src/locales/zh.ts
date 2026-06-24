@@ -247,6 +247,10 @@ export default {
       previewTitle: '继承关系预览',
       effectiveBaseRoles: '等效基础角色',
       noBaseRoles: '所选父角色未包含任何基础角色',
+      confirmTitle: '确认提交',
+      confirmCreateMessage: '确定要创建该角色吗？',
+      confirmEditMessage: '确定要保存修改吗？',
+      confirmYes: '确认',
     },
     delete: {
       title: '确认删除',
@@ -325,6 +329,10 @@ export default {
       cancel: '取消',
       submit: '提交',
       passwordHint: '留空则不修改密码',
+      confirmTitle: '确认提交',
+      confirmCreateMessage: '确定要创建该用户吗？',
+      confirmEditMessage: '确定要保存修改吗？',
+      confirmYes: '确认',
     },
     delete: {
       title: '确认删除',
@@ -487,6 +495,10 @@ export default {
       leader: '主管',
       cancel: '取消',
       submit: '提交',
+      confirmTitle: '确认提交',
+      confirmCreateMessage: '确定要创建该部门吗？',
+      confirmEditMessage: '确定要保存修改吗？',
+      confirmYes: '确认',
     },
     delete: {
       title: '确认删除',
@@ -525,6 +537,10 @@ export default {
       status: '状态',
       cancel: '取消',
       submit: '提交',
+      confirmTitle: '确认提交',
+      confirmCreateMessage: '确定要创建该职位吗？',
+      confirmEditMessage: '确定要保存修改吗？',
+      confirmYes: '确认',
     },
     delete: {
       title: '确认删除',
@@ -558,6 +574,9 @@ export default {
       status: '状态',
       cancel: '取消',
       submit: '提交',
+      confirmTitle: '确认提交',
+      confirmEditMessage: '确定要保存修改吗？',
+      confirmYes: '确认',
     },
     translationPreview: {
       title: '多语言预览',

@@ -249,6 +249,10 @@ export default {
       previewTitle: '継承関係プレビュー',
       effectiveBaseRoles: '有効な基底ロール',
       noBaseRoles: '選択した親ロールに基底ロールは含まれていません',
+      confirmTitle: '送信確認',
+      confirmCreateMessage: 'このロールを作成してもよろしいですか？',
+      confirmEditMessage: '変更内容を保存してもよろしいですか？',
+      confirmYes: '確認',
     },
     delete: {
       title: '削除確認',
@@ -327,6 +331,10 @@ export default {
       cancel: 'キャンセル',
       submit: '送信',
       passwordHint: '空欄の場合、パスワードは変更されません',
+      confirmTitle: '送信確認',
+      confirmCreateMessage: 'このユーザーを作成してもよろしいですか？',
+      confirmEditMessage: '変更内容を保存してもよろしいですか？',
+      confirmYes: '確認',
     },
     delete: {
       title: '削除確認',
@@ -493,6 +501,10 @@ export default {
       leader: '部門長',
       cancel: 'キャンセル',
       submit: '送信',
+      confirmTitle: '送信確認',
+      confirmCreateMessage: 'この部門を作成してもよろしいですか？',
+      confirmEditMessage: '変更内容を保存してもよろしいですか？',
+      confirmYes: '確認',
     },
     delete: {
       title: '削除の確認',
@@ -531,6 +543,10 @@ export default {
       status: 'ステータス',
       cancel: 'キャンセル',
       submit: '送信',
+      confirmTitle: '送信確認',
+      confirmCreateMessage: 'この職位を作成してもよろしいですか？',
+      confirmEditMessage: '変更内容を保存してもよろしいですか？',
+      confirmYes: '確認',
     },
     delete: {
       title: '削除の確認',
@@ -570,6 +586,9 @@ export default {
       status: 'ステータス',
       cancel: 'キャンセル',
       submit: '送信',
+      confirmTitle: '送信確認',
+      confirmEditMessage: '変更内容を保存してもよろしいですか？',
+      confirmYes: '確認',
     },
     translationPreview: {
       title: '翻訳プレビュー',

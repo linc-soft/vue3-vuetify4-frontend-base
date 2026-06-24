@@ -248,6 +248,10 @@ export default {
       previewTitle: 'Inheritance Preview',
       effectiveBaseRoles: 'Effective Base Roles',
       noBaseRoles: 'Selected parent roles contain no base roles',
+      confirmTitle: 'Confirm Submit',
+      confirmCreateMessage: 'Are you sure you want to create this role?',
+      confirmEditMessage: 'Are you sure you want to save the changes?',
+      confirmYes: 'Confirm',
     },
     delete: {
       title: 'Confirm Delete',
@@ -326,6 +330,10 @@ export default {
       cancel: 'Cancel',
       submit: 'Submit',
       passwordHint: 'Leave blank to keep current password',
+      confirmTitle: 'Confirm Submit',
+      confirmCreateMessage: 'Are you sure you want to create this user?',
+      confirmEditMessage: 'Are you sure you want to save the changes?',
+      confirmYes: 'Confirm',
     },
     delete: {
       title: 'Confirm Delete',
@@ -492,6 +500,10 @@ export default {
       leader: 'Department Head',
       cancel: 'Cancel',
       submit: 'Submit',
+      confirmTitle: 'Confirm Submit',
+      confirmCreateMessage: 'Are you sure you want to create this department?',
+      confirmEditMessage: 'Are you sure you want to save the changes?',
+      confirmYes: 'Confirm',
     },
     delete: {
       title: 'Confirm Delete',
@@ -530,6 +542,10 @@ export default {
       status: 'Status',
       cancel: 'Cancel',
       submit: 'Submit',
+      confirmTitle: 'Confirm Submit',
+      confirmCreateMessage: 'Are you sure you want to create this position?',
+      confirmEditMessage: 'Are you sure you want to save the changes?',
+      confirmYes: 'Confirm',
     },
     delete: {
       title: 'Confirm Delete',
@@ -569,6 +585,9 @@ export default {
       status: 'Status',
       cancel: 'Cancel',
       submit: 'Submit',
+      confirmTitle: 'Confirm Submit',
+      confirmEditMessage: 'Are you sure you want to save the changes?',
+      confirmYes: 'Confirm',
     },
     translationPreview: {
       title: 'Translation Preview',

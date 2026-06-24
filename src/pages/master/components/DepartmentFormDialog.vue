@@ -94,8 +94,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -103,6 +102,41 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('department.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{
+            mode === 'create'
+              ? t('department.form.confirmCreateMessage')
+              : t('department.form.confirmEditMessage')
+          }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('department.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('department.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -158,6 +192,7 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
 const tree = ref<DepartmentTreeResponse[]>([])
 
@@ -189,7 +224,10 @@ const rules = {
 watch(
   () => props.modelValue,
   async open => {
-    if (!open) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
     errorMessage.value = ''
     loading.value = true
     try {
@@ -231,7 +269,10 @@ async function handleSubmit() {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -254,9 +295,11 @@ async function handleSubmit() {
           status: form.status || undefined,
           version: version.value,
         }))
+    confirmDialog.value = false
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value = error instanceof Error ? error.message : t('department.error.saveFailed')
   } finally {
     submitting.value = false
