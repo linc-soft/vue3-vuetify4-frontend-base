@@ -37,7 +37,7 @@ const visible = computed({
 </script>
 
 <style scoped>
-.app-snackbar :deep(.v-snackbar__wrapper) {
-  margin-block-start: 8px !important;
+.app-snackbar {
+  padding-block-start: 8px !important;
 }
 </style>
