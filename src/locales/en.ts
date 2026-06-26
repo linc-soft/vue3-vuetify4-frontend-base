@@ -474,6 +474,20 @@ export default {
       noAccessLog: 'No access log recorded',
       noSqlLogs: 'No SQL logs recorded',
     },
+    export: {
+      title: 'Export Logs',
+      status: {
+        PENDING: 'Preparing...',
+        RUNNING: 'Exporting...',
+        SUCCESS: 'Export completed',
+        FAILED: 'Export failed',
+        EXPIRED: 'Export expired',
+      },
+      download: 'Download',
+      close: 'Close',
+      fileInfo: '{count} records | {size}',
+      pollingHint: 'Exporting in progress, please wait...',
+    },
   },
   oa: {
     employee: {

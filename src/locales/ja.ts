@@ -475,6 +475,20 @@ export default {
       noAccessLog: 'アクセスログが記録されていません',
       noSqlLogs: 'SQL ログが記録されていません',
     },
+    export: {
+      title: 'ログエクスポート',
+      status: {
+        PENDING: '準備中...',
+        RUNNING: 'エクスポート中...',
+        SUCCESS: 'エクスポート完了',
+        FAILED: 'エクスポート失敗',
+        EXPIRED: 'エクスポート期限切れ',
+      },
+      download: 'ダウンロード',
+      close: '閉じる',
+      fileInfo: '{count} 件 | {size}',
+      pollingHint: 'エクスポート中です。しばらくお待ちください...',
+    },
   },
   oa: {
     employee: {

@@ -91,6 +91,10 @@ http.interceptors.response.use(
         // Reload permissions after refresh — the user's roles may have changed since
         // the previous access token was issued (max staleness ~= access token TTL).
         void reloadPermissions()
+        const newToken = getAccessToken()
+        if (newToken) {
+          error.config.headers.set('Authorization', `Bearer ${newToken}`)
+        }
         // Retry the original request with the new token.
         return http(error.config)
       }

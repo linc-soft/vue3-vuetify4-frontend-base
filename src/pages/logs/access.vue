@@ -174,6 +174,11 @@
         {{ formatDateTime(value) }}
       </template>
     </v-data-table-server>
+
+    <ExportTaskDialog
+      v-model="exportDialog"
+      :task-id="exportTaskId"
+    />
   </v-container>
 </template>
 
@@ -184,10 +189,12 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { exportAccessLogs, getAccessLogPage } from '@/api/modules/accessLog'
+import { getAccessLogPage } from '@/api/modules/accessLog'
+import { createExportTask } from '@/api/modules/exportTask'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
 import EnumSelect from '@/components/EnumSelect.vue'
+import ExportTaskDialog from '@/components/ExportTaskDialog.vue'
 import OptionSelect from '@/components/OptionSelect.vue'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 
@@ -221,6 +228,8 @@ const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([])
 const items = ref<AccessLogPageItem[]>([])
 const loading = ref(false)
 const exportLoading = ref(false)
+const exportDialog = ref(false)
+const exportTaskId = ref('')
 
 // Method options
 const methodOptions = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
@@ -308,7 +317,7 @@ function handleReset() {
 async function handleExport() {
   exportLoading.value = true
   try {
-    const blob = await exportAccessLogs({
+    const { taskId } = await createExportTask({
       traceId: filters.traceId || undefined,
       username: filters.username || undefined,
       method: filters.method ?? undefined,
@@ -317,14 +326,10 @@ async function handleExport() {
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
     })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `access_logs_${Date.now()}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    exportTaskId.value = taskId
+    exportDialog.value = true
   } catch (error: unknown) {
-    console.error('Failed to export access logs:', error)
+    console.error('Failed to create export task:', error)
   } finally {
     exportLoading.value = false
   }

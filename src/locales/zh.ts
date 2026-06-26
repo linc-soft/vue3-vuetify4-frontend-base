@@ -469,6 +469,20 @@ export default {
       noAccessLog: '暂无访问日志记录',
       noSqlLogs: '暂无 SQL 日志记录',
     },
+    export: {
+      title: '导出日志',
+      status: {
+        PENDING: '准备中...',
+        RUNNING: '导出中...',
+        SUCCESS: '导出完成',
+        FAILED: '导出失败',
+        EXPIRED: '导出已过期',
+      },
+      download: '下载',
+      close: '关闭',
+      fileInfo: '{count} 条记录 | {size}',
+      pollingHint: '正在导出，请耐心等待...',
+    },
   },
   oa: {
     employee: {
