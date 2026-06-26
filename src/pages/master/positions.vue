@@ -22,14 +22,12 @@
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.status"
           clearable
-          density="compact"
           hide-details
-          :items="commonStatusOptions"
           :label="t('position.search.status')"
-          variant="outlined"
+          type="common-status"
         />
       </v-col>
       <v-col
@@ -52,8 +50,9 @@
           {{ t('position.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'position:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('position:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -76,17 +75,28 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'position:view'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('position:view', 'mdi-eye-outline')"
+          size="small"
+          :title="t('position.actions.detail')"
+          variant="text"
+          @click="openDetail(item.id)"
+        />
+        <v-btn
+          v-perm="'position:update'"
+          density="compact"
+          :icon="iconOf('position:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('position.actions.edit')"
           variant="text"
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'position:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('position:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('position.actions.delete')"
           variant="text"
@@ -101,6 +111,13 @@
       :mode="formMode"
       :position-id="selectedId"
       @saved="fetchPositions"
+    />
+
+    <!-- Position Detail Dialog -->
+    <PositionDetailDialog
+      v-model="detailDialog"
+      :position-id="selectedDetailId"
+      @deleted="fetchPositions"
     />
 
     <!-- Delete Confirmation Dialog -->
@@ -155,11 +172,17 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deletePosition, getPositionList } from '@/api/modules/position'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
+import PositionDetailDialog from './components/PositionDetailDialog.vue'
 import PositionFormDialog from './components/PositionFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
+const snackbar = useSnackbarStore()
 
 const filters = reactive({ positionName: '', status: '' })
 
@@ -170,12 +193,15 @@ const formDialog = ref(false)
 const selectedId = ref<number | null>(null)
 const formMode = ref<'create' | 'edit'>('create')
 
+const detailDialog = ref(false)
+const selectedDetailId = ref<number | null>(null)
+
 const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
 const deleteLoading = ref(false)
 const errorMessage = ref('')
 
-const { options: commonStatusOptions, labelOf: commonStatusLabelOf } = useEnums('common-status')
+const { labelOf: commonStatusLabelOf } = useEnums('common-status')
 
 const allHeaders = computed(() => [
   { title: t('position.table.positionName'), key: 'positionName' },
@@ -195,7 +221,7 @@ async function fetchPositions() {
   try {
     items.value = await getPositionList({
       positionName: filters.positionName || undefined,
-      status: filters.status || undefined,
+      status: filters.status ?? undefined,
     })
   } catch (error: unknown) {
     console.error('Failed to fetch positions:', error)
@@ -224,6 +250,11 @@ function openForm(mode: 'create' | 'edit', id?: number) {
   formDialog.value = true
 }
 
+function openDetail(id: number) {
+  selectedDetailId.value = id
+  detailDialog.value = true
+}
+
 function openDeleteConfirm(item: PositionInfoResponse) {
   errorMessage.value = ''
   deleteTarget.value = { id: item.id, version: item.version }
@@ -238,6 +269,7 @@ async function handleDelete() {
     await deletePosition(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchPositions()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('position.error.deleteFailed')

@@ -20,68 +20,81 @@
         <v-form
           v-else
           ref="formRef"
+          autocomplete="off"
           @submit.prevent="handleSubmit"
         >
           <v-text-field
             v-model="form.username"
+            density="compact"
             :disabled="mode === 'edit'"
             :label="t('user.form.loginId')"
             :rules="[rules.usernameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.realName"
+            density="compact"
             :label="t('user.form.realName')"
             :rules="mode === 'create' ? [rules.realNameRequired] : undefined"
+            variant="outlined"
           />
-          <v-select
+          <OptionSelect
             v-model="form.deptId"
             clearable
-            :items="deptOptions"
             :label="t('user.form.dept')"
+            type="department"
           />
-          <v-select
+          <OptionSelect
             v-model="form.positionId"
             clearable
-            :items="positionOptions"
             :label="t('user.form.position')"
+            type="position"
           />
           <v-text-field
             v-model="form.mobile"
+            density="compact"
             :label="t('user.form.mobile')"
+            variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.gender"
             clearable
-            :items="genderOptions"
             :label="t('user.form.gender')"
+            type="gender"
           />
           <v-text-field
             v-model="form.birthday"
+            density="compact"
             :label="t('user.form.birthday')"
             type="date"
+            variant="outlined"
           />
           <v-text-field
             v-if="mode === 'edit'"
             v-model="form.password"
+            density="compact"
             :hint="t('user.form.passwordHint')"
             :label="t('user.form.password')"
             persistent-hint
             type="password"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.email"
+            density="compact"
             :label="t('user.form.email')"
             :rules="
               mode === 'create' ? [rules.emailRequired, rules.emailPattern] : [rules.emailPattern]
             "
             type="email"
+            variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-if="mode === 'edit'"
             v-model="form.status"
-            :items="statusOptions"
             :label="t('user.form.status')"
             :rules="[rules.statusRequired]"
+            type="user-status"
           />
           <RoleAutocomplete
             v-model="form.roleIds"
@@ -113,8 +126,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -122,6 +134,41 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('user.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{
+            mode === 'create'
+              ? t('user.form.confirmCreateMessage')
+              : t('user.form.confirmEditMessage')
+          }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('user.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('user.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -134,9 +181,10 @@ import { useDisplay } from 'vuetify'
 
 import { getRoleList } from '@/api/modules/role'
 import { createUser, getUser, updateUser } from '@/api/modules/user'
+import EnumSelect from '@/components/EnumSelect.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
-import { useSelectOptions } from '@/composables/useSelectOptions'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -151,7 +199,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: genderOptions } = useEnums('gender')
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   username: string
@@ -183,11 +231,9 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
-const { options: statusOptions } = useEnums('user-status')
 const roleItems = ref<RoleListResponseItem[]>([])
-const { options: deptOptions } = useSelectOptions('department')
-const { options: positionOptions } = useSelectOptions('position')
 
 const rules = {
   usernameRequired: (v: string) => !!v || t('user.validation.usernameRequired'),
@@ -201,7 +247,10 @@ const rules = {
 watch(
   () => props.modelValue,
   async open => {
-    if (!open) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
     errorMessage.value = ''
     loading.value = true
     try {
@@ -251,7 +300,10 @@ async function handleSubmit() {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -282,9 +334,14 @@ async function handleSubmit() {
           birthday: form.birthday || undefined,
           version: version.value,
         }))
+    confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value = error instanceof Error ? error.message : t('user.error.saveFailed')
   } finally {
     submitting.value = false

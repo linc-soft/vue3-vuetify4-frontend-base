@@ -88,6 +88,9 @@ http.interceptors.response.use(
       // Token expired, attempting to refresh
       const refreshed = await tryRefreshToken()
       if (refreshed && error.config) {
+        // Reload permissions after refresh — the user's roles may have changed since
+        // the previous access token was issued (max staleness ~= access token TTL).
+        void reloadPermissions()
         // Retry the original request with the new token.
         return http(error.config)
       }
@@ -99,6 +102,12 @@ http.interceptors.response.use(
     const errResult = error.response?.data
     if (errResult?.code === 999_422) {
       handleForcePasswordChange()
+    }
+
+    // 403: backend denied the request. Reload permissions and redirect to /403
+    // if the current route's resource code is no longer visible.
+    if (status === 403 && errResult?.code !== 999_422) {
+      void handleForbidden()
     }
 
     // Handle blob error responses — read the blob as text to extract the error message.
@@ -210,6 +219,31 @@ function handleForcePasswordChange() {
     // Ignore localStorage errors
   }
   window.location.href = '/force-change-password'
+}
+
+async function reloadPermissions() {
+  try {
+    const { usePermissionStore } = await import('@/stores/permission')
+    await usePermissionStore().load(true)
+  } catch {
+    // Permission reload failure is non-fatal; backend authorization remains authoritative.
+  }
+}
+
+async function handleForbidden() {
+  try {
+    const { usePermissionStore } = await import('@/stores/permission')
+    const { default: router } = await import('@/router')
+    const store = usePermissionStore()
+    await store.load(true)
+    const currentRoute = router.currentRoute.value
+    const code = currentRoute.meta?.resourceCode as string | undefined
+    if (code && !store.isRouteAllowed(code) && currentRoute.name !== 'forbidden') {
+      await router.replace({ name: 'forbidden' })
+    }
+  } catch {
+    // Forbidden handler failure is non-fatal; original 403 error continues to propagate.
+  }
 }
 
 export default http

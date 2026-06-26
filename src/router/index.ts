@@ -39,64 +39,84 @@ const router = createRouter({
       path: '/',
       component: resolveLayout(),
       children: [
-        { path: '', name: 'home', component: Index },
+        { path: '', name: 'home', component: Index, meta: { resourceCode: 'home' } },
         {
           path: 'master/users',
           name: 'users',
           component: () => import('@/pages/master/users.vue'),
+          meta: { resourceCode: 'user:read' },
         },
         {
           path: 'master/roles',
           name: 'roles',
           component: () => import('@/pages/master/roles.vue'),
+          meta: { resourceCode: 'role:read' },
         },
         {
           path: 'master/departments',
           name: 'departments',
           component: () => import('@/pages/master/departments.vue'),
+          meta: { resourceCode: 'dept:read' },
         },
         {
           path: 'master/positions',
           name: 'positions',
           component: () => import('@/pages/master/positions.vue'),
+          meta: { resourceCode: 'position:read' },
+        },
+        {
+          path: 'master/resources',
+          name: 'resources',
+          component: () => import('@/pages/master/resources.vue'),
+          meta: { resourceCode: 'resource:read' },
         },
         // Logs
-        { path: 'logs', name: 'logs-access', component: () => import('@/pages/logs/access.vue') },
+        {
+          path: 'logs',
+          name: 'logs-access',
+          component: () => import('@/pages/logs/access.vue'),
+          meta: { resourceCode: 'log:access:read' },
+        },
         {
           path: 'logs/error',
           name: 'logs-error',
           component: () => import('@/pages/logs/error.vue'),
+          meta: { resourceCode: 'log:error:read' },
         },
         {
           path: 'logs/operation',
           name: 'logs-operation',
           component: () => import('@/pages/logs/operation.vue'),
+          meta: { resourceCode: 'log:operation:read' },
         },
         {
           path: 'logs/trace/:traceId',
           name: 'logs-trace',
           component: () => import('@/pages/logs/trace.vue'),
+          meta: { resourceCode: 'log:trace:read' },
         },
         {
           path: 'logs/sql',
           name: 'logs-sql',
           component: () => import('@/pages/logs/sql.vue'),
+          meta: { resourceCode: 'log:sql:read' },
+        },
+        {
+          path: '403',
+          name: 'forbidden',
+          component: () => import('@/pages/forbidden.vue'),
         },
       ],
     },
   ],
 })
 
-// Navigation guard: Redirect to the login page when not logged in.
-// Force password change redirect for INACTIVE users.
 router.beforeEach(async to => {
   const { useAuthStore } = await import('@/stores/auth')
+  const { usePermissionStore } = await import('@/stores/permission')
   const authStore = useAuthStore()
+  const permStore = usePermissionStore()
 
-  // Synchronize in-memory token state with the persisted auth store before
-  // evaluating guards. This prevents bypassing login after browser restart
-  // when the access token is lost but isAuthenticated still appears true
-  // from localStorage.
   await authStore.validateAuth()
 
   if (!to.meta.guest && !authStore.isAuthenticated) {
@@ -107,13 +127,26 @@ router.beforeEach(async to => {
     return { name: 'home' }
   }
 
-  // INACTIVE users must change password before accessing other pages
   if (
     authStore.requirePasswordChange &&
     to.name !== 'force-change-password' &&
     to.name !== 'logout'
   ) {
     return { name: 'force-change-password' }
+  }
+
+  if (authStore.isAuthenticated && !to.meta.guest && to.name !== 'force-change-password') {
+    if (!permStore.loaded) {
+      try {
+        await permStore.load()
+      } catch {
+        // Failure to load permissions should not block navigation; backend 403 will catch.
+      }
+    }
+    const code = to.meta.resourceCode as string | undefined
+    if (code && !permStore.isRouteAllowed(code) && to.name !== 'forbidden') {
+      return { name: 'forbidden' }
+    }
   }
 })
 

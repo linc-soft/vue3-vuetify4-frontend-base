@@ -3,7 +3,10 @@
     class="fill-height position-relative"
     fluid
   >
-    <div class="login-locale-switcher">
+    <div
+      v-if="canSwitch"
+      class="login-locale-switcher"
+    >
       <v-menu offset="8">
         <template #activator="{ props }">
           <v-btn
@@ -20,7 +23,7 @@
           :selected="[currentLocale]"
         >
           <v-list-item
-            v-for="code in supportedLocales"
+            v-for="code in enabledLocales"
             :key="code"
             :active="currentLocale === code"
             :title="localeLabels[code]"
@@ -156,11 +159,14 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { resetPassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const { t } = useI18n()
+const snackbar = useSnackbarStore()
 const {
   current: currentLocale,
-  supported: supportedLocales,
+  enabled: enabledLocales,
+  canSwitch,
   labels: localeLabels,
   setLocale,
 } = useLocale()
@@ -208,6 +214,7 @@ async function handleSubmit() {
   try {
     await resetPassword({ token, newPassword: form.newPassword })
     successMessage.value = t('resetPassword.successMessage')
+    snackbar.success(t('resetPassword.successMessage'))
     setTimeout(() => {
       router.replace({ name: 'login' })
     }, 3000)

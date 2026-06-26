@@ -11,14 +11,12 @@
         md="2"
         sm="4"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.module"
           clearable
-          density="compact"
           hide-details
-          :items="moduleOptions"
           :label="t('log.operation.module')"
-          variant="outlined"
+          type="module"
         />
       </v-col>
       <v-col
@@ -26,14 +24,12 @@
         md="2"
         sm="4"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.subModule"
           clearable
-          density="compact"
           hide-details
-          :items="subModuleOptions"
           :label="t('log.operation.subModule')"
-          variant="outlined"
+          type="sub-module"
         />
       </v-col>
       <v-col
@@ -41,14 +37,12 @@
         md="2"
         sm="4"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.operationType"
           clearable
-          density="compact"
           hide-details
-          :items="operationTypeOptions"
           :label="t('log.operation.operationType')"
-          variant="outlined"
+          type="operation"
         />
       </v-col>
     </v-row>
@@ -62,14 +56,12 @@
         md="2"
         sm="4"
       >
-        <UserAutocomplete
+        <OptionSelect
           v-model="filters.username"
           clearable
-          density="compact"
           hide-details
           :label="t('log.operation.username')"
-          value-key="username"
-          variant="outlined"
+          type="username"
         />
       </v-col>
       <v-col
@@ -95,6 +87,7 @@
       >
         <v-text-field
           v-model="filters.traceId"
+          autocomplete="off"
           clearable
           density="compact"
           hide-details
@@ -193,20 +186,21 @@ import { useDisplay } from 'vuetify'
 import { getOperationLogPage } from '@/api/modules/operationLog'
 import CopyButton from '@/components/CopyButton.vue'
 import DatetimeRangePicker from '@/components/DatetimeRangePicker.vue'
-import UserAutocomplete from '@/components/UserAutocomplete.vue'
+import EnumSelect from '@/components/EnumSelect.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
 
 // Module options (loaded from backend enums)
-const { options: moduleOptions, labelOf: moduleLabelOf } = useEnums('module')
+const { labelOf: moduleLabelOf } = useEnums('module')
 
 // Sub-module options (loaded from backend enums)
-const { options: subModuleOptions, labelOf: subModuleLabelOf } = useEnums('sub-module')
+const { labelOf: subModuleLabelOf } = useEnums('sub-module')
 
 // Operation type options (loaded from backend enums)
-const { options: operationTypeOptions, labelOf: operationTypeLabelOf } = useEnums('operation')
+const { labelOf: operationTypeLabelOf } = useEnums('operation')
 
 // Filter Conditions
 const filters = reactive({
@@ -257,9 +251,9 @@ async function fetchLogs() {
       page: page.value,
       size: itemsPerPage.value,
       traceId: filters.traceId || undefined,
-      operationType: filters.operationType || undefined,
-      module: filters.module || undefined,
-      subModule: filters.subModule || undefined,
+      operationType: filters.operationType ?? undefined,
+      module: filters.module ?? undefined,
+      subModule: filters.subModule ?? undefined,
       username: filters.username || undefined,
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,

@@ -20,19 +20,25 @@
         <template v-else>
           <v-form
             ref="formRef"
+            autocomplete="off"
             @submit.prevent="handleSubmit"
           >
             <v-text-field
               v-model="form.roleName"
+              density="compact"
               :label="t('role.form.roleName')"
               :rules="[rules.roleNameRequired]"
+              variant="outlined"
             />
             <v-text-field
               v-model="form.description"
+              density="compact"
               :label="t('role.form.description')"
+              variant="outlined"
             />
             <RoleAutocomplete
               v-model="form.parentRoleIds"
+              density="compact"
               :exclude-id="props.roleId ?? null"
               :hint="t('role.form.parentRolesHint')"
               :items="allRoles"
@@ -154,8 +160,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -163,6 +168,41 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('role.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{
+            mode === 'create'
+              ? t('role.form.confirmCreateMessage')
+              : t('role.form.confirmEditMessage')
+          }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('role.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('role.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -176,6 +216,7 @@ import { useDisplay } from 'vuetify'
 import { createRole, getRole, getRoleList, updateRole } from '@/api/modules/role'
 import RoleAutocomplete from '@/components/RoleAutocomplete.vue'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -191,6 +232,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { displayName } = useRoleDisplay()
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   roleName: string
@@ -206,6 +248,7 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
 // All roles (used to build the inheritance graph)
 const allRoles = ref<RoleListResponseItem[]>([])
@@ -267,7 +310,10 @@ function flattenedTree(rootId: number): { role: RoleListResponseItem; depth: num
 watch(
   () => props.modelValue,
   async open => {
-    if (!open) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
     errorMessage.value = ''
     loading.value = true
     try {
@@ -302,7 +348,10 @@ async function handleSubmit() {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -320,9 +369,14 @@ async function handleSubmit() {
           parentRoleIds: form.parentRoleIds,
         }))
 
+    confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value = error instanceof Error ? error.message : t('role.error.saveFailed')
   } finally {
     submitting.value = false

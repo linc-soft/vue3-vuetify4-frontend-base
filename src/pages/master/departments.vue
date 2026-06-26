@@ -14,8 +14,9 @@
           {{ t('department.actions.refresh') }}
         </v-btn>
         <v-btn
+          v-perm="'dept:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('dept:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -71,25 +72,37 @@
             {{ commonStatusLabelOf(item.status) }}
           </v-chip>
           <v-btn
+            v-perm="'dept:create'"
             density="compact"
-            icon="mdi-plus"
+            :icon="iconOf('dept:create', 'mdi-plus')"
             size="small"
             :title="t('department.actions.addChild')"
             variant="text"
             @click.stop="openChild(item.id)"
           />
           <v-btn
+            v-perm="'dept:view'"
             density="compact"
-            icon="mdi-pencil-outline"
+            :icon="iconOf('dept:view', 'mdi-eye-outline')"
+            size="small"
+            :title="t('department.actions.detail')"
+            variant="text"
+            @click.stop="openDetail(item.id)"
+          />
+          <v-btn
+            v-perm="'dept:update'"
+            density="compact"
+            :icon="iconOf('dept:update', 'mdi-pencil-outline')"
             size="small"
             :title="t('department.actions.edit')"
             variant="text"
             @click.stop="openForm('edit', item.id)"
           />
           <v-btn
+            v-perm="'dept:delete'"
             color="error"
             density="compact"
-            icon="mdi-delete-outline"
+            :icon="iconOf('dept:delete', 'mdi-delete-outline')"
             size="small"
             :title="t('department.actions.delete')"
             variant="text"
@@ -106,6 +119,13 @@
       :mode="formMode"
       :preset-parent-id="presetParentId"
       @saved="fetchTree"
+    />
+
+    <!-- Department Detail Dialog -->
+    <DepartmentDetailDialog
+      v-model="detailDialog"
+      :department-id="selectedDetailId"
+      @deleted="fetchTree"
     />
 
     <!-- Delete Confirmation Dialog -->
@@ -161,11 +181,16 @@ import { useDisplay } from 'vuetify'
 
 import { deleteDepartment, getDepartmentTree } from '@/api/modules/department'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
+import DepartmentDetailDialog from './components/DepartmentDetailDialog.vue'
 import DepartmentFormDialog from './components/DepartmentFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { labelOf: commonStatusLabelOf } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const tree = ref<DepartmentTreeResponse[]>([])
 const loading = ref(false)
@@ -174,6 +199,9 @@ const formDialog = ref(false)
 const selectedId = ref<number | null>(null)
 const formMode = ref<'create' | 'edit'>('create')
 const presetParentId = ref<number | null>(null)
+
+const detailDialog = ref(false)
+const selectedDetailId = ref<number | null>(null)
 
 const deleteDialog = ref(false)
 const deleteTarget = ref<{ id: number; version: number } | null>(null)
@@ -202,6 +230,11 @@ function openForm(mode: 'create' | 'edit', id?: number) {
   formDialog.value = true
 }
 
+function openDetail(id: number) {
+  selectedDetailId.value = id
+  detailDialog.value = true
+}
+
 function openChild(parentId: number) {
   formMode.value = 'create'
   selectedId.value = null
@@ -223,6 +256,7 @@ async function handleDelete() {
     await deleteDepartment(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchTree()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('department.error.deleteFailed')

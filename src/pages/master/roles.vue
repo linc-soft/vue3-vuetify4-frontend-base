@@ -22,27 +22,15 @@
         cols="12"
         md="3"
       >
-        <v-autocomplete
+        <EnumSelect
           v-model="filters.roleCode"
           clearable
-          density="compact"
+          display-field="code"
           hide-details
-          item-value="code"
-          :items="roleCodeItems"
           :label="t('role.search.roleCode')"
-          variant="outlined"
-        >
-          <template #selection="{ item }">
-            {{ item.code }}
-          </template>
-          <template #item="{ props: itemProps, item }">
-            <v-list-item
-              v-bind="itemProps"
-              :subtitle="item.name"
-              :title="item.code"
-            />
-          </template>
-        </v-autocomplete>
+          show-subtitle
+          type="role-code"
+        />
       </v-col>
       <v-col
         cols="12"
@@ -75,8 +63,9 @@
           {{ t('role.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'role:create'"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('role:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
@@ -106,25 +95,28 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'role:view'"
           density="compact"
-          icon="mdi-eye-outline"
+          :icon="iconOf('role:view', 'mdi-eye-outline')"
           size="small"
           :title="t('role.actions.detail')"
           variant="text"
           @click="openDetail(item.id)"
         />
         <v-btn
+          v-perm="'role:update'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('role:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('role.actions.edit')"
           variant="text"
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'role:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('role:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('role.actions.delete')"
           variant="text"
@@ -200,14 +192,18 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRoleList } from '@/api/modules/role'
-import { useEnums } from '@/composables/useEnums'
+import EnumSelect from '@/components/EnumSelect.vue'
+import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 import RoleDetailDialog from './components/RoleDetailDialog.vue'
 import RoleFormDialog from './components/RoleFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
 const { displayName } = useRoleDisplay()
+const snackbar = useSnackbarStore()
 
 // Filter Conditions
 const filters = reactive({
@@ -220,9 +216,6 @@ const filters = reactive({
 const items = ref<RoleListResponseItem[]>([])
 const loading = ref(false)
 const itemsPerPage = ref(10)
-
-// Role code enum options for the roleCode filter dropdown
-const { items: roleCodeItems } = useEnums('role-code')
 
 // Dialog Control
 const detailDialog = ref(false)
@@ -266,7 +259,7 @@ async function fetchRoles() {
   try {
     items.value = await getRoleList({
       roleName: filters.roleName || undefined,
-      roleCode: filters.roleCode || undefined,
+      roleCode: filters.roleCode ?? undefined,
       aggregatedOnly: filters.aggregatedOnly,
     })
     lastSearchAggregatedOnly.value = filters.aggregatedOnly
@@ -319,6 +312,7 @@ async function handleDelete() {
     await deleteRole(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchRoles()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('role.error.deleteFailed')

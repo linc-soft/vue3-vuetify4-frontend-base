@@ -167,6 +167,7 @@ import { useDisplay } from 'vuetify'
 
 import { deleteRole, getRole, getRoleList } from '@/api/modules/role'
 import { useRoleDisplay } from '@/composables/useRoleDisplay'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -181,6 +182,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { mobile } = useDisplay()
 const { displayName } = useRoleDisplay()
+const snackbar = useSnackbarStore()
 
 const role = ref<Awaited<ReturnType<typeof getRole>> | null>(null)
 const allRoles = ref<RoleListResponseItem[]>([])
@@ -250,6 +252,7 @@ async function handleDelete() {
   try {
     await deleteRole({ id: role.value.id, version: role.value.version })
     deleteDialog.value = false
+    snackbar.success(t('common.deleteSuccess'))
     emit('update:modelValue', false)
     emit('deleted')
   } catch (error: unknown) {

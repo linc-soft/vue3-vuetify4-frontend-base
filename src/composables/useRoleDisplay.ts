@@ -8,7 +8,7 @@ interface RoleDisplayInput {
 /**
  * Resolve a role's display name with i18n support.
  *
- * Base roles carry a `roleCode` (e.g. `LOG_READ`) that maps to locale keys under
+ * Base roles carry a `roleCode` (e.g. `LIST_LOG`) that maps to locale keys under
  * `common.enums.role-code.<normalized-code>`. Composite roles only have a user-defined
  * `roleName`, which is returned as-is.
  */

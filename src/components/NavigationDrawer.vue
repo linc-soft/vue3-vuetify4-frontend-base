@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import type { NavItem } from '@/layouts/navItems'
+import type { ResourceNode } from '@/api/schemas/resource'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePermissionStore } from '@/stores/permission'
 
 defineProps<{
   modelValue: boolean
-  items: NavItem[]
 }>()
 
 defineEmits<{
@@ -12,6 +13,13 @@ defineEmits<{
 }>()
 
 const { t } = useI18n()
+const permStore = usePermissionStore()
+
+const menuNodes = computed<ResourceNode[]>(() => permStore.resourceTree)
+
+function isMenuLeaf(node: ResourceNode): boolean {
+  return node.type === 1 && !!node.routePath && !node.routePath.includes(':')
+}
 </script>
 
 <template>
@@ -28,35 +36,39 @@ const { t } = useI18n()
       nav
     >
       <template
-        v-for="item in items"
-        :key="item.to || item.title"
+        v-for="node in menuNodes"
+        :key="node.id"
       >
         <v-list-item
-          v-if="!item.children"
-          :prepend-icon="item.icon"
-          :title="t(item.title)"
-          :to="item.to"
+          v-if="isMenuLeaf(node)"
+          :prepend-icon="node.icon ?? undefined"
+          :title="t(node.resourceName)"
+          :to="node.routePath ?? undefined"
         />
 
         <v-list-group
-          v-else
-          :value="item.title"
+          v-else-if="node.type === 0 && node.children?.length"
+          :value="node.resourceCode"
         >
           <template #activator="{ props }">
             <v-list-item
               v-bind="props"
-              :prepend-icon="item.icon"
-              :title="t(item.title)"
+              :prepend-icon="node.icon ?? undefined"
+              :title="t(node.resourceName)"
             />
           </template>
 
-          <v-list-item
-            v-for="child in item.children"
-            :key="child.to"
-            :prepend-icon="child.icon"
-            :title="t(child.title)"
-            :to="child.to"
-          />
+          <template
+            v-for="child in node.children"
+            :key="child.id"
+          >
+            <v-list-item
+              v-if="isMenuLeaf(child)"
+              :prepend-icon="child.icon ?? undefined"
+              :title="t(child.resourceName)"
+              :to="child.routePath ?? undefined"
+            />
+          </template>
         </v-list-group>
       </template>
     </v-list>

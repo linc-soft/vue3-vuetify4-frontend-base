@@ -20,40 +20,55 @@
         <v-form
           v-else
           ref="formRef"
+          autocomplete="off"
           @submit.prevent="handleSubmit"
         >
           <v-text-field
             v-model="form.deptName"
+            density="compact"
             :label="t('department.form.deptName')"
             :rules="[rules.deptNameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.deptCode"
+            density="compact"
             :label="t('department.form.deptCode')"
+            variant="outlined"
           />
+          <!-- <OptionSelect
+            v-model="form.parentId"
+            clearable
+            :label="t('department.form.parent')"
+            type="department"
+          /> -->
           <v-select
             v-model="form.parentId"
             clearable
+            density="compact"
             :hint="t('department.form.parentHint')"
             :items="parentOptions"
             :label="t('department.form.parent')"
             persistent-hint
+            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
+            density="compact"
             :label="t('department.form.sortOrder')"
             type="number"
+            variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.status"
-            :items="statusOptions"
             :label="t('department.form.status')"
+            type="common-status"
           />
-          <UserAutocomplete
+          <OptionSelect
             v-model="form.leaderUserId"
             clearable
             :label="t('department.form.leader')"
-            value-key="id"
+            type="user"
           />
         </v-form>
         <v-alert
@@ -79,8 +94,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -88,6 +102,41 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('department.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{
+            mode === 'create'
+              ? t('department.form.confirmCreateMessage')
+              : t('department.form.confirmEditMessage')
+          }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('department.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('department.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -104,8 +153,9 @@ import {
   getDepartmentTree,
   updateDepartment,
 } from '@/api/modules/department'
-import UserAutocomplete from '@/components/UserAutocomplete.vue'
-import { useEnums } from '@/composables/useEnums'
+import EnumSelect from '@/components/EnumSelect.vue'
+import OptionSelect from '@/components/OptionSelect.vue'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -122,7 +172,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: statusOptions } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   deptName: string
@@ -144,6 +194,7 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
 const tree = ref<DepartmentTreeResponse[]>([])
 
@@ -175,7 +226,10 @@ const rules = {
 watch(
   () => props.modelValue,
   async open => {
-    if (!open) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
     errorMessage.value = ''
     loading.value = true
     try {
@@ -217,7 +271,10 @@ async function handleSubmit() {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -240,9 +297,14 @@ async function handleSubmit() {
           status: form.status || undefined,
           version: version.value,
         }))
+    confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value = error instanceof Error ? error.message : t('department.error.saveFailed')
   } finally {
     submitting.value = false

@@ -20,26 +20,33 @@
         <v-form
           v-else
           ref="formRef"
+          autocomplete="off"
           @submit.prevent="handleSubmit"
         >
           <v-text-field
             v-model="form.positionName"
+            density="compact"
             :label="t('position.form.positionName')"
             :rules="[rules.positionNameRequired]"
+            variant="outlined"
           />
           <v-text-field
             v-model="form.positionCode"
+            density="compact"
             :label="t('position.form.positionCode')"
+            variant="outlined"
           />
           <v-text-field
             v-model.number="form.sortOrder"
+            density="compact"
             :label="t('position.form.sortOrder')"
             type="number"
+            variant="outlined"
           />
-          <v-select
+          <EnumSelect
             v-model="form.status"
-            :items="commonStatusOptions"
             :label="t('position.form.status')"
+            type="common-status"
           />
         </v-form>
         <v-alert
@@ -65,8 +72,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          :disabled="loading"
-          :loading="submitting"
+          :disabled="loading || confirmDialog"
           variant="elevated"
           @click="handleSubmit"
         >
@@ -74,6 +80,41 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="confirmDialog"
+      :fullscreen="mobile"
+      :max-width="mobile ? undefined : 400"
+    >
+      <v-card>
+        <v-card-title>{{ t('position.form.confirmTitle') }}</v-card-title>
+        <v-card-text>
+          {{
+            mode === 'create'
+              ? t('position.form.confirmCreateMessage')
+              : t('position.form.confirmEditMessage')
+          }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="submitting"
+            variant="text"
+            @click="confirmDialog = false"
+          >
+            {{ t('position.form.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="submitting"
+            variant="elevated"
+            @click="confirmSubmit"
+          >
+            {{ t('position.form.confirmYes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
@@ -84,7 +125,8 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { createPosition, getPosition, updatePosition } from '@/api/modules/position'
-import { useEnums } from '@/composables/useEnums'
+import EnumSelect from '@/components/EnumSelect.vue'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const props = defineProps<{
   modelValue: boolean
@@ -99,7 +141,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
-const { options: commonStatusOptions } = useEnums('common-status')
+const snackbar = useSnackbarStore()
 
 const form = reactive<{
   positionName: string
@@ -117,6 +159,7 @@ const formRef = ref<VForm>()
 const loading = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const confirmDialog = ref(false)
 
 const rules = {
   positionNameRequired: (v: string) => !!v || t('position.validation.positionNameRequired'),
@@ -125,7 +168,10 @@ const rules = {
 watch(
   () => props.modelValue,
   async open => {
-    if (!open) return
+    if (!open) {
+      confirmDialog.value = false
+      return
+    }
     errorMessage.value = ''
     loading.value = true
     try {
@@ -160,7 +206,10 @@ async function handleSubmit() {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
+  confirmDialog.value = true
+}
 
+async function confirmSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
@@ -179,9 +228,14 @@ async function handleSubmit() {
           status: form.status || undefined,
           version: version.value,
         }))
+    confirmDialog.value = false
+    snackbar.success(
+      props.mode === 'create' ? t('common.createSuccess') : t('common.updateSuccess'),
+    )
     emit('saved')
     emit('update:modelValue', false)
   } catch (error: unknown) {
+    confirmDialog.value = false
     errorMessage.value = error instanceof Error ? error.message : t('position.error.saveFailed')
   } finally {
     submitting.value = false

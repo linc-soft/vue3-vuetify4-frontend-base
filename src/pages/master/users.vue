@@ -22,14 +22,12 @@
         cols="12"
         md="3"
       >
-        <v-select
+        <EnumSelect
           v-model="filters.status"
           clearable
-          density="compact"
           hide-details
-          :items="statusOptions"
           :label="t('user.search.status')"
-          variant="outlined"
+          type="user-status"
         />
       </v-col>
       <v-col
@@ -52,15 +50,18 @@
           {{ t('user.search.reset') }}
         </v-btn>
         <v-btn
+          v-perm="'user:create'"
+          class="mr-2"
           color="primary"
-          prepend-icon="mdi-plus"
+          :prepend-icon="iconOf('user:create', 'mdi-plus')"
           variant="tonal"
           @click="openForm('create')"
         >
           {{ t('user.actions.create') }}
         </v-btn>
         <v-btn
-          prepend-icon="mdi-file-pdf-box"
+          v-perm="'user:export'"
+          :prepend-icon="iconOf('user:export', 'mdi-file-pdf-box')"
           variant="tonal"
           @click="reportDialog = true"
         >
@@ -95,25 +96,28 @@
       </template>
       <template #item.actions="{ item }">
         <v-btn
+          v-perm="'user:view'"
           density="compact"
-          icon="mdi-eye-outline"
+          :icon="iconOf('user:view', 'mdi-eye-outline')"
           size="small"
           :title="t('user.actions.detail')"
           variant="text"
           @click="openDetail(item.id)"
         />
         <v-btn
+          v-perm="'user:update'"
           density="compact"
-          icon="mdi-pencil-outline"
+          :icon="iconOf('user:update', 'mdi-pencil-outline')"
           size="small"
           :title="t('user.actions.edit')"
           variant="text"
           @click="openForm('edit', item.id)"
         />
         <v-btn
+          v-perm="'user:delete'"
           color="error"
           density="compact"
-          icon="mdi-delete-outline"
+          :icon="iconOf('user:delete', 'mdi-delete-outline')"
           size="small"
           :title="t('user.actions.delete')"
           variant="text"
@@ -240,12 +244,17 @@ import { useDisplay } from 'vuetify'
 import { getDepartmentTree } from '@/api/modules/department'
 import { getPositionList } from '@/api/modules/position'
 import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
+import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
+import { useResourceIcon } from '@/composables/useResourceIcon'
+import { useSnackbarStore } from '@/stores/snackbar'
 import UserDetailDialog from './components/UserDetailDialog.vue'
 import UserFormDialog from './components/UserFormDialog.vue'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const { iconOf } = useResourceIcon()
+const snackbar = useSnackbarStore()
 
 // Filter Conditions
 const filters = reactive({ username: '', status: '1' })
@@ -279,7 +288,7 @@ const reportGroupByOptions = computed(() => [
 ])
 
 // Status options (client-side i18n mapping)
-const { options: statusOptions, labelOf: statusLabelOf } = useEnums('user-status')
+const { labelOf: statusLabelOf } = useEnums('user-status')
 const { labelOf: genderLabelOf } = useEnums('gender')
 
 // Reference data for resolving dept / position display names.
@@ -320,7 +329,7 @@ async function fetchUsers() {
   try {
     items.value = await getUserList({
       username: filters.username || undefined,
-      status: filters.status || undefined,
+      status: filters.status ?? undefined,
     })
   } catch (error: unknown) {
     console.error('Failed to fetch users:', error)
@@ -381,6 +390,7 @@ async function handleDelete() {
     await deleteUser(deleteTarget.value)
     deleteDialog.value = false
     deleteTarget.value = null
+    snackbar.success(t('common.deleteSuccess'))
     fetchUsers()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : t('user.error.deleteFailed')

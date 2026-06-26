@@ -48,7 +48,7 @@ export function useSelectOptions(type: string) {
     items.value.map(item => ({
       title: item.label,
       value: item.value,
-      props: { subtitle: item.description ?? undefined },
+      props: { subtitle: item.description || undefined },
     })),
   )
 

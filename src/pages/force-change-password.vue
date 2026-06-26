@@ -3,7 +3,10 @@
     class="fill-height position-relative"
     fluid
   >
-    <div class="force-change-password-locale-switcher">
+    <div
+      v-if="canSwitch"
+      class="force-change-password-locale-switcher"
+    >
       <v-menu offset="8">
         <template #activator="{ props }">
           <v-btn
@@ -20,7 +23,7 @@
           :selected="[currentLocale]"
         >
           <v-list-item
-            v-for="code in supportedLocales"
+            v-for="code in enabledLocales"
             :key="code"
             :active="currentLocale === code"
             :title="localeLabels[code]"
@@ -144,16 +147,19 @@ import { ApiError } from '@/api/client'
 import { forceChangePassword as apiForceChangePassword } from '@/api/modules/auth'
 import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const { t } = useI18n()
 const router = useRouter()
 const {
   current: currentLocale,
-  supported: supportedLocales,
+  enabled: enabledLocales,
+  canSwitch,
   labels: localeLabels,
   setLocale,
 } = useLocale()
 const authStore = useAuthStore()
+const snackbar = useSnackbarStore()
 
 const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const formValid = ref(false)
@@ -181,6 +187,7 @@ async function handleSubmit() {
   try {
     await apiForceChangePassword({ newPassword: form.newPassword })
     authStore.requirePasswordChange = false
+    snackbar.success(t('changePassword.successMessage'))
     await router.push({ name: 'home' })
   } catch (error: unknown) {
     errorMessage.value = error instanceof ApiError ? error.message : t('forceChangePassword.failed')
