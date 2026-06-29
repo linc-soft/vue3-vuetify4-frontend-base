@@ -22,7 +22,7 @@ export type AccessLogPageRequest = z.infer<typeof AccessLogPageRequestSchema>
 
 export const AccessLogPageItemSchema = z.object({
   id: z.number().int(),
-  traceId: z.string(),
+  traceId: z.string().nullish(),
   username: z.string().nullish(),
   method: z.string(),
   path: z.string(),

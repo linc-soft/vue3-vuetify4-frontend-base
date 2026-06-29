@@ -148,13 +148,21 @@
     >
       <template #item.traceId="{ value }">
         <a
+          v-if="value"
           class="text-primary text-decoration-none"
           :href="`/logs/trace/${value}`"
           target="_blank"
         >
           {{ truncateTraceId(value) }}
         </a>
+        <span
+          v-else
+          class="text-medium-emphasis"
+        >
+          —
+        </span>
         <CopyButton
+          v-if="value"
           class="ml-1"
           :text="value"
         />
@@ -336,7 +344,8 @@ async function handleExport() {
 }
 
 // Truncate trace ID
-function truncateTraceId(traceId: string): string {
+function truncateTraceId(traceId: string | null | undefined): string {
+  if (!traceId) return ''
   if (traceId.length <= 16) return traceId
   return `${traceId.slice(0, 8)}...${traceId.slice(-4)}`
 }
