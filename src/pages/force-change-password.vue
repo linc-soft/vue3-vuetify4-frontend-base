@@ -71,11 +71,11 @@
             <v-form
               ref="formRef"
               v-model="formValid"
+              autocomplete="off"
               @submit.prevent="handleSubmit"
             >
               <v-text-field
                 v-model="form.newPassword"
-                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('forceChangePassword.newPassword')"
@@ -87,7 +87,6 @@
 
               <v-text-field
                 v-model="form.confirmPassword"
-                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('forceChangePassword.confirmPassword')"

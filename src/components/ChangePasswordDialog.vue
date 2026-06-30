@@ -95,12 +95,12 @@ async function handleSubmit() {
         <v-form
           ref="formRef"
           v-model="formValid"
+          autocomplete="off"
           @submit.prevent="handleSubmit"
         >
           <v-text-field
             v-model="form.currentPassword"
             :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            autocomplete="current-password"
             class="mb-2"
             :disabled="submitting"
             :label="$t('changePassword.currentPassword')"
@@ -114,7 +114,6 @@ async function handleSubmit() {
           <v-text-field
             v-model="form.newPassword"
             :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            autocomplete="new-password"
             class="mb-2"
             :disabled="submitting"
             :label="$t('changePassword.newPassword')"
@@ -128,7 +127,6 @@ async function handleSubmit() {
           <v-text-field
             v-model="form.confirmNewPassword"
             :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            autocomplete="new-password"
             class="mb-2"
             :disabled="submitting"
             :label="$t('changePassword.confirmNewPassword')"

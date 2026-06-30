@@ -62,11 +62,11 @@
             <v-form
               ref="formRef"
               v-model="formValid"
+              autocomplete="off"
               @submit.prevent="handleSubmit"
             >
               <v-text-field
                 v-model="form.usernameOrEmail"
-                autocomplete="username"
                 class="mb-2"
                 :disabled="loading || submitted"
                 :label="t('forgotPassword.usernameOrEmail')"

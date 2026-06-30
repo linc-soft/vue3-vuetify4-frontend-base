@@ -83,12 +83,12 @@
               v-if="!tokenInvalid && !successMessage"
               ref="formRef"
               v-model="formValid"
+              autocomplete="off"
               @submit.prevent="handleSubmit"
             >
               <v-text-field
                 v-model="form.newPassword"
                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('resetPassword.newPassword')"
@@ -102,7 +102,6 @@
               <v-text-field
                 v-model="form.confirmNewPassword"
                 :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="new-password"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('resetPassword.confirmNewPassword')"

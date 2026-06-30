@@ -62,11 +62,11 @@
             <v-form
               ref="formRef"
               v-model="formValid"
+              autocomplete="off"
               @submit.prevent="handleLogin"
             >
               <v-text-field
                 v-model="form.username"
-                autocomplete="username"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('login.username')"
@@ -78,7 +78,6 @@
               <v-text-field
                 v-model="form.password"
                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                autocomplete="current-password"
                 class="mb-2"
                 :disabled="loading"
                 :label="t('login.password')"
