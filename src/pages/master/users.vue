@@ -188,6 +188,14 @@
       </v-card>
     </v-dialog>
 
+    <!-- Report Task Dialog -->
+    <ExportTaskDialog
+      v-model="exportDialog"
+      open-in-browser
+      :task-id="exportTaskId"
+      :title="t('user.report.title')"
+    />
+
     <!-- Delete Confirmation Dialog -->
     <v-dialog
       v-model="deleteDialog"
@@ -242,8 +250,9 @@ import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { getDepartmentTree } from '@/api/modules/department'
+import { createUserReportExportTask } from '@/api/modules/exportTask'
 import { getPositionList } from '@/api/modules/position'
-import { deleteUser, generateUserReport, getUserList } from '@/api/modules/user'
+import { deleteUser, getUserList } from '@/api/modules/user'
 import EnumSelect from '@/components/EnumSelect.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
@@ -280,6 +289,8 @@ const reportDialog = ref(false)
 const reportGroupBy = ref<string | null>(null)
 const reportLoading = ref(false)
 const reportError = ref('')
+const exportDialog = ref(false)
+const exportTaskId = ref('')
 
 const reportGroupByOptions = computed(() => [
   { title: t('user.report.groupByNone'), value: '' },
@@ -403,17 +414,13 @@ async function handleGenerateReport() {
   reportLoading.value = true
   reportError.value = ''
   try {
-    const blob = await generateUserReport({
+    const { taskId } = await createUserReportExportTask({
       username: filters.username || undefined,
       groupBy: reportGroupBy.value || undefined,
     })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `user_report_${Date.now()}.pdf`
-    a.click()
-    URL.revokeObjectURL(url)
+    exportTaskId.value = taskId
     reportDialog.value = false
+    exportDialog.value = true
   } catch (error: unknown) {
     reportError.value = error instanceof Error ? error.message : t('user.error.loadFailed')
   } finally {

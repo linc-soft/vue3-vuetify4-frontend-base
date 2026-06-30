@@ -52,15 +52,3 @@ export async function updateUser(params: UserUpdateRequest): Promise<void> {
 export async function deleteUser(params: UserDeleteRequest): Promise<void> {
   await http.delete('/api/master/users', { data: params })
 }
-
-/** GET /api/master/users/report */
-export async function generateUserReport(params: {
-  username?: string
-  groupBy?: string
-}): Promise<Blob> {
-  const { data } = await http.get('/api/master/users/report', {
-    params,
-    responseType: 'blob',
-  })
-  return data
-}

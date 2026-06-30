@@ -5,7 +5,7 @@
     @update:model-value="emit('update:modelValue', $event)"
   >
     <v-card>
-      <v-card-title>{{ t('log.export.title') }}</v-card-title>
+      <v-card-title>{{ title ?? t('log.export.title') }}</v-card-title>
 
       <v-card-text>
         <div
@@ -118,6 +118,8 @@ const { t } = useI18n()
 const props = defineProps<{
   modelValue: boolean
   taskId: string
+  title?: string
+  openInBrowser?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -180,10 +182,14 @@ async function handleDownload() {
   try {
     const blob = await downloadExportTask(props.taskId)
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = task.value?.fileName ?? `export_${props.taskId}.jsonl.gz`
-    a.click()
+    if (props.openInBrowser) {
+      window.open(url, '_blank')
+    } else {
+      const a = document.createElement('a')
+      a.href = url
+      a.download = task.value?.fileName ?? `export_${props.taskId}.jsonl.gz`
+      a.click()
+    }
     URL.revokeObjectURL(url)
     emit('downloaded')
   } catch (error_: unknown) {
