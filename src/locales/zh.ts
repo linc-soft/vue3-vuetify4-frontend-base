@@ -498,6 +498,7 @@ export default {
     expireAt: '过期时间',
     download: '下载',
     preview: '预览',
+    refresh: '刷新',
     loadFailed: '加载导出任务失败',
     downloadFailed: '下载失败',
   },

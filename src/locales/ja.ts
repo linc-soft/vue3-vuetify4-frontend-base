@@ -504,6 +504,7 @@ export default {
     expireAt: '有効期限',
     download: 'ダウンロード',
     preview: 'プレビュー',
+    refresh: '更新',
     loadFailed: 'エクスポートタスクの読み込みに失敗しました',
     downloadFailed: 'ダウンロードに失敗しました',
   },

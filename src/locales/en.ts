@@ -503,6 +503,7 @@ export default {
     expireAt: 'Expires At',
     download: 'Download',
     preview: 'Preview',
+    refresh: 'Refresh',
     loadFailed: 'Failed to load export tasks',
     downloadFailed: 'Download failed',
   },

@@ -9,15 +9,41 @@
       <v-card-title>{{ t('exportTask.title') }}</v-card-title>
 
       <v-card-text>
-        <v-select
-          v-model="typeFilter"
+        <v-row
+          align="center"
           class="mb-4"
           density="compact"
-          hide-details
-          :items="typeOptions"
-          :label="t('exportTask.typeLabel')"
-          variant="outlined"
-        />
+        >
+          <v-col>
+            <v-select
+              v-model="typeFilter"
+              density="compact"
+              hide-details
+              :items="typeOptions"
+              :label="t('exportTask.typeLabel')"
+              variant="outlined"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
+              :aria-label="t('exportTask.refresh')"
+              density="comfortable"
+              icon="mdi-refresh"
+              :loading="loading"
+              size="small"
+              variant="text"
+              @click="fetchTasks"
+            >
+              <v-icon>mdi-refresh</v-icon>
+              <v-tooltip
+                activator="parent"
+                location="bottom"
+              >
+                {{ t('exportTask.refresh') }}
+              </v-tooltip>
+            </v-btn>
+          </v-col>
+        </v-row>
 
         <v-data-table-server
           v-model:items-per-page="itemsPerPage"
