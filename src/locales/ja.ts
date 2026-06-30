@@ -507,6 +507,13 @@ export default {
     refresh: '更新',
     loadFailed: 'エクスポートタスクの読み込みに失敗しました',
     downloadFailed: 'ダウンロードに失敗しました',
+    previewFailed: 'プレビューに失敗しました',
+    clear: 'クリア',
+    clearConfirmTitle: 'クリアの確認',
+    clearConfirmMessage: '選択した {count} 件のエクスポートタスクをクリアしますか？',
+    clearSuccess: '{count} 件のエクスポートタスクをクリアしました',
+    clearFailed: 'クリアに失敗しました',
+    cancel: 'キャンセル',
   },
   oa: {
     employee: {

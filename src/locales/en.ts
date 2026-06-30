@@ -506,6 +506,13 @@ export default {
     refresh: 'Refresh',
     loadFailed: 'Failed to load export tasks',
     downloadFailed: 'Download failed',
+    previewFailed: 'Preview failed',
+    clear: 'Clear',
+    clearConfirmTitle: 'Confirm Clear',
+    clearConfirmMessage: 'Clear {count} selected export tasks?',
+    clearSuccess: 'Cleared {count} export tasks',
+    clearFailed: 'Clear failed',
+    cancel: 'Cancel',
   },
   oa: {
     employee: {

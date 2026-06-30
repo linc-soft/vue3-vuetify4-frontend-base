@@ -501,6 +501,13 @@ export default {
     refresh: '刷新',
     loadFailed: '加载导出任务失败',
     downloadFailed: '下载失败',
+    previewFailed: '预览失败',
+    clear: '清除',
+    clearConfirmTitle: '确认清除',
+    clearConfirmMessage: '确定要清除选中的 {count} 个导出任务吗？',
+    clearSuccess: '已清除 {count} 个导出任务',
+    clearFailed: '清除失败',
+    cancel: '取消',
   },
   oa: {
     employee: {

@@ -46,14 +46,18 @@
         </v-row>
 
         <v-data-table-server
+          v-model="selectedTaskIds"
           v-model:items-per-page="itemsPerPage"
           v-model:page="page"
           :headers="headers"
+          :item-selectable="isTaskSelectable"
+          item-value="taskId"
           :items="items"
           :items-length="totalItems"
           :loading="loading"
           :mobile="mobile"
           multi-sort
+          show-select
           @update:options="onOptionsUpdate"
         >
           <template #item.type="{ item }">
@@ -95,6 +99,7 @@
               density="compact"
               :disabled="item.status !== 'SUCCESS'"
               icon="mdi-eye-outline"
+              :loading="previewingTaskId === item.taskId"
               size="small"
               variant="text"
               @click="handlePreview(item)"
@@ -112,12 +117,52 @@
       </v-card-text>
 
       <v-card-actions>
+        <v-btn
+          color="error"
+          :disabled="selectedTaskIds.length === 0"
+          :loading="clearing"
+          variant="text"
+          @click="confirmClearDialog = true"
+        >
+          {{ t('exportTask.clear') }}
+        </v-btn>
         <v-spacer />
         <v-btn
           variant="text"
           @click="handleClose"
         >
           {{ t('log.export.close') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog
+    v-model="confirmClearDialog"
+    max-width="420"
+  >
+    <v-card>
+      <v-card-title>{{ t('exportTask.clearConfirmTitle') }}</v-card-title>
+      <v-card-text>
+        {{ t('exportTask.clearConfirmMessage', { count: selectedTaskIds.length }) }}
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          :disabled="clearing"
+          variant="text"
+          @click="confirmClearDialog = false"
+        >
+          {{ t('exportTask.cancel') }}
+        </v-btn>
+        <v-btn
+          color="error"
+          :disabled="selectedTaskIds.length === 0"
+          :loading="clearing"
+          variant="elevated"
+          @click="handleClear"
+        >
+          {{ t('exportTask.clear') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -130,10 +175,12 @@ import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
-import { downloadExportTask, getExportTaskPage } from '@/api/modules/exportTask'
+import { deleteExportTasks, downloadExportTask, getExportTaskPage } from '@/api/modules/exportTask'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 const { t } = useI18n()
 const { mobile } = useDisplay()
+const snackbar = useSnackbarStore()
 
 const props = defineProps<{
   modelValue: boolean
@@ -150,6 +197,10 @@ const totalItems = ref(0)
 const loading = ref(false)
 const error = ref('')
 const downloadingTaskId = ref('')
+const previewingTaskId = ref('')
+const clearing = ref(false)
+const selectedTaskIds = ref<string[]>([])
+const confirmClearDialog = ref(false)
 
 const page = ref(1)
 const itemsPerPage = ref(10)
@@ -215,6 +266,10 @@ function mapSortKey(key: string): string {
   }
 }
 
+function isTaskSelectable(item: ExportTaskPageResponseItem): boolean {
+  return item.status !== 'PENDING' && item.status !== 'RUNNING'
+}
+
 function onOptionsUpdate(options: {
   page: number
   itemsPerPage: number
@@ -277,18 +332,49 @@ async function handleDownload(item: ExportTaskPageResponseItem) {
   }
 }
 
-function handlePreview(item: ExportTaskPageResponseItem) {
+async function handlePreview(item: ExportTaskPageResponseItem) {
   if (item.type !== 'USER_REPORT') return
-  window.open(`/api/tasks/${item.taskId}/download`, '_blank')
+  previewingTaskId.value = item.taskId
+  try {
+    const blob = await downloadExportTask(item.taskId)
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank')
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  } catch (error_: unknown) {
+    error.value = error_ instanceof Error ? error_.message : t('exportTask.previewFailed')
+  } finally {
+    previewingTaskId.value = ''
+  }
+}
+
+async function handleClear() {
+  if (selectedTaskIds.value.length === 0) return
+  const count = selectedTaskIds.value.length
+  clearing.value = true
+  error.value = ''
+  try {
+    await deleteExportTasks(selectedTaskIds.value)
+    selectedTaskIds.value = []
+    confirmClearDialog.value = false
+    snackbar.success(t('exportTask.clearSuccess', { count }))
+    await fetchTasks()
+  } catch (error_: unknown) {
+    error.value = error_ instanceof Error ? error_.message : t('exportTask.clearFailed')
+  } finally {
+    clearing.value = false
+  }
 }
 
 function handleClose() {
   stopPolling()
+  confirmClearDialog.value = false
   emit('update:modelValue', false)
 }
 
 watch(typeFilter, () => {
   page.value = 1
+  selectedTaskIds.value = []
+  confirmClearDialog.value = false
   fetchTasks()
 })
 
@@ -298,10 +384,13 @@ watch(
     if (val) {
       typeFilter.value = props.defaultType ?? ''
       page.value = 1
+      selectedTaskIds.value = []
+      confirmClearDialog.value = false
       await fetchTasks()
       startPolling()
     } else {
       stopPolling()
+      confirmClearDialog.value = false
     }
   },
 )

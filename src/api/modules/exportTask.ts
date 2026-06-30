@@ -52,6 +52,6 @@ export async function getExportTask(taskId: string): Promise<ExportTask> {
   return ExportTaskSchema.parse(data.data)
 }
 
-export async function deleteExportTask(taskId: string): Promise<void> {
-  await http.delete(`/api/tasks/${taskId}`)
+export async function deleteExportTasks(taskIds: string[]): Promise<void> {
+  await http.delete('/api/tasks', { data: { taskIds } })
 }
