@@ -19,6 +19,7 @@ export default {
     logout: '退出登录',
     language: '语言',
     changePassword: '修改密码',
+    exportTasks: '导出任务',
   },
   common: {
     enums: {
@@ -483,6 +484,22 @@ export default {
       fileInfo: '{count} 条记录 | {size}',
       pollingHint: '正在导出，请耐心等待...',
     },
+  },
+  exportTask: {
+    title: '导出任务',
+    allTypes: '全部类型',
+    typeLabel: '类型',
+    type: {
+      LOG_TRACE: '日志导出',
+      USER_REPORT: '用户报表',
+    },
+    createdAt: '创建时间',
+    status: '状态',
+    expireAt: '过期时间',
+    download: '下载',
+    preview: '预览',
+    loadFailed: '加载导出任务失败',
+    downloadFailed: '下载失败',
   },
   oa: {
     employee: {

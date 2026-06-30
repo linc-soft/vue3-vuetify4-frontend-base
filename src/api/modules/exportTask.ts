@@ -1,8 +1,12 @@
-import type { Result } from '@/api/types'
+import type { Page, Result } from '@/api/types'
+import { z } from 'zod/v4'
 import http, { getAccessToken } from '@/api/client'
 import {
   CreateExportTaskResponseSchema,
   type ExportTask,
+  type ExportTaskPageRequest,
+  type ExportTaskPageResponseItem,
+  ExportTaskPageResponseItemSchema,
   ExportTaskSchema,
   type LogExportRequest,
 } from '@/api/schemas/exportTask'
@@ -22,6 +26,16 @@ export async function createUserReportExportTask(
 export async function createExportTask(params: LogExportRequest): Promise<{ taskId: string }> {
   const { data } = await http.post<Result>('/api/tasks/export-logs', params)
   return CreateExportTaskResponseSchema.parse(data.data)
+}
+
+export async function getExportTaskPage(
+  params: ExportTaskPageRequest,
+): Promise<Page<ExportTaskPageResponseItem>> {
+  const { data } = await http.get<Result<Page<ExportTaskPageResponseItem>>>('/api/tasks', {
+    params,
+  })
+  data.data.records = z.array(ExportTaskPageResponseItemSchema).parse(data.data.records)
+  return data.data
 }
 
 export async function downloadExportTask(taskId: string): Promise<Blob> {

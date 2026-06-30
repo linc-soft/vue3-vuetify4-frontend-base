@@ -1,76 +1,84 @@
 <template>
   <v-dialog
-    max-width="480"
+    max-width="960"
     :model-value="modelValue"
+    scrollable
     @update:model-value="emit('update:modelValue', $event)"
   >
     <v-card>
-      <v-card-title>{{ title ?? t('log.export.title') }}</v-card-title>
+      <v-card-title>{{ t('exportTask.title') }}</v-card-title>
 
       <v-card-text>
-        <div
-          v-if="isPolling"
-          class="d-flex flex-column align-center ga-4 py-4"
-        >
-          <v-progress-circular
-            color="primary"
-            indeterminate
-            size="48"
-          />
-          <div class="text-body-1">
-            {{ statusText }}
-          </div>
-          <div class="text-caption text-medium-emphasis">
-            {{ t('log.export.pollingHint') }}
-          </div>
-        </div>
-
-        <div
-          v-else-if="isSuccess"
-          class="d-flex flex-column align-center ga-4 py-4"
-        >
-          <v-icon
-            color="success"
-            size="48"
-          >
-            mdi-check-circle
-          </v-icon>
-          <div class="text-body-1 text-success">
-            {{ statusText }}
-          </div>
-          <div
-            v-if="fileInfo"
-            class="text-caption"
-          >
-            {{ fileInfo }}
-          </div>
-        </div>
-
-        <v-alert
-          v-else-if="isFailed"
-          :text="task?.errorMessage ?? t('log.export.status.FAILED')"
-          type="error"
-          variant="tonal"
+        <v-select
+          v-model="typeFilter"
+          class="mb-4"
+          density="compact"
+          hide-details
+          :items="typeOptions"
+          :label="t('exportTask.typeLabel')"
+          variant="outlined"
         />
 
-        <div
-          v-else-if="task?.status === 'EXPIRED'"
-          class="d-flex flex-column align-center ga-4 py-4"
+        <v-data-table-server
+          v-model:items-per-page="itemsPerPage"
+          v-model:page="page"
+          :headers="headers"
+          :items="items"
+          :items-length="totalItems"
+          :loading="loading"
+          :mobile="mobile"
+          multi-sort
+          @update:options="onOptionsUpdate"
         >
-          <v-icon
-            color="warning"
-            size="48"
-          >
-            mdi-clock-alert-outline
-          </v-icon>
-          <div class="text-body-1">
-            {{ statusText }}
-          </div>
-        </div>
+          <template #item.type="{ item }">
+            {{ t(`exportTask.type.${item.type}`) }}
+          </template>
+
+          <template #item.createdAt="{ item }">
+            {{ formatDateTime(item.createdAt) }}
+          </template>
+
+          <template #item.status="{ item }">
+            <v-chip
+              :color="statusColorOf(item.status)"
+              size="small"
+            >
+              {{ t(`log.export.status.${item.status}`) }}
+            </v-chip>
+          </template>
+
+          <template #item.expireAt="{ item }">
+            {{ item.expireAt ? formatDateTime(item.expireAt) : '-' }}
+          </template>
+
+          <template #item.download="{ item }">
+            <v-btn
+              density="compact"
+              :disabled="item.status !== 'SUCCESS'"
+              icon="mdi-download"
+              :loading="downloadingTaskId === item.taskId"
+              size="small"
+              variant="text"
+              @click="handleDownload(item)"
+            />
+          </template>
+
+          <template #item.preview="{ item }">
+            <v-btn
+              v-if="item.type === 'USER_REPORT'"
+              density="compact"
+              :disabled="item.status !== 'SUCCESS'"
+              icon="mdi-eye-outline"
+              size="small"
+              variant="text"
+              @click="handlePreview(item)"
+            />
+          </template>
+        </v-data-table-server>
 
         <v-alert
           v-if="error"
-          class="mt-2"
+          class="mt-4"
           :text="error"
           type="error"
           variant="tonal"
@@ -80,23 +88,6 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          v-if="isFailed || task?.status === 'EXPIRED'"
-          variant="text"
-          @click="handleClose"
-        >
-          {{ t('log.export.close') }}
-        </v-btn>
-        <v-btn
-          v-if="isSuccess"
-          color="primary"
-          :loading="downloading"
-          variant="tonal"
-          @click="handleDownload"
-        >
-          {{ t('log.export.download') }}
-        </v-btn>
-        <v-btn
-          v-if="isSuccess"
           variant="text"
           @click="handleClose"
         >
@@ -108,54 +99,132 @@
 </template>
 
 <script lang="ts" setup>
-import type { ExportTask } from '@/api/schemas/exportTask'
+import type { ExportTaskPageResponseItem } from '@/api/schemas/exportTask'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { downloadExportTask, getExportTask } from '@/api/modules/exportTask'
+import { useDisplay } from 'vuetify'
+
+import { downloadExportTask, getExportTaskPage } from '@/api/modules/exportTask'
 
 const { t } = useI18n()
+const { mobile } = useDisplay()
 
 const props = defineProps<{
   modelValue: boolean
-  taskId: string
-  title?: string
-  openInBrowser?: boolean
+  defaultType?: 'LOG_TRACE' | 'USER_REPORT'
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  downloaded: []
 }>()
 
-const task = ref<ExportTask | null>(null)
-const downloading = ref(false)
+const typeFilter = ref<'' | 'LOG_TRACE' | 'USER_REPORT'>(props.defaultType ?? '')
+const items = ref<ExportTaskPageResponseItem[]>([])
+const totalItems = ref(0)
+const loading = ref(false)
 const error = ref('')
+const downloadingTaskId = ref('')
+
+const page = ref(1)
+const itemsPerPage = ref(10)
+const sortBy = ref<{ key: string; order: 'asc' | 'desc' }[]>([{ key: 'createdAt', order: 'desc' }])
+
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
-const statusText = computed(() => {
-  if (!task.value) return ''
-  return t(`log.export.status.${task.value.status}`)
-})
+const headers = computed(() => [
+  { title: t('exportTask.typeLabel'), key: 'type', sortable: true },
+  { title: t('exportTask.createdAt'), key: 'createdAt', sortable: true },
+  { title: t('exportTask.status'), key: 'status', sortable: true },
+  { title: t('exportTask.expireAt'), key: 'expireAt', sortable: true },
+  { title: t('exportTask.download'), key: 'download', sortable: false, align: 'center' as const },
+  { title: t('exportTask.preview'), key: 'preview', sortable: false, align: 'center' as const },
+])
 
-const fileInfo = computed(() => {
-  if (!task.value || !task.value.rowCount) return ''
-  const count = task.value.rowCount
-  const size =
-    task.value.fileSize == null ? '' : (task.value.fileSize / 1024 / 1024).toFixed(2) + ' MB'
-  return t('log.export.fileInfo', { count, size })
-})
+const typeOptions = computed(() => [
+  { title: t('exportTask.allTypes'), value: '' },
+  { title: t('exportTask.type.LOG_TRACE'), value: 'LOG_TRACE' },
+  { title: t('exportTask.type.USER_REPORT'), value: 'USER_REPORT' },
+])
 
-const isPolling = computed(() => {
-  return task.value?.status === 'PENDING' || task.value?.status === 'RUNNING'
-})
+const hasInProgressTask = computed(() =>
+  items.value.some(item => item.status === 'PENDING' || item.status === 'RUNNING'),
+)
 
-const isSuccess = computed(() => task.value?.status === 'SUCCESS')
-const isFailed = computed(() => task.value?.status === 'FAILED')
+function statusColorOf(status: string): string {
+  switch (status) {
+    case 'SUCCESS': {
+      return 'success'
+    }
+    case 'FAILED': {
+      return 'error'
+    }
+    case 'PENDING':
+    case 'RUNNING': {
+      return 'primary'
+    }
+    case 'EXPIRED': {
+      return 'warning'
+    }
+    default: {
+      return 'default'
+    }
+  }
+}
+
+function formatDateTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleString()
+}
+
+function mapSortKey(key: string): string {
+  switch (key) {
+    case 'createdAt': {
+      return 'created_at'
+    }
+    case 'expireAt': {
+      return 'expire_at'
+    }
+    default: {
+      return key
+    }
+  }
+}
+
+function onOptionsUpdate(options: {
+  page: number
+  itemsPerPage: number
+  sortBy: { key: string; order: 'asc' | 'desc' }[]
+}) {
+  page.value = options.page
+  itemsPerPage.value = options.itemsPerPage
+  sortBy.value = options.sortBy ?? []
+  fetchTasks()
+}
+
+async function fetchTasks() {
+  loading.value = true
+  error.value = ''
+  try {
+    const res = await getExportTaskPage({
+      page: page.value,
+      size: itemsPerPage.value,
+      type: typeFilter.value || undefined,
+      sortBy:
+        sortBy.value.length > 0 ? sortBy.value.map(s => mapSortKey(s.key)).join(',') : 'created_at',
+      sortOrder: sortBy.value.length > 0 ? sortBy.value.map(s => s.order).join(',') : 'desc',
+    })
+    items.value = res.records
+    totalItems.value = res.total
+  } catch (error_: unknown) {
+    error.value = error_ instanceof Error ? error_.message : t('exportTask.loadFailed')
+  } finally {
+    loading.value = false
+  }
+}
 
 function startPolling() {
   stopPolling()
-  fetchTask()
-  pollTimer = setInterval(fetchTask, 5000)
+  if (!hasInProgressTask.value) return
+  pollTimer = setInterval(fetchTasks, 5000)
 }
 
 function stopPolling() {
@@ -165,38 +234,26 @@ function stopPolling() {
   }
 }
 
-async function fetchTask() {
+async function handleDownload(item: ExportTaskPageResponseItem) {
+  downloadingTaskId.value = item.taskId
   try {
-    task.value = await getExportTask(props.taskId)
-    if (!isPolling.value) {
-      stopPolling()
-    }
+    const blob = await downloadExportTask(item.taskId)
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = item.fileName ?? `export_${item.taskId}`
+    a.click()
+    URL.revokeObjectURL(url)
   } catch (error_: unknown) {
-    error.value = error_ instanceof Error ? error_.message : 'Unknown error'
-    stopPolling()
+    error.value = error_ instanceof Error ? error_.message : t('exportTask.downloadFailed')
+  } finally {
+    downloadingTaskId.value = ''
   }
 }
 
-async function handleDownload() {
-  downloading.value = true
-  try {
-    const blob = await downloadExportTask(props.taskId)
-    const url = URL.createObjectURL(blob)
-    if (props.openInBrowser) {
-      window.open(url, '_blank')
-    } else {
-      const a = document.createElement('a')
-      a.href = url
-      a.download = task.value?.fileName ?? `export_${props.taskId}.jsonl.gz`
-      a.click()
-    }
-    URL.revokeObjectURL(url)
-    emit('downloaded')
-  } catch (error_: unknown) {
-    error.value = error_ instanceof Error ? error_.message : 'Download failed'
-  } finally {
-    downloading.value = false
-  }
+function handlePreview(item: ExportTaskPageResponseItem) {
+  if (item.type !== 'USER_REPORT') return
+  window.open(`/api/tasks/${item.taskId}/download`, '_blank')
 }
 
 function handleClose() {
@@ -204,17 +261,29 @@ function handleClose() {
   emit('update:modelValue', false)
 }
 
+watch(typeFilter, () => {
+  page.value = 1
+  fetchTasks()
+})
+
 watch(
   () => props.modelValue,
-  val => {
+  async val => {
     if (val) {
-      error.value = ''
+      typeFilter.value = props.defaultType ?? ''
+      page.value = 1
+      await fetchTasks()
       startPolling()
     } else {
       stopPolling()
     }
   },
 )
+
+watch(items, () => {
+  stopPolling()
+  startPolling()
+})
 
 onUnmounted(() => stopPolling())
 </script>

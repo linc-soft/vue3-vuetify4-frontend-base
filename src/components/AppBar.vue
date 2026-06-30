@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import ChangePasswordDialog from '@/components/ChangePasswordDialog.vue'
+import ExportTaskDialog from '@/components/ExportTaskDialog.vue'
 import { useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
 
@@ -16,6 +17,7 @@ const { t } = useI18n()
 const { current: currentLocale, enabled, canSwitch, labels, setLocale } = useLocale()
 
 const showChangePasswordDialog = ref(false)
+const showExportTaskDialog = ref(false)
 
 async function handleLogout() {
   try {
@@ -86,6 +88,11 @@ async function handleLogout() {
         min-width="160"
       >
         <v-list-item
+          prepend-icon="mdi-file-export"
+          :title="$t('app.exportTasks')"
+          @click="showExportTaskDialog = true"
+        />
+        <v-list-item
           prepend-icon="mdi-key-variant"
           :title="$t('app.changePassword')"
           @click="showChangePasswordDialog = true"
@@ -98,6 +105,7 @@ async function handleLogout() {
       </v-list>
     </v-menu>
 
+    <ExportTaskDialog v-model="showExportTaskDialog" />
     <ChangePasswordDialog v-model="showChangePasswordDialog" />
   </v-app-bar>
 </template>

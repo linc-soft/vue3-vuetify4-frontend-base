@@ -19,6 +19,7 @@ export default {
     logout: 'Sign Out',
     language: 'Language',
     changePassword: 'Change Password',
+    exportTasks: 'Export Tasks',
   },
   common: {
     enums: {
@@ -488,6 +489,22 @@ export default {
       fileInfo: '{count} records | {size}',
       pollingHint: 'Exporting in progress, please wait...',
     },
+  },
+  exportTask: {
+    title: 'Export Tasks',
+    allTypes: 'All Types',
+    typeLabel: 'Type',
+    type: {
+      LOG_TRACE: 'Log Export',
+      USER_REPORT: 'User Report',
+    },
+    createdAt: 'Created At',
+    status: 'Status',
+    expireAt: 'Expires At',
+    download: 'Download',
+    preview: 'Preview',
+    loadFailed: 'Failed to load export tasks',
+    downloadFailed: 'Download failed',
   },
   oa: {
     employee: {

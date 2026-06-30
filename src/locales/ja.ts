@@ -19,6 +19,7 @@ export default {
     logout: 'ログアウト',
     language: '言語',
     changePassword: 'パスワード変更',
+    exportTasks: 'エクスポートタスク',
   },
   common: {
     enums: {
@@ -489,6 +490,22 @@ export default {
       fileInfo: '{count} 件 | {size}',
       pollingHint: 'エクスポート中です。しばらくお待ちください...',
     },
+  },
+  exportTask: {
+    title: 'エクスポートタスク',
+    allTypes: 'すべてのタイプ',
+    typeLabel: 'タイプ',
+    type: {
+      LOG_TRACE: 'ログエクスポート',
+      USER_REPORT: 'ユーザーレポート',
+    },
+    createdAt: '作成日時',
+    status: 'ステータス',
+    expireAt: '有効期限',
+    download: 'ダウンロード',
+    preview: 'プレビュー',
+    loadFailed: 'エクスポートタスクの読み込みに失敗しました',
+    downloadFailed: 'ダウンロードに失敗しました',
   },
   oa: {
     employee: {

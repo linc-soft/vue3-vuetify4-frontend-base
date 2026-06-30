@@ -185,7 +185,7 @@
 
     <ExportTaskDialog
       v-model="exportDialog"
-      :task-id="exportTaskId"
+      default-type="LOG_TRACE"
     />
   </v-container>
 </template>
@@ -237,7 +237,6 @@ const items = ref<AccessLogPageItem[]>([])
 const loading = ref(false)
 const exportLoading = ref(false)
 const exportDialog = ref(false)
-const exportTaskId = ref('')
 
 // Method options
 const methodOptions = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
@@ -325,7 +324,7 @@ function handleReset() {
 async function handleExport() {
   exportLoading.value = true
   try {
-    const { taskId } = await createExportTask({
+    await createExportTask({
       traceId: filters.traceId || undefined,
       username: filters.username || undefined,
       method: filters.method ?? undefined,
@@ -334,7 +333,6 @@ async function handleExport() {
       startTime: timeRange.value?.startTime || undefined,
       endTime: timeRange.value?.endTime || undefined,
     })
-    exportTaskId.value = taskId
     exportDialog.value = true
   } catch (error: unknown) {
     console.error('Failed to create export task:', error)

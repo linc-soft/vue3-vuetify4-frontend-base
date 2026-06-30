@@ -191,9 +191,7 @@
     <!-- Report Task Dialog -->
     <ExportTaskDialog
       v-model="exportDialog"
-      open-in-browser
-      :task-id="exportTaskId"
-      :title="t('user.report.title')"
+      default-type="USER_REPORT"
     />
 
     <!-- Delete Confirmation Dialog -->
@@ -254,6 +252,7 @@ import { createUserReportExportTask } from '@/api/modules/exportTask'
 import { getPositionList } from '@/api/modules/position'
 import { deleteUser, getUserList } from '@/api/modules/user'
 import EnumSelect from '@/components/EnumSelect.vue'
+import ExportTaskDialog from '@/components/ExportTaskDialog.vue'
 import { useEnums } from '@/composables/useEnums'
 import { useResourceIcon } from '@/composables/useResourceIcon'
 import { useSnackbarStore } from '@/stores/snackbar'
@@ -290,7 +289,6 @@ const reportGroupBy = ref<string | null>(null)
 const reportLoading = ref(false)
 const reportError = ref('')
 const exportDialog = ref(false)
-const exportTaskId = ref('')
 
 const reportGroupByOptions = computed(() => [
   { title: t('user.report.groupByNone'), value: '' },
@@ -414,11 +412,10 @@ async function handleGenerateReport() {
   reportLoading.value = true
   reportError.value = ''
   try {
-    const { taskId } = await createUserReportExportTask({
+    await createUserReportExportTask({
       username: filters.username || undefined,
       groupBy: reportGroupBy.value || undefined,
     })
-    exportTaskId.value = taskId
     reportDialog.value = false
     exportDialog.value = true
   } catch (error: unknown) {
