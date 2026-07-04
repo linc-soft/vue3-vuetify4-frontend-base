@@ -133,7 +133,7 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useLocale } from '@/composables/useLocale'
+import { isEnabledLocale, useLocale } from '@/composables/useLocale'
 import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
@@ -172,6 +172,9 @@ async function handleLogin() {
 
   try {
     const res = await authStore.login({ username: form.username, password: form.password })
+    if (res.language && isEnabledLocale(res.language)) {
+      setLocale(res.language)
+    }
     if (res.requirePasswordChange) {
       router.push({ name: 'force-change-password' })
     } else {

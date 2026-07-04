@@ -34,9 +34,43 @@ export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequestSchema>
 export const LoginResponseSchema = z.object({
   accessToken: z.string(),
   requirePasswordChange: z.boolean().optional().default(false),
+  language: z.string().nullable().optional(),
 })
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>
+
+export const ProfileResponseSchema = z.object({
+  id: z.number(),
+  username: z.string(),
+  email: z.string().nullable(),
+  realName: z.string().nullable(),
+  mobile: z.string().nullable(),
+  gender: z.string().nullable(),
+  birthday: z.string().nullable(),
+  language: z.string().nullable(),
+  deptId: z.number().nullable(),
+  deptName: z.string().nullable(),
+  positionId: z.number().nullable(),
+  positionName: z.string().nullable(),
+  status: z.string().nullable(),
+  version: z.number(),
+})
+
+export type ProfileResponse = z.infer<typeof ProfileResponseSchema>
+
+export const ProfileUpdateRequestSchema = z.object({
+  realName: z.string().max(64).nullable(),
+  mobile: z.string().max(20).nullable(),
+  gender: z
+    .string()
+    .regex(/^[012]$/)
+    .nullable(),
+  birthday: z.string().nullable(),
+  language: z.string().regex(/^(en|zh|ja)$/),
+  version: z.number(),
+})
+
+export type ProfileUpdateRequest = z.infer<typeof ProfileUpdateRequestSchema>
 
 export const ForceChangePasswordRequestSchema = z.object({
   newPassword: z.string().min(8),

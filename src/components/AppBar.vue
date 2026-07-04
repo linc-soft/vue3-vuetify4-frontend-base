@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import ChangePasswordDialog from '@/components/ChangePasswordDialog.vue'
 import ExportTaskDialog from '@/components/ExportTaskDialog.vue'
-import { useLocale } from '@/composables/useLocale'
+import ProfileDialog from '@/components/ProfileDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 
 defineEmits<{
@@ -13,9 +12,8 @@ defineEmits<{
 
 const authStore = useAuthStore()
 const router = useRouter()
-const { t } = useI18n()
-const { current: currentLocale, enabled, canSwitch, labels, setLocale } = useLocale()
 
+const showProfileDialog = ref(false)
 const showChangePasswordDialog = ref(false)
 const showExportTaskDialog = ref(false)
 
@@ -34,43 +32,6 @@ async function handleLogout() {
 
     <v-spacer />
 
-    <v-menu
-      v-if="canSwitch"
-      offset="8"
-    >
-      <template #activator="{ props }">
-        <v-btn
-          :aria-label="t('app.language')"
-          icon="mdi-translate"
-          variant="text"
-          v-bind="props"
-        >
-          <v-icon>mdi-translate</v-icon>
-          <v-tooltip
-            activator="parent"
-            location="bottom"
-          >
-            {{ t('app.language') }}
-          </v-tooltip>
-        </v-btn>
-      </template>
-
-      <v-list
-        density="compact"
-        min-width="160"
-        :selected="[currentLocale]"
-      >
-        <v-list-item
-          v-for="code in enabled"
-          :key="code"
-          :active="currentLocale === code"
-          :title="labels[code]"
-          :value="code"
-          @click="setLocale(code)"
-        />
-      </v-list>
-    </v-menu>
-
     <v-menu offset="8">
       <template #activator="{ props }">
         <v-btn
@@ -79,7 +40,9 @@ async function handleLogout() {
           variant="text"
           v-bind="props"
         >
-          <span class="d-none d-sm-inline">{{ authStore.username }}</span>
+          <span class="d-none d-sm-inline">{{
+            authStore.profile?.realName || authStore.username
+          }}</span>
         </v-btn>
       </template>
 
@@ -87,6 +50,11 @@ async function handleLogout() {
         density="compact"
         min-width="160"
       >
+        <v-list-item
+          prepend-icon="mdi-account-details"
+          :title="$t('app.profile')"
+          @click="showProfileDialog = true"
+        />
         <v-list-item
           prepend-icon="mdi-file-export"
           :title="$t('app.exportTasks')"
@@ -107,5 +75,6 @@ async function handleLogout() {
 
     <ExportTaskDialog v-model="showExportTaskDialog" />
     <ChangePasswordDialog v-model="showChangePasswordDialog" />
+    <ProfileDialog v-model="showProfileDialog" />
   </v-app-bar>
 </template>

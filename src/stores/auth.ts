@@ -1,8 +1,13 @@
-import type { LoginRequest } from '@/api/schemas/auth'
+import type { LoginRequest, ProfileResponse, ProfileUpdateRequest } from '@/api/schemas/auth'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getAccessToken, setAccessToken, tryRefreshToken } from '@/api/client'
-import { login as apiLogin, logout as apiLogout } from '@/api/modules/auth'
+import {
+  login as apiLogin,
+  logout as apiLogout,
+  getProfile,
+  updateProfile,
+} from '@/api/modules/auth'
 import { clearEnumsCache } from '@/composables/useEnums'
 import { clearSelectOptionsCache } from '@/composables/useSelectOptions'
 import { usePermissionStore } from '@/stores/permission'
@@ -13,6 +18,7 @@ export const useAuthStore = defineStore(
     const username = ref<string | null>(null)
     const isAuthenticated = ref(false)
     const requirePasswordChange = ref(false)
+    const profile = ref<ProfileResponse | null>(null)
 
     async function login(params: LoginRequest) {
       const res = await apiLogin(params)
@@ -34,9 +40,20 @@ export const useAuthStore = defineStore(
       username.value = null
       isAuthenticated.value = false
       requirePasswordChange.value = false
+      profile.value = null
       clearSelectOptionsCache()
       clearEnumsCache()
       usePermissionStore().clear()
+    }
+
+    async function fetchProfile() {
+      profile.value = await getProfile()
+      return profile.value
+    }
+
+    async function updateMyProfile(params: ProfileUpdateRequest) {
+      profile.value = await updateProfile(params)
+      return profile.value
     }
 
     function checkAuth() {
@@ -72,8 +89,11 @@ export const useAuthStore = defineStore(
       username,
       isAuthenticated,
       requirePasswordChange,
+      profile,
       login,
       logout,
+      fetchProfile,
+      updateMyProfile,
       checkAuth,
       validateAuth,
     }

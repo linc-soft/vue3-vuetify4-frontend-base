@@ -7,6 +7,9 @@ import {
   type LoginRequest,
   type LoginResponse,
   LoginResponseSchema,
+  type ProfileResponse,
+  ProfileResponseSchema,
+  type ProfileUpdateRequest,
   type ResetPasswordRequest,
 } from '@/api/schemas/auth'
 
@@ -88,4 +91,14 @@ export async function forceChangePassword(
   const parsed = LoginResponseSchema.parse(data.data)
   setAccessToken(parsed.accessToken)
   return parsed
+}
+
+export async function getProfile(): Promise<ProfileResponse> {
+  const { data } = await http.get<Result<ProfileResponse>>('/api/auth/me')
+  return ProfileResponseSchema.parse(data.data)
+}
+
+export async function updateProfile(params: ProfileUpdateRequest): Promise<ProfileResponse> {
+  const { data } = await http.put<Result<ProfileResponse>>('/api/auth/me', params)
+  return ProfileResponseSchema.parse(data.data)
 }
